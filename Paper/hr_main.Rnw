@@ -23,7 +23,7 @@
 
 
     \title{Putting Data Back in Time: Getting the Most Out of Hazard Ratios in Diffusion Research}
-    \author{Christopher Gandrud\thanks{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@.ac.kr}) Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{}.
+    \author{Christopher Gandrud\thanks{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@.ac.kr}) Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{test}.
 
 
 
