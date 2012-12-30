@@ -23,7 +23,7 @@
 
 
     \title{Putting Data Back in Time: Getting the Most Out of Hazard Ratios in Diffusion Research}
-    \author{Christopher Gandrud\thanks{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@.ac.kr}) Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{test}.
+    \author{Christopher Gandrud\thanks{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@.ac.kr}) Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.
 
 
 
@@ -141,7 +141,7 @@ Properly interpreting the results from an EHA can help us determine whether cris
 Lets first look at a simple Cox PH model with three variables. A banking crisis dummy,\footnote{From \citet{Laeven2008}.}, EU membership, and level of democracy as measured by the Unified Democracy Score\footnote{From \citep{Pemstein2010}.}
 %Run basic fin model
 
-<<echo = false, results = hide>>=
+<<include=FALSE>>=
 
 library(foreign)
 library(survival)
@@ -172,7 +172,7 @@ fin.M2 <- coxph(formula = Surv(X_t0, X_t, X_d) ~ crisis_base + eu + udems_mean +
   \centering
   \caption{Cox Proportional Hazards Ratios}
   \label{results_table}
-<<echo = false, results = tex>>=
+<<echo=FALSE, results='asis'>>=
 
 library(apsrtable)
 
@@ -185,7 +185,7 @@ Simply looking at the static cross-time averaged hazard ratios from this model i
 
 Not ignoring Hern\'{a}an's first interpretation problem--focusing on static hazard ratios--has allowed us to reach a substantively meaningful conclusion about how crisis effected supervisory reform choices.
 
-<<echo = FALSE>>=
+<<include=FALSE>>=
 
     library(ggplot2)
 
@@ -216,7 +216,7 @@ Not ignoring Hern\'{a}an's first interpretation problem--focusing on static haza
   \caption{Probability of \emph{Not} Creating a Unifed Specialised Regulator (1988-2006)}
   \label{surv_curvs}
   
-<<echo = FALSE, results = hide, fig = TRUE, width = 7, height = 4>>=
+<<echo=FALSE, message=FALSE, fig = TRUE, width = 7, height = 4>>=
 
     print(gg.full)
 
@@ -226,7 +226,7 @@ Not ignoring Hern\'{a}an's first interpretation problem--focusing on static haza
 
 Now lets examine how the observation period selection-bias--Problem 2--could affect our results and conclusions. Let's constrict the observation period to 2000-2007. There is clearly a selection bias in this sample since all of the countries have been exposed to the ``best practice" FSA idea. Figure \ref{surv_post_1997} shows the estimated survival curves from the analysis run on this constricted sample.
 
-<<echo = FALSE>>=
+<<include=FALSE>>=
   
         fit.fin.crisis <- survfit(fin.M2, newdata = data.frame(eu = 1, crisis_base = 1, udems_mean = 1.5), conf.type = c("plain"))
 
@@ -244,7 +244,7 @@ Now lets examine how the observation period selection-bias--Problem 2--could aff
   \caption{Probability of \emph{Not} Creating a Unified Specialised Regulator, Estimated with Constricted (post-1996) Observation Period }
   \label{surv_post_1997}
   
-<<echo = FALSE, results = hide, fig = TRUE, width = 7, height = 4>>=
+<<echo=FALSE, message=FALSE, fig = TRUE, width = 7, height = 4>>=
 
     print(gg.1997)
 
@@ -255,6 +255,6 @@ Now lets examine how the observation period selection-bias--Problem 2--could aff
 From this figure we may conclude that the effect of having a banking crisis on creating a unified and specialised regulator was largely constant over time. This would provide support for a time-constant hypothesis about the relationship between crises and regualtory reforms.
 
 \bibliographystyle{apa}
-\bibliography{/Users/christophergandrud/Dropbox/Ireland_Korea_Research/PhD_Thesis-1}
+\bibliography{HRBibliography.bib}
 
 \end{document}
