@@ -1,0 +1,260 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Interpreting Hazard Ratios in Political Science
+% Christopher Gandrud
+% 30 December 2012
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper]{article}
+\usepackage{fullpage}
+\usepackage[authoryear]{natbib}
+\usepackage{setspace}
+    \doublespacing
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=blue,
+    urlcolor=blue
+}
+\usepackage{dcolumn}
+\usepackage{tikz}
+\usepackage{todonotes}
+
+
+    \title{Putting Data Back in Time: Getting the Most Out of Hazard Ratios in Diffusion Research}
+    \author{Christopher Gandrud\thanks{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@.ac.kr}) Note: I wrote the paper with Sweave \citep{Leisch2002}. The paper, including all empirical analyses and graphs can be reproduced with the Sweave document. Please contact me for the original.
+
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent\emph{Draft version. Comments welcome.} \\[0.2cm]
+Event History Analysis (EHA) has become a popular method in political science over the past decade for examining cross-country cross-time data. However, most political science studies have not used EHA to its full potential.There has been an inordinate focus on effects that are averaged across time. This ignores EHA's ability to examine how time-period specific events--such as global shocks or the promotion of new policy ideas--interact with traditional covariates. I argue that EHA can be used to examine the interactions between shared time-specific events, especially ``best practice" policy recommendations, and country-specific  variables. I illustrate this potential with a brief analysis of financial supervisory governance reforms from 1987 to 2007.
+
+\end{abstract}
+
+\begin{description}
+  \item [{\textbf{Keywords:}}] Event History Analysis, hazard ratios, financial supervisory governance
+\end{description}
+
+\vspace{0.3cm}
+
+\cite{Hern'an2010} recently published a short article in \emph{Epidemiology} entitled ``The Hazard of Hazard Ratios". He highlighted two common problems with the way that hazard ratios (HR)\footnote{Hazard ratios are roughly equivalent to odds ratios in logistic regression. See below for further details.} estimated with Cox Proportional Hazard models (CPH) and other Event History Analyses (EHA)\footnote{Also known as survival, hazard, or duration analysis.} are often interpreted by epidemiologists. He argues that researchers ignore (1) how hazard ratios  change over time and (2) the fact that their studies' observation periods have ``bult-in selection-biases". Unfortunately, Hern\'{a}n's hazard ratio misinterpretation problems are not limited to epidemiology. Many political scientists have adopted EHA over the past decade, especially CPH \citep[][530]{Golub2008}. This includes work by \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. Many of the results from this research have been misinterpreted.
+
+My aim is to import Hern\'{a}n's lessons to political science, so that future researchers better interpret their results. I also go two steps further. First I describe how, unlike in epidemiology, political scientists need to consider not only generic time-period duration selection-biases, but also how their data actually comes from specific \emph{historical} time-periods. I further argue that if political researchers acknowledge that their estimated effects change over time and are associated with specific historical periods, they can test hypotheses that have largely been ignored by quantitative political science. If we actively examine how hazard ratios change over time and that our data are from particular time-periods we can examine relationships that have so far been poorly operationalised. In particular, these EHA qualities allow us to study the role of globally promoted policy recommendations and ideas.
+
+In this paper, I first discuss how Hern\'{a}n's misinterpretation problems apply to recent political science research. Then I argue that political scientists can turn these problems to our advantage. Finally, I illustrate this potential with data on financial supervisory governance reforms from 1987 to 2007.\todo{need to compare EHA results with logit, etc.}
+
+\section{Hazard Ratio Misinterpretation Problems}
+
+In this paper I focus on one of the more commonly used EHA models in both epidemiology and political science, the Cox Proportional Hazard Model \citet{cox1972}.\footnote{In general my conclusions also apply to Fine and Gray's \citeyearpar{Fine1999} Competing Risks Model.} CPH is a semi-parametric EHA model that allows researchers to examine the hazard of a given event, e.g. a policy is adopted, a government falls, or a war breaks out. In the basic model an event $k$ can happen to unit $i$ by time $t$ or continue on without the event happening. We call the set of units that have not experience event $k$ by a time $t$ the risk set. In CPH the hazard rate $h(t)$ is the instantaneous rate of an event $k$ occurring by time $t$ conditional on the values of a unit $i$'s covariates. Formally: 
+%
+\begin{equation}
+  h(t|\mathbf{x_{\mathrm{\mathit{i}}})={\lim\atop {\scriptstyle {\scriptscriptstyle \mathit{\triangle t\rightarrow0}}}}\frac{\mathit{\Pr(t\leq T_{k}\leq t+\triangle t|T_{k}\geq t,}\mathbf{x\mathit{_{i})}}}{\mathit{\mathit{\triangle t}}}}
+\end{equation} 
+%
+where $T_{k}$ is the time that event $k$ occurs during some time interval $[t,\: t+\Delta t]$ conditional on the values of a unit's covariates $\mathrm{x_{i}}$ \citep[7]{clevesetal2004}. The specific CPH model for estimating the hazard rate for the $i$th unit is given by:
+%
+\begin{equation}
+    h(t|\mathbf{x}_{i})=h_{0}(t)\exp(\beta\prime{\mathbf{x}_{i}})
+\end{equation}
+%
+where $h_{0}(t)$ is the baseline hazard, i.e. the instantaneous rate of a transition at time $t$ when all of the covariates are zero. 
+
+We are usually interested in how a covariate changes the rate of an event happening. Does a certain drug decrease disease remission? Does having a majoritarian electoral system increase the probability of a country adopting a given policy? In general researchers have tried to answer these questions by looking at the CPH coefficient estimates $\beta$. Like logistic regression, the coefficient is more easily interpreted if we examine its exponent $\exp(\beta)$, i.e. the hazard ratio. Using the HR we can find the predicted percentage change in the hazard rate when we compare two values of a given variable. To find how the effect on the hazard rate of some value $X_{1}$ compared to $X_{2}$ we use the following formula from \citet[60]{boxsteffensmeier2004}:
+%
+\begin{equation}
+    \%\triangle h{t} = \left[\frac{\exp(\beta X_{1}) - \exp(\beta X_{2})} {\exp(\beta X_{2})}\right]
+\end{equation}   
+\vspace{0.3cm}
+
+However, interpreting HRs like this gives us only a partial understanding of $x$'s estimated effect. Fundamentally, this interpretation ignores the hazard ratio's relationship with time. Hern\'{a}n highlights two problems with interpreting hazard ratio's without reference to time. These are:
+%
+\begin{description}
+  \item [{\textbf{Problem 1:}}] Hazard ratios are averaged over the study's observation period;
+  \item [{\textbf{Problem 2:}}] Time period-specific HRs have an inherent selection-bias. 
+\end{description}
+
+Starting with Problem 1, hazard ratios are the estimated effects of variables on the hazard rate averaged over a study's particular observation period. Equation 3 gives us a variable's time-averaged marginal effect. The value of time-averaged HRs depend on a study's duration and can change over time. As with any mean value, HRs may in fact be large at one point in the study and then small in another. Presenting just time-averaged HRs cannot reveal these trends.   
+
+Let's consider how this works in Cox Proportional Hazard models. CPH does not have an intercept. It does have a baseline hazards $h_{0}(t)$. Note that baseline hazards change at each point in time. Unlike in linear regression where the intercept can be ignored when interpreting estimated marginal effects, we need to consider both hazard ratios and the baseline hazard at each point in time to understand what is going on. The best way to present hazard ratios is by comparing survival curves or hazard functions using fitted values over our studies' observation periods. These graphs give us a sense of the variables' effects at each point in time.
+
+If hazard ratios can change at each point in time, then a study's specific observation period can effect our results. Hern\'{a}n largely focuses on what I call \emph{duration period-specific selection-bias} (PSSB). 
+
+For example, imagine that we are interested in whether or not a country adopted a policy P ($\mathrm{P}=1$). We create a simple EHA with one independent variable X, such as democracy. We test the model on twenty years worth of data. Imagine that the averaged hazard ratio from this model is positive--higher values of X increase the hazard of adopting policy P. When we look at the HR over time we find that in the first ten years of the observation period the HR is positive then becomes weakly negative for the last decade. 
+
+What causal story could explain this? Duration PSSB may be at work. There could be a proportion of countries in our sample that are more likely to adopt policy P when they also have a positive value of X, because X is interacting with some unobserved factor Z to produce a common effect C. Using epidemiological terminology, these countries are more `susceptible'. Over the course of the observation period, the more susceptible countries adopt policy P at a higher rate than countries that just have high values of X. After the susceptible countries exit the risk set, we are left with a sample of less susceptible countries. X in the absence of Z may actually have a slight negative causal effect, which we observe after the susceptible countries drop out of our sample. 
+
+This is illustrated in Figure \ref{duration_PSSB}\footnote{This type of causal diagram is formally known as a directed acyclic diagram \citep[see][]{Hern'an2004}.} The box around the common effect C means that it is conditional on X and Z. When X and Z are present it has a C exists and has a positive effect on P. If Z does not exist, then C does not. X therefore has an independent and, in our example, a negative effect on P.\footnote{Gandrud's (2011) examination of deposit insurance governance choices the hazard ratio for a level of democracy variable suffered from slightly different duration period-specific selection-bias. For most of the study the democracy HR had a positive HR. Later in the study it became negative. This was because most democracies adopted the deposit insurance policy of interest about halfway through the observation period. The only democracies remaining in the risk set near the end of the study were Australia and New Zealand, where Australian banks operate almost exclusively. It could be that there was some third unobserved factor in the `Oceana' countries that was inhibiting democracy effect. Therefore the sample was biased at the specific time-period creating a negative democracy hazard ratio.} 
+
+
+% Where should I put this?
+Duration PSSB is a particular problem in cohort studies, i.e. those that follow one group of subjects that drop out of the risk set when they experience the event of interest.  
+
+In political science we should not only interested in generic duration time-period selection-biases, but also an important sub-type of this bias: \emph{historical time-period selection-bias}.        
+
+% Use Meseuger 2006 study as an example. Stops observation period at 1990, just when CBI is kicking off.
+
+%\begin{figure}
+%    \centering
+%    \caption{Period-Specific Selection-Bias}
+%    \label{duration_PSSB}
+
+%<<echo =  FALSE>>=    
+%    library(pgfSweave)
+%        duration.pssb <- pgfSweave("/Users/christophergandrud/Desktop/selection_bias_fig.tex")
+
+%@
+
+%<<echo = FALSE, results = hide, fig = TRUE, width = 7, height = 4>>=
+
+%print(duration.pssb)
+
+%@
+
+                
+%\end{figure}
+
+\section{Leveraging Hazard Ratios in Political Science}
+
+\todo[inline]{Explain how these ``problems" can be used to political scientists advantage, especially for examining cross-country time-specific events}
+
+\section{An Illustration: Financial Supervisory Governance Reforms}
+
+I use a data set of financial supervisory reforms from 1987 to 2007\footnote{Full details about this data set and a much more complete analysis of it can be found at \url{"http://dl.dropbox.com/u/12581470/Working_Papers/FIN_Gandrud_2011.pdf"}} to illustrate why political scientists need to keep in mind how their EHA results may change over time. I show that not doing so can lead to misleading results. Researchers may even draw very different conclusions about the effect of a given variable, depending on whether or not they recognise the time-changing nature of their results. 
+
+There are a number of different ways that countries can arrange financial supervision. They can involve a wide variety of actors including the ministry of finance (MoF), the central bank (CB), a specialised regulator (SR), or some combination. For this simple illustration, I just look at the creation of a unified SR. Why would a country create a unified SR?\footnote{The paper this data set is from uses a \cite{Fine1999} Competing Risks EHA to explore the full range of transitions. My results presented here are nonetheless broadly similar.} For simplicity, let's focus on the potential effect of one factor to answer this question: banking crises. Consider two hypotheses about how having a banking crisis might effect a country's propensity to create a unified SR. 
+
+The first hypothesis is purely functional. A unified SR is simply the most effective type of supervision for preventing and resolving banking crises. Unified SR allows regulators to independently use their technical skills while regulating financial activities across the banking and securities sectors. If a country is in a crisis, but does not have a unified supervisory, they will be more likely to create one. Unified SR will help solve the problem and prevent it from happening again. Though this hypothesis may seem misguided in light of recent and severe banking crises in countries with unified SRs, such as Iceland and the United Kingdom, the argument was regularly made by authors \citep[for examples see][]{Goodhart1997,Goodhart2002,quintynetal2007,Masciandaro2006,Masciandaro2008a}.
+
+The second hypothesis treats banking crises as a mechanism for ideational diffusion. Banking crises can indicate regulatory policy failure. Policy failure creates an impetus for change, so policymakers look for new policy ideas \citep{blyth2002,blyth2003,mcnamara1998,mcnamara2002,Windmaier2007}. Under the functional diffusion hypothesis policymakers should choose a unified SR when they have a crisis, regardless of the time period. It is assumed to be the best policy. But how do policymakers know that it is indeed the best policy? Even if unified FR is the optimal financial regulatory governance style, do all policymakers know this at all points in time? The crisis ideational diffusion hypothesis is based on the assumption that actors do not always know what is the optimal policy. Instead they rely on prominent and successful actors for ``best practice" ideas. In a crisis, when policymakers are most motivated to replace failed policies, they look to prominent actors for these new ideas. Best practice ideas can change over time.
+
+This was certainly the case for unified specialised regulation was heavily promoted at a particular point in time. In 1997 the Basel Committee for Banking Supervision included it in its ``Core Principles of Banking Supervision". The United Kindgom, a major financial centre, created the unified and specialised Financial Services Authority (FSA). Many other international financial organisations adopted it into their best practice recommendations by the end of the decade. 
+
+Both the functional and ideational diffusion hypotheses predict a positive effect of crisis on creating a unified SR. However, if crisis is an ideational diffusion mechanism in this case, we would expect to see crises increasing countries' probability of creating a unified SR \emph{from} 1997. If it is not, its effect should be largely constant over time.
+
+Properly interpreting the results from an EHA can help us determine whether crisis is working as a functional or ideation cause of supervisory reforms. 
+
+Lets first look at a simple Cox PH model with three variables. A banking crisis dummy,\footnote{From \citet{Laeven2008}.}, EU membership, and level of democracy as measured by the Unified Democracy Score\footnote{From \citep{Pemstein2010}.}
+%Run basic fin model
+
+<<echo = false, results = hide>>=
+
+library(foreign)
+library(survival)
+
+#Load data set
+  ## Note survival time variables were created in Stata using the command:
+  ## stset year, id(country) failure(sr = 1)
+fin <- read.csv("/Users/christophergandrud/Dropbox/Fin_trans/Data/fin_research_note.csv")
+
+  # Remove countries all years after they have established SR
+  fin <- subset(fin, X_d != "")
+  
+# Basic Cox PH Model
+## X_d is the failure variable
+
+#glm.M1 <- glm(X_d ~ crisis_base + eu + udems_mean, data = fin, family = binomial(link="logit"))
+#    display(glm.M1)
+
+fin.M1 <- coxph(formula = Surv(X_t0, X_t, X_d) ~ crisis_base + eu + udems_mean + cluster(country), method = "breslow", data = fin)
+
+fin.1997 <- subset(fin, year > 1996)
+
+fin.M2 <- coxph(formula = Surv(X_t0, X_t, X_d) ~ crisis_base + eu + udems_mean + cluster(country), method = "breslow", data = fin.1997)
+
+@
+
+\begin{table}
+  \centering
+  \caption{Cox Proportional Hazards Ratios}
+  \label{results_table}
+<<echo = false, results = tex>>=
+
+library(apsrtable)
+
+apsrtable(fin.M1, fin.M2, digits=1, align = "left",
+stars="default", coef.names = c("Crisis", "EU Member", "Democracy (UDS)"), Sweave = TRUE)
+@
+\end{table}
+
+Simply looking at the static cross-time averaged hazard ratios from this model in Table \ref{results_table} does not help us distinguish between the two models. All we observe is a positive effect, because the hazard ratio is greater than one. Stopping our analysis here we find evidence for both the functional and ideational diffusion hypotheses. Now we need to place these hazard ratios in time. Figure \ref{surv_curvs} shows the estimated survival curves from the full 1988-2007 sample. We can clearly see from the survival curves in the top row that the effect of being in a banking crisis changes fairly dramatically after 1997 as predicted by the ideational diffusion hypothesis. The 95\% confidence interval for the crisis effect before 1997 is extremely wide--it includes a probability of not creating a unified SR of both 1 and almost 0. After 1997, countries in crises are predicted to be very likely to create unified SR. Crisis basically had no effect on unified SR creation until it was promoted by prominent actors.
+
+Not ignoring Hern\'{a}an's first interpretation problem--focusing on static hazard ratios--has allowed us to reach a substantively meaningful conclusion about how crisis effected supervisory reform choices.
+
+<<echo = FALSE>>=
+
+    library(ggplot2)
+
+        fit.fin.crisis <- survfit(fin.M1, newdata = data.frame(eu = 1, crisis_base = 1, udems_mean = 1.5), conf.type = c("plain"))
+
+        fit.fin.no.crisis <- survfit(fin.M1, newdata = data.frame(eu = 1, crisis_base = 0, udems_mean = 1.5), conf.type = c("plain"))
+
+        fit.df <- data.frame(fit.fin.crisis$time, fit.fin.crisis$surv, fit.fin.crisis$upper, fit.fin.crisis$lower, fit.fin.no.crisis$surv, fit.fin.no.crisis$upper, fit.fin.no.crisis$lower)
+
+        gg.full <-ggplot(data = fit.df, aes(x = fit.fin.crisis.time, y = fit.fin.crisis.surv), xlab= "") + 
+          geom_line(aes(x = fit.fin.crisis.time, y = fit.fin.crisis.surv, color = "red")) + 
+          geom_line(aes(x = fit.fin.crisis.time, y = fit.fin.crisis.lower, color = "red", alpha = 0.3, linetype = 2)) + 
+          geom_line(aes(x = fit.fin.crisis.time, y = fit.fin.crisis.upper, color = "red", alpha = 0.3, linetype = 2)) +
+          geom_line(aes(x = fit.fin.crisis.time, y = fit.fin.no.crisis.surv, color = "blue")) + 
+          geom_line(aes(x = fit.fin.crisis.time, y = fit.fin.no.crisis.lower, color = "blue", alpha = 0.3, linetype = 2)) + 
+          geom_line(aes(x = fit.fin.crisis.time, y = fit.fin.no.crisis.upper, color = "blue", alpha = 0.3, linetype = 2)) + 
+          geom_ribbon(aes(ymin = fit.fin.crisis.lower, ymax = fit.fin.crisis.upper, fill = "red", alpha = 0.2)) + 
+          geom_ribbon(aes(ymin = fit.fin.no.crisis.lower, ymax = fit.fin.no.crisis.upper, fill = "blue", alpha = 0.2)) + 
+          xlab("") + ylab("Pr(No Unified SR)") + 
+          opts(legend.position = "none")
+          
+
+@
+
+
+\begin{figure}[t]
+  \centering
+  \caption{Probability of \emph{Not} Creating a Unifed Specialised Regulator (1988-2006)}
+  \label{surv_curvs}
+  
+<<echo = FALSE, results = hide, fig = TRUE, width = 7, height = 4>>=
+
+    print(gg.full)
+
+@
+
+\end{figure}
+
+Now lets examine how the observation period selection-bias--Problem 2--could affect our results and conclusions. Let's constrict the observation period to 2000-2007. There is clearly a selection bias in this sample since all of the countries have been exposed to the ``best practice" FSA idea. Figure \ref{surv_post_1997} shows the estimated survival curves from the analysis run on this constricted sample.
+
+<<echo = FALSE>>=
+  
+        fit.fin.crisis <- survfit(fin.M2, newdata = data.frame(eu = 1, crisis_base = 1, udems_mean = 1.5), conf.type = c("plain"))
+
+        fit.fin.no.crisis <- survfit(fin.M2, newdata = data.frame(eu = 1, crisis_base = 0, udems_mean = 1.5), conf.type = c("plain"))
+
+        fit.df.M2 <- data.frame(fit.fin.crisis$time, fit.fin.crisis$surv, fit.fin.crisis$upper, fit.fin.crisis$lower, fit.fin.no.crisis$surv, fit.fin.no.crisis$upper, fit.fin.no.crisis$lower)
+
+        gg.1997 <- ggplot(data = fit.df.M2, aes(x = fit.fin.crisis.time, y = fit.fin.crisis.surv), xlab= "") + geom_line(aes(x = fit.fin.crisis.time, y = fit.fin.crisis.surv, color = "red")) + geom_line(aes(x = fit.fin.crisis.time, y = fit.fin.crisis.lower, color = "red", linetype = 2)) + geom_line(aes(x = fit.fin.crisis.time, y = fit.fin.crisis.upper, color = "red", linetype = 2)) + geom_line(aes(x = fit.fin.crisis.time, y = fit.fin.no.crisis.surv, color = "blue")) + geom_line(aes(x = fit.fin.crisis.time, y = fit.fin.no.crisis.lower, color = "blue", linetype = 2)) + geom_line(aes(x = fit.fin.crisis.time, y = fit.fin.no.crisis.upper, color = "blue", linetype = 2)) + geom_ribbon(aes(ymin = fit.fin.crisis.lower, ymax = fit.fin.crisis.upper, fill = "red", alpha = 0.2)) + geom_ribbon(aes(ymin = fit.fin.no.crisis.lower, ymax = fit.fin.no.crisis.upper, fill = "blue", alpha = 0.2)) + xlab("") + ylab("Pr(No Unified SR)") + opts(legend.position = "none")
+
+@
+
+
+\begin{figure}[t]
+  \centering
+  \caption{Probability of \emph{Not} Creating a Unified Specialised Regulator, Estimated with Constricted (post-1996) Observation Period }
+  \label{surv_post_1997}
+  
+<<echo = FALSE, results = hide, fig = TRUE, width = 7, height = 4>>=
+
+    print(gg.1997)
+
+@
+\end{figure}
+
+
+From this figure we may conclude that the effect of having a banking crisis on creating a unified and specialised regulator was largely constant over time. This would provide support for a time-constant hypothesis about the relationship between crises and regualtory reforms.
+
+\bibliographystyle{apa}
+\bibliography{/Users/christophergandrud/Dropbox/Ireland_Korea_Research/PhD_Thesis-1}
+
+\end{document}
