@@ -1,0 +1,61 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Interpreting Hazard Ratios in Political Science
+% Christopher Gandrud
+% 2 February 2013
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper]{article}
+\usepackage{fullpage}
+\usepackage[authoryear]{natbib}
+\usepackage{setspace}
+    \doublespacing
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=blue,
+    urlcolor=blue
+}
+\usepackage{dcolumn}
+\usepackage{tikz}
+\usepackage{todonotes}
+
+<<include=FALSE>>=
+library(repmis)
+
+Packages <- c("knitr", "repmis", "devtools")
+
+LoadandCite(Packages, file = "HRPackages.bib")
+@
+
+\begin{document}
+
+% Title
+\title{Putting Data Back in Time: Getting the Most Out of Hazard Ratios in Diffusion Research}
+    \author{Christopher Gandrud\footnote{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}) Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
+
+
+\maketitle
+
+% Abstract
+\begin{abstract}
+
+\noindent\emph{Draft version. Comments welcome.} \\[0.2cm]
+Over the past decade Event History Analysis (EHA) has become a popular method in political science for examining cross-country cross-time data. However, most political science studies have not used EHA to its full potential. There has been an inordinate focus on effects that are averaged across time. This ignores EHA's ability to examine how time-period specific events--such as global shocks or the promotion of new policy ideas--interact with traditional covariates. I argue that EHA can be used to examine the interactions between shared time-specific events, especially ``best practice" policy recommendations, and country-specific  variables. I introduce a new R package called \emph{simtvc} that makes exploring and graphically presenting time-varying effects easier. [ADD how illustrate]
+
+\end{abstract}
+
+\begin{description}
+  \item [{\textbf{Keywords:}}] Cox Proportional Hazards, Event History Analysis, hazard ratios, time-varying coefficients
+\end{description}
+
+\vspace{0.3cm}
+
+\cite{Hern'an2010} recently published a short article in \emph{Epidemiology} entitled ``The Hazard of Hazard Ratios". He highlighted two common problems with the way that hazard ratios (HR)\footnote{Hazard ratios are roughly equivalent to odds ratios in logistic regression.} estimated with Cox Proportional Hazard models (CPH) and other Event History Analyses (EHA)\footnote{Also known as survival, hazard, or duration analysis.} are often interpreted by epidemiologists. He argues that researchers ignore (1) how hazard ratios  change over time and (2) the fact that their studies' observation periods have ``bult-in selection-biases". The problems Hern\'{a}n identified are not limited to epidemiology. Many political scientists have adopted EHA over the past decade, especially CPH \citep[][530]{Golub2008}. This includes work by \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. Many of the results from this research may have been misinterpreted.
+
+
+\bibliographystyle{apsr}
+\bibliography{HRBibliography,HRPackages}
+
+\end{document}

@@ -23,7 +23,7 @@
 
 
     \title{Putting Data Back in Time: Getting the Most Out of Hazard Ratios in Diffusion Research}
-    \author{Christopher Gandrud\thanks{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@.ac.kr}) Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.
+    \author{Christopher Gandrud}\thanks{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@.ac.kr}) Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.
 
 
 
@@ -45,7 +45,7 @@ Event History Analysis (EHA) has become a popular method in political science ov
 
 \todo[inline]{Add Keele2010}
 
-\cite{Hern'an2010} recently published a short article in \emph{Epidemiology} entitled ``The Hazard of Hazard Ratios". He highlighted two common problems with the way that hazard ratios (HR)\footnote{Hazard ratios are roughly equivalent to odds ratios in logistic regression.} estimated with Cox Proportional Hazard models (CPH) and other Event History Analyses (EHA)\footnote{Also known as survival, hazard, or duration analysis.} are often interpreted by epidemiologists. He argues that researchers ignore (1) how hazard ratios  change over time and (2) the fact that their studies' observation periods have ``bult-in selection-biases". The problems Hern\'{a}n identified are not limited to epidemiology. Many political scientists have adopted EHA over the past decade, especially CPH \citep[][530]{Golub2008}. This includes work by \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. Many of the results from this research may have been misinterpreted.
+\cite{Hern'an2010} recently published a short article in \emph{Epidemiology} entitled ``The Hazard of Hazard Ratios". He highlighted two common problems with the way that hazard ratios (HR)\footnote{Hazard ratios are roughly equivalent to odds ratios in logistic regression.} estimated with Cox Proportional Hazard models (CPH) and other Event History Analyses (EHA)\footnote{Also known as survival, hazard, or duration analysis.} are often interpreted by epidemiologists. He argues that researchers ignore (1) how hazard ratios  change over time and (2) the fact that their studies' observation periods have ``bult-in selection-biases". The problems Hern\'{a}n identified are not limited to epidemiology. Many political scientists have adopted EHA over the past decade, especially CPH \citep[][530]{Golub2008}. This includes work by \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. Many of the results from this research may have been misinterpreted.
 
 My aim is to import Hern\'{a}n's lessons to political science, so that future researchers better interpret their results. I also go a few steps further. First I describe how, unlike in epidemiology, political scientists need to consider not only generic time-period duration selection-biases, but also how their data actually comes from specific \emph{historical} time-periods. I further argue that if political researchers acknowledge that their estimated effects change over time and are associated with specific historical periods, they can test hypotheses that have largely been ignored by quantitative political science. If we actively study how hazard ratios change over time and acknowledge that our data are from particular time-periods we can examine relationships that have so far been poorly operationalised. In particular, these EHA qualities allow us to study the role of globally promoted policy recommendations and ideas. 
 
@@ -137,7 +137,7 @@ The first hypothesis is purely functional. A unified SR is simply the most effec
 
 The second hypothesis treats banking crises as a mechanism for ideational diffusion. Banking crises can indicate regulatory policy failure. Policy failure creates an impetus for change, so policymakers look for new policy ideas \citep{blyth2002,blyth2003,mcnamara1998,mcnamara2002,Windmaier2007}. Under the functional diffusion hypothesis policymakers should choose a unified SR when they have a crisis, regardless of the time period. It is assumed to be the best policy. But how do policymakers know that it is indeed the best policy? Even if unified FR is the optimal financial regulatory governance style, do all policymakers know this at all points in time? The crisis ideational diffusion hypothesis is based on the assumption that actors do not always know what is the optimal policy. Instead they rely on prominent and successful actors for ``best practice" ideas. In a crisis, when policymakers are most motivated to replace failed policies, they look to prominent actors for these new ideas. Best practice ideas can change over time.
 
-This was certainly the case for unified specialised regulation was heavily promoted at a particular point in time. In 1997 the Basel Committee for Banking Supervision included it in its ``Core Principles of Banking Supervision". The United Kindgom, a major financial centre, created the unified and specialised Financial Services Authority (FSA). Many other international financial organisations adopted it into their best practice recommendations by the end of the decade. 
+This was certainly the case for unified specialised regulation was heavily promoted at a particular point in time. In 1997 the Basel Committee for Banking Supervision included it in its ``Core Principles of Banking Supervision". The United Kingdom, a major financial centre, created the unified and specialised Financial Services Authority (FSA). Many other international financial organisations adopted it into their best practice recommendations by the end of the decade. 
 
 Both the functional and ideational diffusion hypotheses predict a positive effect of crisis on creating a unified SR. However, if crisis is an ideational diffusion mechanism in this case, we would expect to see crises increasing countries' probability of creating a unified SR \emph{from} 1997. If it is not, its effect should be largely constant over time.
 
@@ -221,7 +221,7 @@ Not ignoring Hern\'{a}an's first interpretation problem--focusing on static haza
   \caption{Probability of \emph{Not} Creating a Unifed Specialised Regulator (1988-2006)}
   \label{surv_curvs}
   
-<<echo=FALSE, message=FALSE, fig = TRUE, width = 7, height = 4>>=
+<<echo=FALSE, message=FALSE, fig.width=7, fig.height=4>>=
 
     print(gg.full)
 
@@ -249,7 +249,7 @@ Now lets examine how the observation period selection-bias--Problem 2--could aff
   \caption{Probability of \emph{Not} Creating a Unified Specialised Regulator, Estimated with Constricted (post-1996) Observation Period }
   \label{surv_post_1997}
   
-<<echo=FALSE, message=FALSE, fig = TRUE, width = 7, height = 4>>=
+<<echo=FALSE, message=FALSE, fig.width=7, fig.height=4>>=
 
     print(gg.1997)
 
@@ -257,9 +257,9 @@ Now lets examine how the observation period selection-bias--Problem 2--could aff
 \end{figure}
 
 
-From this figure we may conclude that the effect of having a banking crisis on creating a unified and specialised regulator was largely constant over time. This would provide support for a time-constant hypothesis about the relationship between crises and regualtory reforms.
+From this figure we may conclude that the effect of having a banking crisis on creating a unified and specialised regulator was largely constant over time. This would provide support for a time-constant hypothesis about the relationship between crises and regulatory reforms.
 
 \bibliographystyle{apa}
-\bibliography{HRBibliography.bib}
+\bibliography{HRBibliography}
 
 \end{document}

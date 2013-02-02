@@ -1,3 +1,7 @@
+# Ignore files from Git #
+#########################
+
+.DS_Store
 .Rproj.user
 .Rhistory
 .RData
