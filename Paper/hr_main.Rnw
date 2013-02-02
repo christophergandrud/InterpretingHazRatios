@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science
 % Christopher Gandrud
-% 30 December 2012
+% 2 February 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper]{article}
@@ -31,22 +31,25 @@
 \maketitle
 
 \begin{abstract}
+
 \noindent\emph{Draft version. Comments welcome.} \\[0.2cm]
-Event History Analysis (EHA) has become a popular method in political science over the past decade for examining cross-country cross-time data. However, most political science studies have not used EHA to its full potential.There has been an inordinate focus on effects that are averaged across time. This ignores EHA's ability to examine how time-period specific events--such as global shocks or the promotion of new policy ideas--interact with traditional covariates. I argue that EHA can be used to examine the interactions between shared time-specific events, especially ``best practice" policy recommendations, and country-specific  variables. I illustrate this potential with a brief analysis of financial supervisory governance reforms from 1987 to 2007.
+Event History Analysis (EHA) has become a popular method in political science over the past decade for examining cross-country cross-time data. However, most political science studies have not used EHA to its full potential. There has been an inordinate focus on effects that are averaged across time. This ignores EHA's ability to examine how time-period specific events--such as global shocks or the promotion of new policy ideas--interact with traditional covariates. I argue that EHA can be used to examine the interactions between shared time-specific events, especially ``best practice" policy recommendations, and country-specific  variables. I introduce a new R package called \emph{simtvc} that makes exploring and presenting time-varying effects easier. [ADD how illustrate]
 
 \end{abstract}
 
 \begin{description}
-  \item [{\textbf{Keywords:}}] Event History Analysis, hazard ratios, financial supervisory governance
+  \item [{\textbf{Keywords:}}] Event History Analysis, hazard ratios, time-varying coefficients
 \end{description}
 
 \vspace{0.3cm}
 
 \todo[inline]{Add Keele2010}
 
-\cite{Hern'an2010} recently published a short article in \emph{Epidemiology} entitled ``The Hazard of Hazard Ratios". He highlighted two common problems with the way that hazard ratios (HR)\footnote{Hazard ratios are roughly equivalent to odds ratios in logistic regression. See below for further details.} estimated with Cox Proportional Hazard models (CPH) and other Event History Analyses (EHA)\footnote{Also known as survival, hazard, or duration analysis.} are often interpreted by epidemiologists. He argues that researchers ignore (1) how hazard ratios  change over time and (2) the fact that their studies' observation periods have ``bult-in selection-biases". Unfortunately, Hern\'{a}n's hazard ratio misinterpretation problems are not limited to epidemiology. Many political scientists have adopted EHA over the past decade, especially CPH \citep[][530]{Golub2008}. This includes work by \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. Many of the results from this research have been misinterpreted.
+\cite{Hern'an2010} recently published a short article in \emph{Epidemiology} entitled ``The Hazard of Hazard Ratios". He highlighted two common problems with the way that hazard ratios (HR)\footnote{Hazard ratios are roughly equivalent to odds ratios in logistic regression.} estimated with Cox Proportional Hazard models (CPH) and other Event History Analyses (EHA)\footnote{Also known as survival, hazard, or duration analysis.} are often interpreted by epidemiologists. He argues that researchers ignore (1) how hazard ratios  change over time and (2) the fact that their studies' observation periods have ``bult-in selection-biases". The problems Hern\'{a}n identified are not limited to epidemiology. Many political scientists have adopted EHA over the past decade, especially CPH \citep[][530]{Golub2008}. This includes work by \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. Many of the results from this research may have been misinterpreted.
 
-My aim is to import Hern\'{a}n's lessons to political science, so that future researchers better interpret their results. I also go two steps further. First I describe how, unlike in epidemiology, political scientists need to consider not only generic time-period duration selection-biases, but also how their data actually comes from specific \emph{historical} time-periods. I further argue that if political researchers acknowledge that their estimated effects change over time and are associated with specific historical periods, they can test hypotheses that have largely been ignored by quantitative political science. If we actively examine how hazard ratios change over time and that our data are from particular time-periods we can examine relationships that have so far been poorly operationalised. In particular, these EHA qualities allow us to study the role of globally promoted policy recommendations and ideas.
+My aim is to import Hern\'{a}n's lessons to political science, so that future researchers better interpret their results. I also go a few steps further. First I describe how, unlike in epidemiology, political scientists need to consider not only generic time-period duration selection-biases, but also how their data actually comes from specific \emph{historical} time-periods. I further argue that if political researchers acknowledge that their estimated effects change over time and are associated with specific historical periods, they can test hypotheses that have largely been ignored by quantitative political science. If we actively study how hazard ratios change over time and acknowledge that our data are from particular time-periods we can examine relationships that have so far been poorly operationalised. In particular, these EHA qualities allow us to study the role of globally promoted policy recommendations and ideas. 
+
+Beyond merely making these arguments I am also introducing a new R package--\emph{simtvc}--that can allow researchers to relatively easily examine time-varying effects in event history analysis.
 
 In this paper, I first discuss how Hern\'{a}n's misinterpretation problems apply to recent political science research. Then I argue that political scientists can turn these problems to our advantage. Finally, I illustrate this potential with data on financial supervisory governance reforms from 1987 to 2007.\todo{need to compare EHA results with logit, etc.}
 
