@@ -24,7 +24,7 @@
 <<include=FALSE>>=
 library(repmis)
 
-Packages <- c("knitr", "repmis", "devtools")
+Packages <- c("knitr", "repmis", "devtools", "simtvc")
 
 LoadandCite(Packages, file = "HRPackages.bib")
 @
@@ -42,7 +42,7 @@ LoadandCite(Packages, file = "HRPackages.bib")
 \begin{abstract}
 
 \noindent\emph{Draft version. Comments welcome.} \\[0.2cm]
-Over the past decade Event History Analysis (EHA) has become a popular method in political science for examining cross-country cross-time data. However, most political science studies have not used EHA to its full potential. There has been an inordinate focus on effects that are averaged across time. This ignores EHA's ability to examine how time-period specific events--such as global shocks or the promotion of new policy ideas--interact with traditional covariates. I argue that EHA can be used to examine the interactions between shared time-specific events, especially ``best practice" policy recommendations, and country-specific  variables. I introduce a new R package called \emph{simtvc} that makes exploring and graphically presenting time-varying effects easier. [ADD how illustrate]
+Over the past decade Event History Analysis (EHA) has become a popular method in political science for examining cross-country cross-time data. However, most political science studies have not used EHA to its full potential. There has been an inordinate focus on effects  averaged across time. This ignores EHA's ability to examine how time-period specific events--such as global shocks or the promotion of new policy ideas--interact with traditional covariates. I argue that EHA can be used to examine the interactions between shared time-specific events, especially ``best practice" policy recommendations, and country-specific  variables. I also introduce a new R package called \emph{simtvc} that makes exploring and graphically presenting time-varying and historical time-period specific effects easier. [ADD how illustrate]
 
 \end{abstract}
 
@@ -52,9 +52,63 @@ Over the past decade Event History Analysis (EHA) has become a popular method in
 
 \vspace{0.3cm}
 
-\cite{Hern'an2010} recently published a short article in \emph{Epidemiology} entitled ``The Hazard of Hazard Ratios". He highlighted two common problems with the way that hazard ratios (HR)\footnote{Hazard ratios are roughly equivalent to odds ratios in logistic regression.} estimated with Cox Proportional Hazard models (CPH) and other Event History Analyses (EHA)\footnote{Also known as survival, hazard, or duration analysis.} are often interpreted by epidemiologists. He argues that researchers ignore (1) how hazard ratios  change over time and (2) the fact that their studies' observation periods have ``bult-in selection-biases". The problems Hern\'{a}n identified are not limited to epidemiology. Many political scientists have adopted EHA over the past decade, especially CPH \citep[][530]{Golub2008}. This includes work by \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. Many of the results from this research may have been misinterpreted.
+\cite{Hern'an2010} recently published a short article in \emph{Epidemiology} entitled ``The Hazard of Hazard Ratios". He highlighted two common problems with the way that hazard ratios (HR)\footnote{Hazard ratios are roughly equivalent to odds ratios in logistic regression.} estimated with Cox Proportional Hazard models (CPH) and other Event History Analyses (EHA)\footnote{Also known as survival, hazard, or duration analysis.} are often interpreted by epidemiologists. He argued that researchers ignore (1) how hazard ratios  change over time and (2) the fact that their studies' observation periods have ``built-in selection-biases". The problems Hern\'{a}n identified are not limited to epidemiology. Many political scientists have adopted EHA over the past decade, especially CPH \citep[][530]{Golub2008}. This includes work by \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. Many of these studies have largely ignored time-varying and time-period specific effects.
+
+My aim in this paper is to import Hern\'{a}n's lessons to political science, so that future researchers can better interpret their results. I also go a few steps further. I describe how, unlike in epidemiology, political scientists need to consider not only generic time-period duration selection-biases, but also how their data actually comes from specific \emph{historical} time-periods. I further argue that if political researchers acknowledge that their estimated effects change over time and are associated with specific historical periods, they can test hypotheses that have largely been ignored by quantitative political science. If we actively study how hazard ratios change over time and acknowledge that our data are from particular time-periods we can examine relationships that have so far been poorly operationalised. In particular, these EHA qualities allow us to study the role of globally promoted policy recommendations and ideas that may be important for policy diffusion. 
+
+One reason that political scientists may not have given enough attention to time-based effects in EHA is that so far there are few computational tools that make it easy to do so. To help solve this problem I am introducing a new R package--\emph{simtvc}--that can allow researchers to relatively easily examine time-varying effects in EHA.
+
+In this paper, I first discuss how Hern\'{a}n's misinterpretation problems apply to recent political science research. Then I argue that political scientists can turn these `problems' to our advantage to understand policy diffusion. Finally, I introduce the \emph{simtvc} package and use it to re-examine major findings from past EHA based diffusion research. 
+
+%% Section: Misinterpretation
+\section{Hazard Ratio Misinterpretation Problems}
+
+In this paper I focus on one of the more commonly used EHA models in both epidemiology and political science, the Cox Proportional Hazard Model \citet{cox1972}.\footnote{In general my conclusions also apply to Fine and Gray's \citeyearpar{Fine1999} Competing Risks Model.} The CPH is a semi-parametric EHA model that allows researchers to examine the probability of an event at a particular point in time--a policy is adopted, a government falls, or a war breaks out--given that the even has not already occurred. 
+
+This probability is commonly referred to as the ``hazard rate" ($h_{i}(t)$). The hazard rate for unit $i$ at time $t$ is estimated with the CPH model using: 
+%
+\begin{equation}
+    h(t|\mathbf{X}_{i})=h_{0}(t)\mathrm{e}^{\mathbf{\beta X}_{i}}
+\end{equation}
+%
+where $h_{0}(t)$ is the baseline hazard, i.e. the instantaneous rate of a transition at time $t$ when all of the covariates are zero. $\mathbf{\beta}$ is a vector of coefficients and $\mathbf{X}_{i}$ is the vector of covariates for unit $i$.
+
+We are usually interested in how a covariate changes the rate of an event happening. For example, does having a majoritarian electoral system increase the probability of a country adopting a given policy? In general researchers have tried to answer these questions by looking at the CPH coefficient estimates $\beta$. Like logistic regression, the coefficient is more easily interpreted if we examine its exponent $\exp(\beta)$, i.e. the hazard ratio (HR). Using the HR we can find the predicted percentage change in the hazard rate when we compare two values of a given variable. To find how the effect on the hazard rate of some value $X_{1}$ compared to $X_{2}$ with a coefficient $\beta$ we use the following formula from \citet[60]{boxsteffensmeier2004}:
+%
+\begin{equation}
+    \%\triangle h{t} = \left[\frac{\exp(\beta X_{1}) - \exp(\beta X_{2})} {\exp(\beta X_{2})}\right]
+\end{equation}   
+%
+However, interpreting HRs like this gives us only a partial understanding of $\mathrm{X}$'s estimated effect. In addition to possible problem of nonproportional hazards discussed by \cite{Licht2011}, among others, this interpretation ignores the hazard ratio's relationship with time. 
+
+\cite{Hern'an2010} highlights two problems with interpreting hazard ratio's without reference to time. These are:
+%
+\begin{description}\label{Marginal}
+  \item [{\textbf{Problem 1:}}] Hazard ratios are averaged over the study's observation period;
+  \item [{\textbf{Problem 2:}}] Time period-specific HRs have an inherent selection-bias. 
+\end{description}
+
+\noindent Starting with Problem 1, hazard ratios are the estimated effects of variables on the hazard rate averaged over a study's particular observation period. Equation 2 gives us a variable's time-averaged marginal effect. The value of time-averaged HRs depend on a study's duration and be influenced by the length of the study. As with any mean value, HRs may in fact be large at one point in the study and then small in another. Presenting just time-averaged HRs does not reveal these trends.   
+
+Let's consider how this works in Cox Proportional Hazard models. CPH does not have an intercept. It does have a baseline hazards $h_{0}(t)$. Note that baseline hazards change at each point in time ($t$). Unlike in linear regression where the intercept can be ignored when interpreting estimated marginal effects, we need to consider both hazard ratios and the baseline hazard at each point in time to understand what is going on. The best way to present hazard ratios is by comparing survival curves or hazard functions using fitted values over our studies' observation periods. These graphs give us a sense of the variables' effects at each point in time.
+
+If hazard ratios can change at each point in time, then a study's specific observation period can effect our results. Hern\'{a}n largely focuses on what I call \emph{duration period-specific selection-bias} (PSSB). 
 
 
+\section*{Appendix}
+
+\paragraph{Install \emph{simtvc}}
+
+\emph{simtvc} is currently available for download from GitHub.\footnote{\url{https://github.com/}} To install it into R type the following code into your R Console:
+
+<<eval=FALSE>>=
+devtools::install_github("simtvc", "christophergandrud")
+@
+
+\noindent You need to have the \emph{devtools} package \citep{R-devtools} set up to install \emph{simtvc}.
+
+
+% Bibliography
 \bibliographystyle{apsr}
 \bibliography{HRBibliography,HRPackages}
 
