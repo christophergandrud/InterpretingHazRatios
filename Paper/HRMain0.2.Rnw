@@ -1,0 +1,53 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Interpreting Hazard Ratios in Political Science
+% Christopher Gandrud
+% 4 February 2013
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper]{article}
+\usepackage{fullpage}
+\usepackage[authoryear]{natbib}
+\usepackage{setspace}
+    \doublespacing
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=blue,
+    urlcolor=blue
+}
+\usepackage{dcolumn}
+\usepackage{tikz}
+\usepackage{todonotes}
+
+<<include=FALSE>>=
+library(repmis)
+
+Packages <- c("knitr", "repmis", "devtools", "simtvc")
+
+LoadandCite(Packages, file = "HRPackages.bib")
+@
+
+\begin{document}
+
+% Title
+\title{Putting Data Back in Time: Getting the Most Out of Hazard Ratios in Diffusion Research}
+    \author{Christopher Gandrud\footnote{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}) Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
+
+\maketitle
+
+% Abstract
+\begin{abstract}
+
+\noindent\emph{Draft version. Comments welcome.} \\[0.2cm]
+
+Over the past decade Event History Analysis (EHA) has become a popular method in political science for examining cross-country cross-time data. However, most political science studies have not used EHA to its full potential. There has been an inordinate focus on effects averaged across time. This non-linear and time-varying effects that may be substaintively relvant for political science researchers. In particular focusing on time average effects ignores EHA's ability to examine how time-period specific events--such as global shocks or the promotion of new policy ideas--interact with traditional covariates. I argue that EHA can be used to examine the interactions between shared time-specific events, especially ``best practice" policy recommendations, and country-specific  variables. I also introduce a new R package called \emph{simtvc} that makes exploring and graphically presenting time-varying and historical time-period specific effects easier.
+
+\end{abstract}
+
+\begin{description}
+  \item [{\textbf{Keywords:}}] Cox Proportional Hazards, Event History Analysis, hazard ratios, time-varying coefficients
+\end{description}
+
+\vspace{0.3cm}
