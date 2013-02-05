@@ -14,8 +14,8 @@
     colorlinks,
     citecolor=black,
     filecolor=black,
-    linkcolor=blue,
-    urlcolor=blue
+    linkcolor=cyan,
+    urlcolor=cyan
 }
 \usepackage{dcolumn}
 \usepackage{tikz}
@@ -91,7 +91,7 @@ If the PHA is violated and measures are not taken to correct for the violation, 
 
 \cite{Licht2011} identifies a important political science theories that actually lead us to expect that the PHA will be violated. She says ``the nature of the political processes of learning, institutionalization, strategic developments, and information transmission \ldots are likely to produce frequent violations of the PHA'' \citeyearpar[228]{Licht2011}. In particular, building on \cite{Finnemore1998} and \cite{blyth1997} researchers have attempted to empirically examine how ideas may affect policy change and diffusion relative to geopolitical and domestic political and economic factors, among others. An important empirically observable difference between these types of theories is how they predict the effects of specific factors \emph{will change over time relative to others}.\footnote{Note that the effects of variables in Cox PH can change overtime without violating the PHA via a change in the baseline hazard. We will look at this issue in more detail later in this section.} For example, the effect of norms and ideational diffusion mechanisms \citep[see]{Yee1996} are predicted to strengthen overtime. Whereas the effect of most domestic political and economic and geopolitical factors are expected to have a constant or perhaps decreasing effect overtime \citep[228]{Licht2011}. It is likely that more than one of these approaches has an effect of any given political event of interest. Therefore we should expect that some of our covariates will violate the PHA because their effects on the hazard of an event change non-proportionally over time relative to one another. Properly modeling how covariate effects change overtime is crucial for 	adequately testing our hypotheses. 
 
-There are a number of widely used tests to examine whether or not the PHA is violated. See \cite{Grambsch1994}, \cite{BoxSteffensmeier2001}, and \cite{boxsteffensmeier2004} for discussions of various methods of testing the PHA.\footnote{Many common software packages implement versions of these tests. R's \emph{survival} package \citep{R-survival} implements Grambsch and Therneau's \citeyearpar{Grambsch1994} modified Schoenfeld residuals test. This is done with the \texttt{cox.zph} command.} If a covariate is determined to violate the PHA, Box-Steffensmeier and co-authors suggest \citep{BoxSteffensmeier2003,boxsteffensmeier2004} suggest directly modeling the relationship between the variable and time. This usually entails including an interaction between the variable and some function of time such as the natural logarithm or some exponent.\footnote{The decision to use a particular functional form should be guided by theory and will likely influenced by findings in the data.} If $f(t)$ is some function of time then a simple Cox PH model estimating the hazard rate for unit $i$ with one time-interaction is given by:
+There are a number of widely used tests to examine whether or not the PHA is violated. See \cite{Grambsch1994}, \cite{BoxSteffensmeier2001}, and \cite{boxsteffensmeier2004} for discussions of various methods of testing the PHA.\footnote{Many common software packages implement versions of these tests. R's \emph{survival} package \citep{R-survival} implements Grambsch and Therneau's \citeyearpar{Grambsch1994} modified Schoenfeld residuals test. This is done with the \texttt{cox.zph} command.} If a covariate is determined to violate the PHA, Box-Steffensmeier and co-authors \citep[see][]{BoxSteffensmeier2003,boxsteffensmeier2004} suggest directly modeling the relationship between the variable and time. This usually entails including an interaction between the variable and some function of time such as the natural logarithm or some exponent.\footnote{The decision to use a particular functional form should be guided by theory and will likely influenced by findings in the data.} If $f(t)$ is some function of time then a simple Cox PH model estimating the hazard rate for unit $i$ with one time-interaction is given by:
 %
 \begin{equation}
 	h_{i}(t|\mathbf{X}_{i})=h_{0}(t)\mathrm{e}^{(\beta_{1}X_{i} + \beta_{2}f(t)X_{i})}.
@@ -117,13 +117,34 @@ Following \cite{King2000}, Licht argues that simulation techniques make it easy 
 
 Using these simulation techniques allows us to estimate the full time-varying effect, how it changes over time, substantively asses the effect, and show the uncertainty surrounding our estimates.
  
-\subsection{Non-linear hazards}
+\subsection{Non-linear Effects}
 
-Coefficient effects that do not change proportionately over time are not the only cause of PHA violations. Building on \cite{Grambsch1994} and \cite{Therneau2000}, \cite{Keele2010} points out that common diagnostic tests will as indicate PHA violations if the model is misspecified for other reasons. Omitting an important covariate, using a proportional hazards model even if another EHA model is more appropriate, or including a covariate as linear when its effect is actually non-linear will also lead to significant PHA violation tests.  
+Time-varying coefficient effects are not the only cause of PHA violations. Building on \cite{Grambsch1994} and \cite{Therneau2000}, \cite{Keele2010}\footnote{See also \cite{Keele2008} chapter 6.} points out that common diagnostic tests will as indicate PHA violations if the model is misspecified for other reasons. Omitting an important covariate, using a proportional hazards model even if another EHA model is more appropriate, or including a covariate as linear when its effect is actually non-linear will also lead to significant PHA violation tests. 
 
-\subsection{Time-period biases}
+Because of this Keele suggests that \emph{before} testing the PHA we should (a) try to make sure that we are not omitting important variables, (b) find the appropriate functional form for the covariates, typically either polynomials or splines. Many studies using Cox PH models have not test for nonlinearity, but instead jumped straight to testing the PHA, including time-interactions when it violated. As Keele \citeyearpar{Keele2010} demonstrates ascribing a time-varying effect to a covariate when in fact the effect varies not over time, but non-linearly over values of the covariate can have major substantive implications.
 
-What does it mean if a covariate changes over time.
+After omitted variables and non-linearities have been addressed, then (c) we can then test for the PHA. If it is violated we can add time interactions as before. If after doing all of these steps non-proportional hazards are still present then he suggests we should look for an EHA model, such as the log-logistic model--that does not assume proportional hazards.
+
+\subsection{Time-period specific biases}
+
+\todo[inline]{Haven't looked at the baseline. Effects common to all units.}
+
+The last major issue involves the interpretation of hazard ratios, regardless of whether the effect is non-linear, time-varying, or not, without reference to time. \cite{Hern'an2010} highlights two problems with interpreting hazard ratio's without reference to time. These are:
+%
+\begin{description}\label{Marginal}
+  \item [{\textbf{Problem 1:}}] Hazard ratios are averaged over the study's observation period;
+  \item [{\textbf{Problem 2:}}] Time period-specific HRs have an inherent selection-bias. 
+\end{description}
+
+\noindent Starting with Problem 1, hazard ratios are the estimated effects of variables on the hazard rate averaged over a study's particular observation period. Equation 2 gives us a variable's time-averaged marginal effect. The value of time-averaged HRs depend on a study's duration and be influenced by the length of the study. As with any mean value, HRs may in fact be large at one point in the study and then small in another. Presenting just time-averaged HRs does not reveal these trends.   
+
+Let's consider how this works in Cox Proportional Hazard models. CPH does not have an intercept. It does have a baseline hazards $h_{0}(t)$. Note that baseline hazards change at each point in time ($t$). Unlike in linear regression where the intercept can be ignored when interpreting estimated marginal effects, we need to consider both hazard ratios and the baseline hazard at each point in time to understand what is going on. The best way to present hazard ratios is by comparing survival curves or hazard functions using fitted values over our studies' observation periods. These graphs give us a sense of the variables' effects at each point in time.
+
+If hazard ratios can change at each point in time, then a study's specific observation period can effect our results. Hern\'{a}n largely focuses on what I call \emph{duration period-specific selection-bias} (PSSB). 
+
+For example, imagine that we are interested in whether or not a country adopted a policy P ($\mathrm{P}=1$). We create a simple EHA with one independent variable $X$, such as democracy. We test the model on twenty years worth of data. Imagine that the averaged hazard ratio from this model is positive--higher values of $X$ increase the hazard of adopting policy P. When we look at the HR over time we find that in the first ten years of the observation period the HR is positive then becomes weakly negative for the last decade. 
+
+What causal story could explain this? Duration PSSB may be at work. There could be a proportion of countries in our sample that are more likely to adopt policy P when they also have a positive value of $X$, because $X$ is interacting with some unobserved factor Z to produce a common effect C. Using epidemiological terminology, these countries are more `susceptible'. Over the course of the observation period, the more susceptible countries adopt policy P at a higher rate than countries that just have high values of $X$. After the susceptible countries exit the risk set, we are left with a sample of less susceptible countries. $X$ in the absence of Z may actually have a slight negative causal effect, which we observe after the susceptible countries drop out of our sample. 
 
 
 %%%%%% Section: Modeling Strategy
