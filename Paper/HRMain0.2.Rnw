@@ -24,7 +24,7 @@
 <<include=FALSE>>=
 library(repmis)
 
-Packages <- c("knitr", "repmis", "devtools", "simtvc", "survival")
+Packages <- c("knitr", "repmis", "devtools", "simtvc", "survival", "Zelig", "ggplot2")
 
 LoadandCite(Packages, file = "HRPackages.bib")
 @
@@ -111,13 +111,15 @@ Relative hazards\footnote{The term was advanced by \cite{Golub2007}.} are given 
 %
 where $l = 0$. It represents the change in the hazard when $X$ is ``switched on'' as it would be when comparing an European Union member to a non-member, for example.
 
-Relative hazards are particularly useful for binary variables because they reflect the change in the hazards between $X = 0$ and $X = 1$. The first difference can be more useful for continuous variables as changes in $X$ from 0 to 1 may be inconsequential or even impossible when we are looking at, for example, the effect of GDP per Capita. In these cases the first difference will be more appropriate. 
+Relative hazards are particularly useful for binary variables because they reflect the change in the hazards between $X = 0$ and $X = 1$. The first difference can be more useful for continuous variables as changes in $X$ from 0 to 1 may be inconsequential or even impossible when we are looking at, for example, the effect of GDP per Capita. In these cases the first difference will be more appropriate. Though the choice between relative hazard and first difference can be cosmetic. They are the same if $X_{j} - X_{l} = 1$.
 
 Following \cite{King2000}, Licht argues that simulation techniques make it easy to estimate the uncertainty surrounding the first difference and relative hazards. In both cases we first find the the parameter estimates for $\hat{\beta_{1}}$ and $\hat{\beta_{2}}$ from a Cox PH model as well as the variance matrix $\hat{V}(\hat{\beta})$. Second, we draw $n$ values of $\beta_{1}$ and $\beta_{2}$ from the multivariate normal distribution given by $\hat{\beta} \sim N(\hat{\beta}, \hat{V}(\hat{\beta})$. Third, we use these simulated values to calculate either the first difference or relative hazard for a range of times $T = [t_{1}\ldots t_{T}]$, specified values of $X_{j}$, and $X_{l}$ (as appropriate).
 
 Using these simulation techniques allows us to estimate the full time-varying effect, how it changes over time, substantively asses the effect, and show the uncertainty surrounding our estimates.
  
 \subsection{Non-linear hazards}
+
+Coefficient effects that do not change proportionately over time are not the only cause of PHA violations. Building on \cite{Grambsch1994} and \cite{Therneau2000}, \cite{Keele2010} points out that common diagnostic tests will as indicate PHA violations if the model is misspecified for other reasons. Omitting an important covariate, using a proportional hazards model even if another EHA model is more appropriate, or including a covariate as linear when its effect is actually non-linear will also lead to significant PHA violation tests.  
 
 \subsection{Time-period biases}
 
@@ -132,6 +134,15 @@ What does it mean if a covariate changes over time.
 %%%%%% Section: simtvc
 \section{\emph{simtvc}: tools for simulating and graphing effects from Cox PH models}
 
+Previously there had been no tool to implement the steps in this modeling strategy. In R the \emph{survival} and \emph{Zelig} \citep{R-zelig} packages had capabilities for estimating splines and time interactions. However, their functions for graphically showing results has been limited. Spline functions did not simulate uncertainty in the way described earlier from Cox PH models [CHECK]. \emph{Zelig} could simulate and graph parameter values, but not for combined time-interactions. 
+
+To solve this problem I am introducing the \emph{simtvc} package for R.\footnote{See the Appendix for installation instructions.} There are three basic steps to use the package:
+
+\begin{enumerate}
+	\item Estimate a Cox PH model using \emph{survival}'s \texttt{coxph} command,
+	\item Simulate parameter values and calculate the relative hazards, first differences, or hazard ratios for a given parameter using \texttt{coxsimtvc}.
+	\item Plot the simulations using \texttt{ggtvc}.\footnote{\texttt{ggtvc} uses \emph{ggplot2} \citep{R-ggplot2} to plot the simulations. You can use the object created by \texttt{coxsimtvc} to make a graph with any other plotting package.} 
+\end{enumerate}
 
 %%%%%% Section: Demonstrations
 \section{Demonstrations}

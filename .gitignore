@@ -5,9 +5,11 @@
 .Rproj.user
 .Rhistory
 .RData
+*.aux
 *.bbl
 *.blg
 *.log
+*.out
 *.pdf
 *.gz
 *.tex
