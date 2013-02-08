@@ -24,7 +24,7 @@
 <<include=FALSE>>=
 library(repmis)
 
-Packages <- c("knitr", "repmis", "devtools", "simtvc", "survival", "Zelig", "ggplot2")
+Packages <- c("knitr", "repmis", "devtools", "simPH", "survival", "Zelig", "ggplot2")
 
 LoadandCite(Packages, file = "HRPackages.bib")
 @
@@ -42,7 +42,7 @@ LoadandCite(Packages, file = "HRPackages.bib")
 
 \noindent\emph{Draft version. Comments welcome.} \\[0.2cm]
 
-Over the past decade Event History Analysis (EHA) has become a popular method in political science for examining cross-country cross-time data. However, most political science studies have not used EHA to its full potential. There has been an inordinate focus on effects averaged across time. Beyond issues of model misspecification, non-linear and time-varying effects may be substantively relevant for political science researchers. In particular focusing on time average effects ignores EHA's ability to examine how time-period specific events--such as global shocks or the promotion of new policy ideas--interact with traditional covariates. I argue that EHA can be used to examine the interactions between shared time-specific events, especially ``best practice" policy recommendations, and country-specific  variables. Make it easier for researchers to explore non-linear and time-varying effects, I introduce a new R package called \emph{simtvc}.
+Over the past decade Event History Analysis (EHA) has become a popular method in political science for examining cross-country cross-time data. However, most political science studies have not used EHA to its full potential. There has been an inordinate focus on effects averaged across time. Beyond issues of model misspecification, non-linear and time-varying effects may be substantively relevant for political science researchers. In particular focusing on time average effects ignores EHA's ability to examine how time-period specific events--such as global shocks or the promotion of new policy ideas--interact with traditional covariates. I argue that EHA can be used to examine the interactions between shared time-specific events, especially ``best practice" policy recommendations, and country-specific  variables. Make it easier for researchers to explore non-linear and time-varying effects, I introduce a new R package called \emph{simPH}.
 
 \end{abstract}
 
@@ -56,7 +56,7 @@ Recent articles in \emph{Political Analysis} have highlighted two frequently ove
 
 The Cox PH model and Event History Analysis (EHA) in general is increasingly being used to address political science questions. A small sample of recent studies using Cox PH and EHA includes: \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. As the Cox PH model has become more prevalent in political science we need better strategies and tools for avoiding the problems that \cite{Licht2011}, \cite{Keele2010}, and \cite{Hern'an2010} identify.
 
-My aim in this paper is to lay out a strategy and computational tools for addressing these problems. In the first part of the paper First, I briefly summarize Licht, Keele, and Hern\'{a}n's arguments. Second, combine them together into a singe strategy for researchers using Cox PH models. Solutions to all of these problems are particularly amenable to solutions that use graphically presented estimates. Third, I introduce a new R \citep{RLanguage} package--\emph{simtvc} \citep{R-simtvc}--that includes tools for graphically exploring time-varying and non-linear Cox PH estimates and estimation uncertainty. I illustrate \emph{simtvc}'s capabilities with both simulation data and data from recent political science research.
+My aim in this paper is to lay out a strategy and computational tools for addressing these problems. In the first part of the paper First, I briefly summarize Licht, Keele, and Hern\'{a}n's arguments. Second, combine them together into a singe strategy for researchers using Cox PH models. Solutions to all of these problems are particularly amenable to solutions that use graphically presented estimates. Third, I introduce a new R \citep{RLanguage} package--\emph{simPH} \citep{R-simPH}--that includes tools for graphically exploring time-varying and non-linear Cox PH estimates and estimation uncertainty. I illustrate \emph{simPH}'s capabilities with both simulation data and data from recent political science research.
 
 %%%%%% Section: Common issues
 \section{Common issues in analysis with Cox PH models}
@@ -150,19 +150,28 @@ What causal story could explain this? Duration PSSB may be at work. There could 
 %%%%%% Section: Modeling Strategy
 \section{A Cox PH modeling strategy}
 
+We can combine these suggestions into one research strategy for those setting out to examine a phenomenon with Cox PH models. It has five steps:
 
+\begin{enumerate}
+	\item Determine the covariates and covariate interactions to include in the model.
+	\item Test for non-linearity using splines and polynomials.
+	\item Test for violations of the proportional hazards assumption.
+	\item If non-proportionality exists include time interactions.
+	\item If non-proportionality still exists after including time interactions, consider another model that does not use the PHA.
+	\item If there is no longer evidence of non-proportionality examine time-period specific biases.
+\end{enumerate}
 
-%%%%%% Section: simtvc
-\section{\emph{simtvc}: tools for simulating and graphing effects from Cox PH models}
+%%%%%% Section: simPH
+\section{\emph{simPH}: tools for simulating and graphing effects from Cox PH models}
 
-Previously there had been no tool to implement the steps in this modeling strategy. In R the \emph{survival} and \emph{Zelig} \citep{R-zelig} packages had capabilities for estimating splines and time interactions. However, their functions for graphically showing results has been limited. Spline functions did not simulate uncertainty in the way described earlier from Cox PH models [CHECK]. \emph{Zelig} could simulate and graph parameter values, but not for combined time-interactions. 
+Previously, there have not been a full contingent of capabilities to implement this strategy. In R the \emph{survival} and \emph{Zelig} \citep{R-zelig} packages had capabilities for estimating splines and time interactions. However, their functions for graphically showing results has been limited. Spline functions did not simulate uncertainty in the way described earlier from Cox PH models. though you can use the \texttt{termplot} command to plot log hazards with corresponding confidence bounds for splines.\footnote{See \cite{Keele2008}, chapter 6.} \emph{Zelig} can simulate and graph parameter values, but not for combined time-interactions. In general the capabilities for showing results with time interactions is very limited. Usually, showing these types of results requires considerable researcher effort. See for example Licht's code for replicating the time-interaction plots in her paper.\footnote{It is available at: \url{http://hdl.handle.net/1902.1/15633}.}
 
-To solve this problem I am introducing the \emph{simtvc} package for R.\footnote{See the Appendix for installation instructions.} There are three basic steps to use the package:
+To solve these problems, particularly for time-interactions, I am introducing the \emph{simPH} package for R.\footnote{See the Appendix for installation instructions.} There are three basic steps to use the package:
 
 \begin{enumerate}
 	\item Estimate a Cox PH model using \emph{survival}'s \texttt{coxph} command,
-	\item Simulate parameter values and calculate the relative hazards, first differences, or hazard ratios for a given parameter using \texttt{coxsimtvc}.
-	\item Plot the simulations using \texttt{ggtvc}.\footnote{\texttt{ggtvc} uses \emph{ggplot2} \citep{R-ggplot2} to plot the simulations. You can use the object created by \texttt{coxsimtvc} to make a graph with any other plotting package.} 
+	\item Simulate parameter estimates and calculate the relative hazards, first differences, or hazard ratios for a given parameter using the \emph{simPH} command corresponding to the variable type.\footnote{\texttt{coxsimLinear} can be used for linear, time constant variables, \texttt{coxsimPoly} for polynomials, and \texttt{coxsimtvc} for time-varying coefficients.}
+	\item Plot the simulations using the appropriate \emph{simPH} plotting command.\footnote{Commands include: \texttt{gglinear}, \texttt{ggpoly}, and \texttt{ggtvc}. These commands use \emph{ggplot2} \citep{R-ggplot2} to plot the simulations. You can use the simulation objects created by \emph{simPH} to make a graph with any other plotting package.} 
 \end{enumerate}
 
 %%%%%% Section: Demonstrations
@@ -172,15 +181,15 @@ To solve this problem I am introducing the \emph{simtvc} package for R.\footnote
 
 \section*{Appendix}
 
-\paragraph{Install \emph{simtvc}}
+\paragraph{Install \emph{simPH}}
 
-\emph{simtvc} is currently available for download from GitHub.\footnote{\url{https://github.com/}} To install it into R type the following code into your R Console:
+\emph{simPH} is currently available for download from GitHub.\footnote{\url{https://github.com/}} To install it into R type the following code into your R Console:
 
 <<eval=FALSE>>=
-devtools::install_github("simtvc", "christophergandrud")
+devtools::install_github("simPH", "christophergandrud")
 @
 
-\noindent You need to have the \emph{devtools} package \citep{R-devtools} set up to install \emph{simtvc}.
+\noindent You need to have the \emph{devtools} package \citep{R-devtools} set up to install \emph{simPH}.
 
 
 % Bibliography
