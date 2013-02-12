@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science
 % Christopher Gandrud
-% 4 February 2013
+% 12 February 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper]{article}
@@ -33,7 +33,7 @@ LoadandCite(Packages, file = "HRPackages.bib")
 
 % Title
 \title{Putting Data Back in Time: Getting the Most Out of Hazard Ratios in Diffusion Research}
-    \author{Christopher Gandrud\footnote{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}) Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
+    \author{Christopher Gandrud\footnote{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}) Thank you to Jeffrey Chwieroth. Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
 
 \maketitle
 
@@ -97,7 +97,7 @@ There are a number of widely used tests to examine whether or not the PHA is vio
 	h_{i}(t|\mathbf{X}_{i})=h_{0}(t)\mathrm{e}^{(\beta_{1}X_{i} + \beta_{2}f(t)X_{i})}.
 \end{equation}
 
-Like any other interaction effect \cite[see]{Brambor2006} extra care should be taken when interpreting the parameter estimates. We cannot simply interpret the effect $X$ by looking at $\beta_{1}$ or $\beta_{2}$ in isolation. Licht's argues that postestimation simulations techniques that should be employed to understand these time interactions. She describes two methods: (a) first difference and (b) relative hazards. The first difference is the percentage change in the hazard rate at time $t = t$ between two given values of $X$:
+Like any other interaction effect \cite[see][]{Brambor2006} extra care should be taken when interpreting the parameter estimates. We cannot simply interpret the effect $X$ by looking at $\beta_{1}$ or $\beta_{2}$ in isolation. Licht's argues that postestimation simulations techniques that should be employed to understand these time interactions. She describes two methods: (a) first difference and (b) relative hazards. The first difference is the percentage change in the hazard rate at time $t = t$ between two given values of $X$:
 %
 \begin{equation}
 	\%\triangle h_{i}(t) = (e^{(X_{j} - X_{l})(\beta_{1} + \beta{2}f(t))} - 1) * 100.
@@ -174,14 +174,26 @@ To solve these problems, particularly for time-interactions, I am introducing th
 	\item Plot the simulations using the appropriate \emph{simPH} plotting command.\footnote{Commands include: \texttt{gglinear}, \texttt{ggpoly}, and \texttt{ggtvc}. These commands use \emph{ggplot2} \citep{R-ggplot2} to plot the simulations. You can use the simulation objects created by \emph{simPH} to make a graph with any other plotting package.} 
 \end{enumerate}
 
+\noindent The simulation functions follow \cite{King2000} (discussed above) to simulate and calculate a variety of quantities. The user can select specify the number of simulations to run. The more simulations we conduct, the better picture we get of the probability distributions our parameters are from \citep[349]{King2000}.\footnote{The \emph{coxPH} default is 1,000.} The plot functions then take these simulations and plot them along with a smoothing line specified by the user to summarize their central tendency.
+
+The functions in this package directly complement the strategy discussed in the previous section. With the few exceptions discussed before, without \emph{simPH} researchers would implement the strategy, but would find it difficult to actually interpret their results beyond simply presenting ``train schedules'' of coefficients and standard errors. Given that almost all of the quantities of interest, even hazard rates for single linear covariates, involve some interaction, the ``train schedule'' approach is a highly inadequate way to present results \citep{Brambor2006}. 
+
+Most of the functions are capable of simulating and plotting hazard rates for multiple strata, i.e. when the baseline hazard is allowed to vary across different groups \cite[see][]{BoxSteffensmeier2006}. This is particularly useful when examining time-period specific biases as it allows researchers to see if a common phenomenon effects different groups differently. ``Groups'' can be defined in a variety of ways. One common use of strata is to account for repeated event dependence. An example of examining time period specific biases in repeated event situations is whether or not a time-period specific idea may effect units that have already implemented one type of a policy in the past compared to units that have never had a similar policy. 
+
 %%%%%% Section: Demonstrations
 \section{Demonstrations}
 
+To illustrate how \emph{simPH} can be used by political scientists, I will use it to replicate key findings from \cite{Licht2011}, \cite{Keele2008}, and \cite{Gandrud2012}.
 
+\section{Conclusion}
+
+In this brief paper I have combined a number of important insights about how to build proportional hazards models that avoid common causes of model misspecification. These multiplicative interactions and  time-period specific biases may be factors political scientists are interested in. So we need tools to fully explore them. As this is often difficult in current software, I have also created and demonstrated a new R package--\emph{simPH}--that makes it considerably easier to effectively present results from these models, especially results that are the result of complex multiplicative interactions. 
+
+\emph{simPH} is in the relatively early stages of development, but more more is on the way. Functions for spline simulation and graphing are noticeably lacking in the present version, but will be added in the coming months. It will be useful to add the ability to show results from interactions between different types of variables. For example, plotting quantities of interest from an interaction between a linear and spline fitted variable. The package would also be more useful if future versions were capable of simulating and plotting results for models with frailties, i.e. random effects \cite[see][]{BoxSteffensmeier2006}. Finally, I hope to expand the package so that it is an effective tool for presenting results from other proportional hazards event history analysis models, notably the Fine and Gray competing risks model.
 
 \section*{Appendix}
 
-\paragraph{Install \emph{simPH}}
+\paragraph{Installing \emph{simPH}}
 
 \emph{simPH} is currently available for download from GitHub.\footnote{\url{https://github.com/}} To install it into R type the following code into your R Console:
 
@@ -190,6 +202,8 @@ devtools::install_github("simPH", "christophergandrud")
 @
 
 \noindent You need to have the \emph{devtools} package \citep{R-devtools} set up to install \emph{simPH}.
+
+For more information about \emph{simPH} and how to contribute to its development see: \url{http://christophergandrud.github.com/simPH/}. Please report any bugs to \url{https://github.com/christophergandrud/simPH/issues}.
 
 
 % Bibliography
