@@ -61,7 +61,7 @@ My aim in this paper is to lay out a strategy and computational tools for addres
 %%%%%% Section: Common issues
 \section{Common issues in analysis with Cox PH models}
 
-In this paper I focus on one of the more commonly used EHA models in both political science, the Cox Proportional Hazard Model \citet{cox1972}.\footnote{In general my conclusions also apply to Fine and Gray's \citeyearpar{Fine1999} Competing Risks Model which is a Cox PH analogue for competing risks EHA.} The CPH is a semi-parametric EHA model that allows researchers to examine how specified factors influence the rate of a particular event happening--a policy is adopted, a government falls, or a war breaks out--at a particular point in time given that the even has not already occurred.
+In this paper I focus on one of the more commonly used EHA models in both political science, the Cox Proportional Hazard Model \citet{cox1972}.\footnote{In general my conclusions also apply to Fine and Gray's \citeyearpar{Fine1999} Competing Risks Model which is a Cox PH analogue for competing risks EHA.} The Cox PH is a semi-parametric EHA model that allows researchers to examine how specified factors influence the rate of a particular event happening--a policy is adopted, a government falls, or a war breaks out--at a particular point in time given that the even has not already occurred.
 
 This rate is commonly referred to as the hazard rate ($h_{i}(t)$).\footnote{It is given formally by: $h_{i}(t) = \lim\limits_{\Delta t \rightarrow 0}\frac{\mathrm{Pr}(t \leq T < t + \Delta t | T \leq t)}{\Delta t}$, where $T$ is .} The hazard rate for unit $i$ at time $t$ is estimated with the Cox  nPH model using: 
 %
@@ -71,7 +71,7 @@ This rate is commonly referred to as the hazard rate ($h_{i}(t)$).\footnote{It i
 %
 where $h_{0}(t)$ is the baseline hazard, i.e. the instantaneous rate of a transition at time $t$ when all of the covariates are zero. $\mathbf{\beta}$ is a vector of coefficients and $\mathbf{X}_{i}$ is the vector of covariates for unit $i$.
 
-We are usually interested in how a covariate changes the rate of an event happening. For example, does having a majoritarian electoral system increase the probability of a country adopting a given policy? In general researchers have tried to answer these questions by looking at the CPH coefficient estimates $\beta$. Like logistic regression, the coefficient is more easily interpreted if we examine its exponent $\exp(\beta)$, i.e. the hazard ratio (HR). Using the HR we can find the predicted percentage change in the hazard rate when we compare two values of a given variable. To find how the effect on the hazard rate of some value $X_{1}$ compared to $X_{2}$ with a coefficient $\beta$ we use the following formula from \citet[60]{boxsteffensmeier2004}:
+We are usually interested in how a covariate changes the rate of an event happening. For example, does having a majoritarian electoral system increase the probability of a country adopting a given policy? In general researchers have tried to answer these questions by looking at the Cox PH coefficient estimates $\beta$. Like logistic regression, the coefficient is more easily interpreted if we examine its exponent $\exp(\beta)$, i.e. the hazard ratio (HR). Using the HR we can find the predicted percentage change in the hazard rate when we compare two values of a given variable. To find how the effect on the hazard rate of some value $X_{1}$ compared to $X_{2}$ with a coefficient $\beta$ we use the following formula from \citet[60]{boxsteffensmeier2004}:
 %
 \begin{equation}
     \%\triangle h(t) = \left[\frac{\mathrm{e}^{(\beta X_{1})} - \mathrm{e}^{(\beta X_{2})}} {\mathrm{e}^{(\beta X_{2})}}\right]
@@ -138,7 +138,7 @@ The last major issue involves the interpretation of hazard ratios, regardless of
 
 \noindent Starting with Problem 1, hazard ratios are the estimated effects of variables on the hazard rate averaged over a study's particular observation period. Equation 2 gives us a variable's time-averaged marginal effect. The value of time-averaged HRs depend on a study's duration and be influenced by the length of the study. As with any mean value, HRs may in fact be large at one point in the study and then small in another. Presenting just time-averaged HRs does not reveal these trends.   
 
-Let's consider how this works in Cox Proportional Hazard models. CPH does not have an intercept. It does have a baseline hazards $h_{0}(t)$. Note that baseline hazards change at each point in time ($t$). Unlike in linear regression where the intercept can be ignored when interpreting estimated marginal effects, we need to consider both hazard ratios and the baseline hazard at each point in time to understand what is going on. The best way to present hazard ratios is by comparing survival curves or hazard functions using fitted values over our studies' observation periods. These graphs give us a sense of the variables' effects at each point in time.
+Let's consider how this works in Cox Proportional Hazard models. Cox PH does not have an intercept. It does have a baseline hazards $h_{0}(t)$. Note that baseline hazards change at each point in time ($t$). Unlike in linear regression where the intercept can be ignored when interpreting estimated marginal effects, we need to consider both hazard ratios and the baseline hazard at each point in time to understand what is going on. The best way to present hazard ratios is by comparing survival curves or hazard functions using fitted values over our studies' observation periods. These graphs give us a sense of the variables' effects at each point in time.
 
 If hazard ratios can change at each point in time, then a study's specific observation period can effect our results. Hern\'{a}n largely focuses on what I call \emph{duration period-specific selection-bias} (PSSB). 
 
@@ -156,9 +156,9 @@ We can combine these suggestions into one research strategy for those setting ou
 	\item Determine the covariates and covariate interactions to include in the model.
 	\item Test for non-linearity using splines and polynomials.
 	\item Test for violations of the proportional hazards assumption.
-	\item If non-proportionality exists include time interactions.
-	\item If non-proportionality still exists after including time interactions, consider another model that does not use the PHA. Continue to test for time-period specific biases.
-	\item If there is no longer evidence of non-proportionality examine time-period specific biases.
+	\item If non-proportionality exists include time interactions. If not, consider common time-period specific biases.
+	\item If non-proportionality still exists after including time interactions, consider another model that does not use the PHA. Continue to test for common time-period specific biases.
+	\item If there is no longer evidence of non-proportionality examine common time-period specific biases.
 \end{enumerate}
 
 %%%%%% Section: simPH
@@ -184,7 +184,7 @@ Most of the functions are capable of simulating and plotting hazard rates for mu
    h(t|\mathbf{X}_{i})=h_{k0}(t)\mathrm{e}^{(\mathbf{\beta X}_{i})},
 \end{equation}
 %
-where $k$ is a `group'. Groups can be defined in a variety of ways. One common use of strata is to account for repeated event dependence \citep{BoxSteffensmeier2006}. An example of examining time period specific biases in repeated event situations is whether or not a time-period specific idea may effect units that have already implemented one type of a policy in the past compared to units that have never had a similar policy. So, stratified Cox PH models are particularly useful when examining time-period specific biases as it allows researchers to see if a common time period specific phenomenon effects different groups differently. 
+where $k$ is a `group'.\footnote{Currently, \emph{simPH} does not simulate uncertainty for the baseline hazard parameter estimate. Hopefully this will be included in future versions.} Groups can be defined in a variety of ways. One common use of strata is to account for repeated event dependence \citep{BoxSteffensmeier2006}. An example of examining time period specific biases in repeated event situations is whether or not a time-period specific idea may effect units that have already implemented one type of a policy in the past compared to units that have never had a similar policy. So, stratified Cox PH models are particularly useful when examining time-period specific biases as it allows researchers to see if a common time period specific phenomenon effects different groups differently. 
 
 %%%%%% Section: Demonstrations
 \section{Demonstrations}
@@ -192,6 +192,12 @@ where $k$ is a `group'. Groups can be defined in a variety of ways. One common u
 To illustrate how \emph{simPH} can be used by political scientists, I will use it to replicate key figures and findings from \cite{Keele2010}, \cite{Licht2011}, and \cite{Gandrud2012}.
 
 \subsection{Non-linear effects}
+
+To demonstrate why researchers need to check for and explicitly model non-linearity \cite{Keele2010} indirectly replicated (among others) a study by \cite{Carpenter2002} on the time it takes the U.S. Food and Drug Administration (FDA) to approve a new drug. He added spline fits to the variables in one of Carpenter's models. Then he used a Wald nonlinearity test to examine whether the model with splines had a better fit than the linear model. He then ran a Grambsch and Therneau test of non-proportionality for both the model with linear coefficients and splines. He found evidence that four of the variables in the linear coefficient model violated the test, where as non of them violated the test in the spline model. This indicates that modeling non-linearity rather than time-varying effects is the more appropriate strategy. So, finally he built a model that kept the spline fits for the variables the Wald test indicated had a non-linear relationship and reintroduced the linear terms for the others. This allows him to draw conclusions like the number of FDA review staff increases the likelihood that a drug will be accepted, but that the effect diminishes after a threshold number of staff and, counter to Carpenter's findings, that the number of groups representing a disease actually has little effect on whether or not a drug treating it is approved. 
+
+
+
+
 
 \section{Conclusion}
 
