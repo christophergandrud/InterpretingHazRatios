@@ -196,7 +196,7 @@ To illustrate how \emph{simPH} can be used by political scientists, I will use i
 To demonstrate why researchers need to check for and explicitly model non-linearity \cite{Keele2010} indirectly replicated (among others) a study by \cite{Carpenter2002} on the time it takes the U.S. Food and Drug Administration (FDA) to approve a new drug. He added spline fits to the variables in one of Carpenter's models. Then he used a Wald nonlinearity test to examine whether the model with splines had a better fit than the linear model. He then ran a Grambsch and Therneau test of non-proportionality for both the model with linear coefficients and splines. He found evidence that four of the variables in the linear coefficient model violated the test, where as non of them violated the test in the spline model. This indicates that modeling non-linearity rather than time-varying effects is the more appropriate strategy. So, finally he built a model that kept the spline fits for the variables the Wald test indicated had a non-linear relationship and reintroduced the linear terms for the others. This allows him to draw conclusions like the number of FDA review staff increases the likelihood that a drug will be accepted, but that the effect diminishes after a threshold number of staff and, counter to Carpenter's findings, that the number of groups representing a disease actually has little effect on whether or not a drug treating it is approved. 
 
 
-
+The current alternative for examining spline fits 
 
 
 \section{Conclusion}
@@ -207,7 +207,7 @@ In this brief paper I have combined a number of important insights about how to 
 
 \section*{Appendix}
 
-\paragraph{Installing \emph{simPH}}
+\subsection*{Installing \emph{simPH}}
 
 \emph{simPH} is currently available for download from GitHub.\footnote{\url{https://github.com/}} To install it into R type the following code into your R Console:
 
@@ -218,6 +218,33 @@ devtools::install_github("simPH", "christophergandrud")
 \noindent You need to have the \emph{devtools} package \citep{R-devtools} set up to install \emph{simPH}.
 
 For more information about \emph{simPH} and how to contribute to its development see: \url{http://christophergandrud.github.com/simPH/}. Please report any bugs to \url{https://github.com/christophergandrud/simPH/issues}.
+
+\subsection*{Source Code}
+
+To help you implement the functions in \emph{simPH} I've included the R source code I used to create the figures in this article. 
+
+\paragraph{Figure \ref{Spline1}}
+
+<<Spline1, eval=FALSE, tidy=FALSE>>=
+# Load packages
+library(survival)
+library(simPH)
+
+# Load Carpenter (2002) data 
+# The data is included with simPH
+data("CarpenterFdaData")
+
+# Run basic model
+# From Keele (2010) replication data. Used to create Table 7.
+M1 <- coxph(Surv(acttime, censor) ~  prevgenx + lethal + deathrt1 +
+              acutediz + hosp01 + pspline(hospdisc, df = 4) + 
+              pspline(hhosleng, df = 4) + mandiz01 + 
+              femdiz01 + peddiz01 + orphdum + natreg + vandavg3 + 
+              wpnoavg3 + pspline(condavg3, df = 4) + 
+              pspline(orderent, df = 4) + pspline(stafcder, df = 4), 
+              data = CarpenterFdaData)
+@
+
 
 
 % Bibliography
