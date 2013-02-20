@@ -22,11 +22,25 @@
 \usepackage{todonotes}
 
 <<include=FALSE>>=
+#### Load Packages ####
 library(repmis)
 
-Packages <- c("car", "knitr", "repmis", "devtools", "simPH", "survival", "Zelig", "ggplot2")
+Packages <- c("car", "knitr", "repmis", "devtools", 
+              "simPH", "survival", "Zelig", "ggplot2")
 
 LoadandCite(Packages, file = "HRPackages.bib")
+
+#### Load data ####
+# Load Carpenter (2002) data 
+## The data is included with simPH
+data("CarpenterFdaData")
+
+# Load Golub & Steunenberg (2007) data
+## The data is included with simPH
+data("GolubEUPData")
+
+##### Set Chunk Options ####
+opts_chunk$set(fig.align='center')
 @
 
 \begin{document}
@@ -42,7 +56,7 @@ LoadandCite(Packages, file = "HRPackages.bib")
 
 \noindent\emph{Draft version. Comments welcome.} \\[0.2cm]
 
-Over the past decade Event History Analysis (EHA) has become a popular method in political science for examining cross-country cross-time data. However, most political science studies have not used EHA to its full potential. There has been an inordinate focus on effects averaged across time. Beyond issues of model misspecification, non-linear and time-varying effects may be substantively relevant for political science researchers. In particular focusing on time average effects ignores EHA's ability to examine how time-period specific events--such as global shocks or the promotion of new policy ideas--interact with traditional covariates. I argue that EHA can be used to examine the interactions between shared time-specific events, especially ``best practice" policy recommendations, and country-specific  variables. Make it easier for researchers to explore non-linear and time-varying effects, I introduce a new R package called \emph{simPH}.
+Over the past decade Event History Analysis (EHA) has become a popular method in political science for examining cross-country cross-time data. However, most political science studies have not used EHA to its full potential. There has been an inordinate focus on effects averaged across time. Beyond issues of model misspecification, non-linear and time-varying effects may be substantively relevant for political science researchers. In particular focusing on time average effects ignores EHA's ability to examine how time-period specific events--such as global shocks or the promotion of new policy ideas--interact with traditional covariates. I argue that EHA can be used to examine the interactions between shared time-specific events, especially ``best practice" policy recommendations, and country-specific  variables. Make it easier for researchers to explore and present non-linear, interactive, and time-varying effects, I introduce a new R package called \emph{simPH}.
 
 \end{abstract}
 
@@ -71,17 +85,11 @@ This rate is commonly referred to as the hazard rate ($h_{i}(t)$).\footnote{It i
 %
 where $h_{0}(t)$ is the baseline hazard, i.e. the instantaneous rate of a transition at time $t$ when all of the covariates are zero. $\mathbf{\beta}$ is a vector of coefficients and $\mathbf{X}_{i}$ is the vector of covariates for unit $i$.
 
-We are usually interested in how a covariate changes the rate of an event happening. For example, does having a majoritarian electoral system increase the probability of a country adopting a given policy? In general researchers have tried to answer these questions by looking at the Cox PH coefficient estimates $\beta$. Like logistic regression, the coefficient is more easily interpreted if we examine its exponent $\exp(\beta)$, i.e. the hazard ratio (HR). Using the HR we can find the predicted percentage change in the hazard rate when we compare two values of a given variable. To find how the effect on the hazard rate of some value $X_{1}$ compared to $X_{2}$ with a coefficient $\beta$ we use the following formula from \citet[60]{boxsteffensmeier2004}:
-%
-\begin{equation}
-    \%\triangle h(t) = \left[\frac{\mathrm{e}^{(\beta X_{1})} - \mathrm{e}^{(\beta X_{2})}} {\mathrm{e}^{(\beta X_{2})}}\right]
-\end{equation}   
-%
-There are a number of possible sources of model misspecification that can bias our coefficient estimates and our substantive interpretations
+We are usually interested in how a covariate changes the rate of an event happening. For example, does having a majoritarian electoral system increase the probability of a country adopting a given policy? In general researchers have tried to answer these questions by looking at the Cox PH coefficient estimates $\beta$.\footnote{Like logistic regression, the coefficient is more easily interpreted if we examine its exponent $\exp(\beta)$, i.e. the hazard ratio (HR). Using the HR we can find the predicted percentage change in the hazard rate when we compare two values of a given variable. To find how the effect on the hazard rate of some value $X_{1}$ compared to $X_{2}$ with a coefficient $\beta$ we use the following formula from \citet[60]{boxsteffensmeier2004}: $\%\triangle h(t) = \left[\frac{\mathrm{e}^{(\beta X_{1})} - \mathrm{e}^{(\beta X_{2})}} {\mathrm{e}^{(\beta X_{2})}}\right].$} However, only examining single coefficient estimates can lead to significant model misspecification and erroneous substantive interpretation of Cox PH results.
 
 \subsection{Non-proportional hazards}
 
-One of the most common sources of estimation bias in Cox PH models discussed at length by \cite{Licht2011}, \cite{BoxSteffensmeier2001}, and \cite{boxsteffensmeier2004} are violations of the proportional hazards assumption (PHA). The PHA is that the hazards of two units experiencing an event are proportional to one another and that this relationship is constant overtime. Formally, for the PHA to hold the hazard of units $j$ and $l$ then:
+One of the most common sources of estimation bias in Cox PH models discussed at length by \cite{Licht2011}, \cite{BoxSteffensmeier2001}, and \cite{boxsteffensmeier2004} are violations of the proportional hazards assumption (PHA). The PHA is that the hazards of two units experiencing an event are proportional to one another and that this relationship is constant overtime. Formally, for the PHA to hold the hazard of units $j$ and $l$ then:\footnote{This is also the equation for the hazard ratio between $X_{j}$ and $X_{l}$.}
 %
 \begin{equation}
 	\frac{h_{j}(t)}{h_{l}(t)} = \mathrm{e}^{\beta\prime(X_{j} - X_{l})}.
@@ -193,13 +201,102 @@ To illustrate how \emph{simPH} can be used by political scientists, I will use i
 
 \subsection{Non-linear effects}
 
-To demonstrate why researchers need to check for and explicitly model non-linearity \cite{Keele2010} indirectly replicated (among others) a study by \cite{Carpenter2002} on the time it takes the U.S. Food and Drug Administration (FDA) to approve a new drug. He added spline fits to the variables in one of Carpenter's models. Then he used a Wald nonlinearity test to examine whether the model with splines had a better fit than the linear model. He then ran a Grambsch and Therneau test of non-proportionality for both the model with linear coefficients and splines. He found evidence that four of the variables in the linear coefficient model violated the test, where as non of them violated the test in the spline model. This indicates that modeling non-linearity rather than time-varying effects is the more appropriate strategy. So, finally he built a model that kept the spline fits for the variables the Wald test indicated had a non-linear relationship and reintroduced the linear terms for the others. This allows him to draw conclusions like the days that Congress holds hearings on the drug, the faster the drug is approved. Also, counter to Carpenter's findings, the number of groups representing a disease has little effect on whether or not a drug treating it is approved once nonlinearities in the model are accounted for. 
+To demonstrate why researchers need to check for and explicitly model non-linearity \cite{Keele2010} indirectly replicated (among others) a study by \cite{Carpenter2002} on the time it takes the U.S. Food and Drug Administration (FDA) to approve a new drug. He added spline fits to the variables in one of Carpenter's models. Then he used a Wald nonlinearity test to examine whether the model with splines had a better fit than the linear model. He then ran a Grambsch and Therneau test of non-proportionality for both the model with linear coefficients and splines. He found evidence that four of the variables in the linear coefficient model violated the test, where as non of them violated the test in the spline model. This indicates that modeling non-linearity rather than time-varying effects is the more appropriate strategy. So, finally he built a model that kept the spline fits for the variables the Wald test indicated had a non-linear relationship and reintroduced the linear terms for the others. This allows him to draw conclusions like the number of FDA review staff increases the likelihood that a drug will be accepted, but that the effect diminishes after a threshold number of staff. Also, counter to Carpenter's findings, the number of groups representing a disease has little effect on whether or not a drug treating it is approved once nonlinearities in the model are accounted for. 
 
-Previously it has been difficult to examine and communicate functional form, significance, and magnitude of spline effects. Tables are very cumbersome as a spline fitted effect effectively consists of multiple coefficients and standard errors that estimate the effect of values of a variable in a given range\footnote{The range is demarcated by ``knots''.}
-on the hazard. Depending on the researcher determines size of the ranges\footnote{With R's \texttt{pspline} command the range is effectively adjusted by changing the spline's degrees of freedom.} there can quickly be many more coefficients than can be efficiently presented in a table and understood by a reader. In his results tables, Keele does not show spline coefficients and simply denotes their overall significance with the standard stars. In R you can plot--and Keele alludes having done this--the estimated spline effect over a range of values.\footnote{Again, this is done with the \texttt{termplot} command.} These plots, however, have a number of drawbacks. Firstly, the plots show the log hazard [IS THIS CORRECT?], which is not a particularly intuitive quantity to understand. It also plots standard errors, rather than the more widely used confidence intervals. Casual readers could easily think the uncertainty about the spline estimates is smaller than it really is.\footnote{Remember that the 95 percent confidence interval $CI$ for some point estimate $\hat{\beta}$ and standard error $SE$ is generally found with: $CI = \hat{\beta} \pm 1.96*SE$.} 
+Previously it has been difficult to examine and communicate functional form, magnitude, and uncertainty surrounding spline effects. Tables are very cumbersome as a spline fitted effect effectively consists of multiple coefficients and standard errors that estimate the effect of values of a variable in a given range\footnote{The range is demarcated by ``knots''.}
+on the hazard. Depending on the researcher determines size of the ranges\footnote{With R's \texttt{pspline} command the range is effectively adjusted by changing the spline's degrees of freedom.} there can quickly be many more coefficients than can be efficiently presented in a table and understood by a reader. In his results tables, Keele does not show spline coefficients and simply denotes their overall significance with the standard stars. In R you can plot--and Keele alludes having done this--the estimated spline effect over a range of values.\footnote{Again, this is done with the \texttt{termplot} command.} These plots, however, have a number of drawbacks. Firstly, the plots show the log hazard [IS THIS CORRECT?],\todo{Relate log hazard to hazard ratio.} which is not a particularly intuitive quantity to understand. It also plots standard errors, rather than the more widely used confidence intervals. Casual readers could easily think the uncertainty about the spline estimates is smaller than it really is.\footnote{Remember that the 95 percent confidence interval $CI$ for some point estimate $\hat{\beta}$ and standard error $SE$ is generally found with: $CI = \hat{\beta} \pm 1.96*SE$.} 
 
-When we examine
+\emph{simPH} allows us to estimate quantities that we are more interested in like the relative hazards, hazard rates over time, as well as hazard ratios and first difference between different values of a variable for spline fitted effects.\footnote{If you would prefer to model non-linearities with polynomials, it also supports this. Though currently, it only supports relative hazards for polynomials.} For example, lets simulate the hazard ratios for the effect of the number of drug review staff on the time it takes for a drug to be approved. Figure \ref{Spline1} shows the simulated hazard ratios over the full range of FDA staff per drug trial observed in Carpenter's data.\footnote{The hazard ratios are for where $X$--FDA staff--are one unit apart.} Not only is this more informative than simply showing you the 12 coefficients and their standard errors that comprise the spline parameter estimates, it is also more informative than the current plotting alternatives in R, namely \texttt{termplot}. 
 
+<<FitKeeleModel, include=FALSE>>=
+# Run basic model
+# From Keele (2010) replication data. Used to create Table 7.
+M1 <- coxph(Surv(acttime, censor) ~  prevgenx + lethal + deathrt1 +
+              acutediz + hosp01 + pspline(hospdisc, df = 4) + 
+              pspline(hhosleng, df = 4) + mandiz01 + 
+              femdiz01 + peddiz01 + orphdum + natreg + vandavg3 + 
+              wpnoavg3 + pspline(condavg3, df = 4) + 
+              pspline(orderent, df = 4) + pspline(stafcder, df = 4), 
+              data = CarpenterFdaData)
+@
+
+\begin{figure}
+  \caption{Simulated Hazard Ratios for the Effect of FDA Staff on Drug Approval Time}
+  \label{Spline1}
+<<Spline1Fig, echo=FALSE, message=FALSE, out.width="9cm", out.height="8cm", cache=TRUE>>=
+# Simulated Fitted Values
+Sim1 <- coxsimSpline(M1, bspline = "pspline(stafcder, df = 4)", 
+                     bdata = CarpenterFdaData$stafcder,
+                     qi = "Hazard Ratio",
+                     Xj = seq(1100, 1700, by = 10), 
+                     Xl = seq(1099, 1699, by = 10), ci = "90")
+
+# Plot simulated values
+ggspline(Sim1, qi = "Hazard Ratio", 
+         xlab = "\n Number of FDA Drug Review Staff", palpha = 0.2)
+@  
+
+{\scriptsize {The figure's points show the middle 90 percent of the simulations at each value of FDA staff. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.}}
+\end{figure}
+
+\begin{figure}
+  \caption{Log Hazard for the Effect of FDA Staff on Drug Approval Time}
+  \label{TermPlot}
+<<Termplot, echo=FALSE, out.width="9cm", out.height="8cm", cache=TRUE>>=
+# Create termplot for stafcder
+termplot(M1, term = 17, se = TRUE, rug = TRUE, 
+         ylab = "Log Hazard", xlab = "Number of FDA Drug Review Staff")
+@
+{\scriptsize {Dashed lines indicate the standard error.}}
+\end{figure}
+
+Figure \ref{TermPlot} uses \texttt{termplot} to plot the log hazard of the effect and the standard errors. Apart from showing related but different quantities of interest, Figure \ref{TermPlot} gives us less useful information than Figure \ref{Spline1} about the probability distribution that the parameter is from. By only describing the distribution of the parameter with the mean value and standard error, Figure \ref{TermPlot} makes it difficult for us to know what the distribution is. Figure \ref{Spline1} directly simulates this distribution and shows it directly.
+
+\subsection{Time-varying effects}
+
+Though current capabilities for showing quantities of interest for splines are marginally improved by the simulation capabilities of \emph{simPH}, there are currently no easy to use ways to visually explore time-varying effects. I will recreate plots from \cite{Licht2011} demonstrate how this can be done with \emph{simPH}.\footnote{As I mentioned earlier, she makes the Stata source code available. \emph{simPH} largely makes it much easier to implement these methods.} 
+
+She replicated analyses from \cite{Golub2007} on the duration of deliberation about E.U. directives.
+
+\begin{figure}
+  \caption{Simulated Relative Hazards for the Effect of Qualified Majority Voting on the Time it Takes to Pass Legislation.}
+  \label{TVCQMV}
+<<TVCqmv, echo=FALSE, message=FALSE, out.width="9cm", out.height="8cm", cache=TRUE>>=
+# Create natural log time interactions
+Golubtvc <- function(x){
+  assign(paste0("l", x), tvc(GolubEUPData, b = x, tvar = "end", tfun = "log"))
+}
+GolubEUPData$Lcoop <-Golubtvc("coop")
+GolubEUPData$Lqmv <- Golubtvc("qmv")
+GolubEUPData$Lbacklog <- Golubtvc("backlog")
+GolubEUPData$Lcodec <- Golubtvc("codec")
+GolubEUPData$Lqmvpostsea <- Golubtvc("qmvpostsea")
+GolubEUPData$Lthatcher <- Golubtvc("thatcher")
+
+# Run Cox PH Model
+M2 <- coxph(Surv(begin, end, event) ~
+            qmv + qmvpostsea + qmvpostteu +
+            coop + codec + eu9 + eu10 + eu12 +
+            eu15 + thatcher + agenda + backlog +
+            Lqmv + Lqmvpostsea + Lcoop + Lcodec +
+            Lthatcher + Lbacklog,
+         data = GolubEUPData,
+         ties = "efron")
+
+# Create simtvc object for Relative Hazard
+Sim2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
+                   tfun = "log", from = 80, to = 2000,
+                   by = 15, ci = "95")
+
+# Create relative hazard plot
+ggtvc(Sim2, qi = "Relative Hazard", xlab = "\nTime in Days")
+@
+{\scriptsize {The figure's points show the middle 95 percent of the simulations at each point in time. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.}}
+\end{figure}
+
+\subsection{Common time-period specific biases}
+
+The examples we have looked at so far study phenomenon using generic time.\footnote{Nonetheless, they may still be succeptiable to time-period specific biases, though these would be difficult to detect without expanding the sampling time frame.}
 
 \section{Conclusion}
 
@@ -219,15 +316,15 @@ devtools::install_github("simPH", "christophergandrud")
 
 \noindent You need to have the \emph{devtools} package \citep{R-devtools} set up to install \emph{simPH}.
 
-For more information about \emph{simPH} and how to contribute to its development see: \url{http://christophergandrud.github.com/simPH/}. Please report any bugs to \url{https://github.com/christophergandrud/simPH/issues}.
+For more information about \emph{simPH} and see: \url{http://christophergandrud.github.com/simPH/}. Please report any bugs to \url{https://github.com/christophergandrud/simPH/issues}. Also please feel free to contribute to its development by making a pull request.
 
 \subsection*{Source Code}
 
 To help you implement the functions in \emph{simPH} I've included the R source code I used to create the figures in this article. 
 
-\paragraph{Figure \ref{Spline1}}
+\subsection*{Figure \ref{Spline1}}
 
-<<Spline1, eval=FALSE, tidy=FALSE>>=
+<<Spline1Code, eval=FALSE, tidy=FALSE>>=
 # Load packages
 library(survival)
 library(simPH)
@@ -245,10 +342,64 @@ M1 <- coxph(Surv(acttime, censor) ~  prevgenx + lethal + deathrt1 +
               wpnoavg3 + pspline(condavg3, df = 4) + 
               pspline(orderent, df = 4) + pspline(stafcder, df = 4), 
               data = CarpenterFdaData)
+
+# Simulated Fitted Values of stafcder
+## stafcder is the number of FDA drug review staff
+Sim1 <- coxsimSpline(M1, bspline = "pspline(stafcder, df = 4)", 
+                     bdata = CarpenterFdaData$stafcder,
+                     qi = "Hazard Ratio",
+                     Xj = seq(1100, 1700, by = 10), 
+                     Xl = seq(1099, 1699, by = 10), ci = "90")
+
+# Plot simulated Hazard Ratios
+ggspline(Sim1, qi = "Hazard Ratio", 
+         xlab = "\nNumber of FDA Drug Review Staff ", palpha = 0.2)
 @
 
+\subsection*{Figure \ref{TermPlot}}
 
+<<TermPlot, eval=FALSE, tidy=FALSE>>=
+# Create termplot for stafcder
+termplot(M1, term = 17, se = TRUE, rug = TRUE, ylab = "Log Hazard", 
+         xlab = "Number of FDA Drug Review Staff")
+@
 
+\subsection*{Figure \ref{TVCQMV}}
+
+<<TVCQMVCode, eval=FALSE>>=
+# Load Golub & Steunenberg (2007) data
+## The data is included with simPH
+data("GolubEUPData")
+
+# Create natural log time interactions
+Golubtvc <- function(x){
+  assign(paste0("l", x), tvc(GolubEUPData, b = x, tvar = "end", tfun = "log"))
+}
+GolubEUPData$Lcoop <-Golubtvc("coop")
+GolubEUPData$Lqmv <- Golubtvc("qmv")
+GolubEUPData$Lbacklog <- Golubtvc("backlog")
+GolubEUPData$Lcodec <- Golubtvc("codec")
+GolubEUPData$Lqmvpostsea <- Golubtvc("qmvpostsea")
+GolubEUPData$Lthatcher <- Golubtvc("thatcher")
+
+# Run Cox PH Model
+M2 <- coxph(Surv(begin, end, event) ~
+            qmv + qmvpostsea + qmvpostteu +
+            coop + codec + eu9 + eu10 + eu12 +
+            eu15 + thatcher + agenda + backlog +
+            Lqmv + Lqmvpostsea + Lcoop + Lcodec +
+            Lthatcher + Lbacklog,
+         data = GolubEUPData,
+         ties = "efron")
+
+# Create simtvc object for Relative Hazard
+Sim2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
+                   tfun = "log", from = 80, to = 2000,
+                   by = 15, ci = "95")
+
+# Create relative hazard plot
+ggtvc(Sim2, qi = "Relative Hazard", xlab = "\nTime in Days")
+@
 % Bibliography
 \bibliographystyle{apsr}
 \bibliography{HRBibliography,HRPackages}

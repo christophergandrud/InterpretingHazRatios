@@ -5,6 +5,7 @@
 .Rproj.user
 .Rhistory
 .RData
+*Cache/
 *.aux
 *.bbl
 *.blg
