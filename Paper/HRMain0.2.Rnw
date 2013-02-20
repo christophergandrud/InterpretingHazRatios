@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science
 % Christopher Gandrud
-% 12 February 2013
+% 20 February 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper]{article}
@@ -24,7 +24,7 @@
 <<include=FALSE>>=
 library(repmis)
 
-Packages <- c("knitr", "repmis", "devtools", "simPH", "survival", "Zelig", "ggplot2")
+Packages <- c("car", "knitr", "repmis", "devtools", "simPH", "survival", "Zelig", "ggplot2")
 
 LoadandCite(Packages, file = "HRPackages.bib")
 @
@@ -63,7 +63,7 @@ My aim in this paper is to lay out a strategy and computational tools for addres
 
 In this paper I focus on one of the more commonly used EHA models in both political science, the Cox Proportional Hazard Model \citet{cox1972}.\footnote{In general my conclusions also apply to Fine and Gray's \citeyearpar{Fine1999} Competing Risks Model which is a Cox PH analogue for competing risks EHA.} The CPH is a semi-parametric EHA model that allows researchers to examine how specified factors influence the rate of a particular event happening--a policy is adopted, a government falls, or a war breaks out--at a particular point in time given that the even has not already occurred.
 
-This rate is commonly referred to as the hazard rate ($h_{i}(t)$).\footnote{It is given formally by: $h_{i}(t) = \lim\limits_{\Delta t \rightarrow 0}\frac{\mathrm{Pr}(t \leq T < t + \Delta t | T \leq t)}{\Delta t}$, where $T$ is .} The hazard rate for unit $i$ at time $t$ is estimated with the CPH model using: 
+This rate is commonly referred to as the hazard rate ($h_{i}(t)$).\footnote{It is given formally by: $h_{i}(t) = \lim\limits_{\Delta t \rightarrow 0}\frac{\mathrm{Pr}(t \leq T < t + \Delta t | T \leq t)}{\Delta t}$, where $T$ is .} The hazard rate for unit $i$ at time $t$ is estimated with the Cox  nPH model using: 
 %
 \begin{equation}
     h(t|\mathbf{X}_{i})=h_{0}(t)\mathrm{e}^{(\mathbf{\beta X}_{i})},
@@ -157,39 +157,47 @@ We can combine these suggestions into one research strategy for those setting ou
 	\item Test for non-linearity using splines and polynomials.
 	\item Test for violations of the proportional hazards assumption.
 	\item If non-proportionality exists include time interactions.
-	\item If non-proportionality still exists after including time interactions, consider another model that does not use the PHA.
+	\item If non-proportionality still exists after including time interactions, consider another model that does not use the PHA. Continue to test for time-period specific biases.
 	\item If there is no longer evidence of non-proportionality examine time-period specific biases.
 \end{enumerate}
 
 %%%%%% Section: simPH
 \section{\emph{simPH}: tools for simulating and graphing effects from Cox PH models}
 
-Previously, there have not been a full contingent of capabilities to implement this strategy. In R the \emph{survival} and \emph{Zelig} \citep{R-zelig} packages had capabilities for estimating splines and time interactions. However, their functions for graphically showing results has been limited. Spline functions did not simulate uncertainty in the way described earlier from Cox PH models. though you can use the \texttt{termplot} command to plot log hazards with corresponding confidence bounds for splines.\footnote{See \cite{Keele2008}, chapter 6.} \emph{Zelig} can simulate and graph parameter values, but not for combined time-interactions. In general the capabilities for showing results with time interactions is very limited. Usually, showing these types of results requires considerable researcher effort. See for example Licht's code for replicating the time-interaction plots in her paper.\footnote{It is available at: \url{http://hdl.handle.net/1902.1/15633}.}
+One reason that researchers have inconsistently followed these steps it that there as been a lack of computational capabilities to implement them. In R the \emph{survival} and \emph{Zelig} \citep{R-zelig} packages have capabilities for estimating splines and time interactions. However, their functions for graphically showing results, especially over time, has been limited. Capabilites for showing results from penalised splines\footnote{Primarily the \texttt{termplot} command. See \cite{Keele2008}, chapter 6.} do not simulate uncertainty in the way described earlier from Cox PH models. They also do not show how effects are estimated to change over time. \emph{Zelig} can simulate and graph parameter values, but not for combined interactions. In general the capabilities for showing results with time interactions is very limited. Usually, showing these types of results requires considerable researcher effort to extract estimates from model objects and then devise a way to show them graphically. See for example Licht's code for replicating the time-interaction plots in her paper.\footnote{It is available at: \url{http://hdl.handle.net/1902.1/15633}.}
 
-To solve these problems, particularly for time-interactions, I am introducing the \emph{simPH} package for R.\footnote{See the Appendix for installation instructions.} There are three basic steps to use the package:
+To solve these problems I am introducing the \emph{simPH} package for R.\footnote{See the Appendix for installation instructions.} There are three basic steps to use the package:
 
 \begin{enumerate}
 	\item Estimate a Cox PH model using \emph{survival}'s \texttt{coxph} command,
-	\item Simulate parameter estimates and calculate the relative hazards, first differences, or hazard ratios for a given parameter using the \emph{simPH} command corresponding to the variable type.\footnote{\texttt{coxsimLinear} can be used for linear, time constant variables, \texttt{coxsimPoly} for polynomials, and \texttt{coxsimtvc} for time-varying coefficients.}
-	\item Plot the simulations using the appropriate \emph{simPH} plotting command.\footnote{Commands include: \texttt{gglinear}, \texttt{ggpoly}, and \texttt{ggtvc}. These commands use \emph{ggplot2} \citep{R-ggplot2} to plot the simulations. You can use the simulation objects created by \emph{simPH} to make a graph with any other plotting package.} 
+	\item Simulate parameter estimates and calculate the relative hazards, first differences, or hazard ratios for a given parameter using the \emph{simPH} command corresponding to the variable type.\footnote{\texttt{coxsimLinear} can be used for linear, time constant variables, \texttt{coxsimInteract} for linear multiplicative interactions, \texttt{coxsimPoly} for polynomials, \texttt{coxsimSpline} for penalised splines, and \texttt{coxsimtvc} for time-varying coefficients.}
+	\item Plot the simulations using the appropriate \emph{simPH} plotting command.\footnote{Commands include: \texttt{gglinear}, \texttt{gginteract}, \texttt{ggpoly}, \texttt{ggspline}, and \texttt{ggtvc}. These commands use \emph{ggplot2} \citep{R-ggplot2} and in some cases \texttt{scatter3d} from the \emph{car} packages \citep{R-car} to plot the simulations. You can use the simulation objects created by \emph{simPH} to make a graph with any other plotting package.} 
 \end{enumerate}
 
-\noindent The simulation functions follow \cite{King2000} (discussed above) to simulate and calculate a variety of quantities. The user can select specify the number of simulations to run. The more simulations we conduct, the better picture we get of the probability distributions our parameters are from \citep[349]{King2000}.\footnote{The \emph{coxPH} default is 1,000.} The plot functions then take these simulations and plot them along with a smoothing line specified by the user to summarize their central tendency.
+\noindent The simulation functions follow \cite{King2000} (discussed above) to simulate and calculate a variety of quantities of interest. The user can specify the number of simulations to run. The more simulations we conduct,\footnote{The \emph{simPH} default is 1,000.} the better picture we get of the probability distributions our parameters are from \citep[349]{King2000}.\footnote{Note that in some cases, such as with hazard rates with penalised splines, it is easy to ask the program to create more simulations than average desktop computers can easily handle. Therefore the user may need to balance a a desire for a clear view of the probability distribution a quantity of interest comes from with what is computationally possible. } The plot functions then take these simulated values and plot them along with a smoothing line specified by the user to summarize their central tendency.
 
-The functions in this package directly complement the strategy discussed in the previous section. With the few exceptions discussed before, without \emph{simPH} researchers would implement the strategy, but would find it difficult to actually interpret their results beyond simply presenting ``train schedules'' of coefficients and standard errors. Given that almost all of the quantities of interest, even hazard rates for single linear covariates, involve some interaction, the ``train schedule'' approach is a highly inadequate way to present results \citep{Brambor2006}. 
+The functions in this package directly complement the strategy discussed in the previous section. They make it easy to interpret and present results without resorting to ``train schedules'' of coefficients and standard errors. Given that almost all of the quantities of interest, even hazard rates for single linear covariates, involve some interaction, the ``train schedule'' approach is a highly inadequate way to present results \citep{Brambor2006}. 
 
-Most of the functions are capable of simulating and plotting hazard rates for multiple strata, i.e. when the baseline hazard is allowed to vary across different groups \cite[see][]{BoxSteffensmeier2006}. This is particularly useful when examining time-period specific biases as it allows researchers to see if a common phenomenon effects different groups differently. ``Groups'' can be defined in a variety of ways. One common use of strata is to account for repeated event dependence. An example of examining time period specific biases in repeated event situations is whether or not a time-period specific idea may effect units that have already implemented one type of a policy in the past compared to units that have never had a similar policy. 
+Most of the functions are capable of simulating and plotting hazard rates for multiple strata, i.e. when the baseline hazard is allowed to vary across different groups \cite[see][]{BoxSteffensmeier2006}.\footnote{Currently \emph{simPH} does not present hazard rates for penalised splines from stratified models. This is mostly because of the difficulty presenting 4 dimensional results (i.e. time, hazard rate, fitted values of the variable, and strata.)} A stratified Cox PH model is given by
+%
+\begin{equation}
+   h(t|\mathbf{X}_{i})=h_{k0}(t)\mathrm{e}^{(\mathbf{\beta X}_{i})},
+\end{equation}
+%
+where $k$ is a `group'. Groups can be defined in a variety of ways. One common use of strata is to account for repeated event dependence \citep{BoxSteffensmeier2006}. An example of examining time period specific biases in repeated event situations is whether or not a time-period specific idea may effect units that have already implemented one type of a policy in the past compared to units that have never had a similar policy. So, stratified Cox PH models are particularly useful when examining time-period specific biases as it allows researchers to see if a common time period specific phenomenon effects different groups differently. 
 
 %%%%%% Section: Demonstrations
 \section{Demonstrations}
 
-To illustrate how \emph{simPH} can be used by political scientists, I will use it to replicate key findings from \cite{Licht2011}, \cite{Keele2008}, and \cite{Gandrud2012}.
+To illustrate how \emph{simPH} can be used by political scientists, I will use it to replicate key figures and findings from \cite{Keele2010}, \cite{Licht2011}, and \cite{Gandrud2012}.
+
+\subsection{Non-linear effects}
 
 \section{Conclusion}
 
-In this brief paper I have combined a number of important insights about how to build proportional hazards models that avoid common causes of model misspecification. These multiplicative interactions and  time-period specific biases may be factors political scientists are interested in. So we need tools to fully explore them. As this is often difficult in current software, I have also created and demonstrated a new R package--\emph{simPH}--that makes it considerably easier to effectively present results from these models, especially results that are the result of complex multiplicative interactions. 
+In this brief paper I have combined a number of important insights about how to build proportional hazards models into a simple worlkflow that will help researchers avoid common causes of model misspecification. An important insight is that the multiplicative interactions and time-period specific biases researchers should look out for in their models may actually be factors political scientists are interested in studying. So we need tools to fully explore them, not just ways to control for them. Doing this is often difficult in current software. So, I have also created and demonstrated a new R package--\emph{simPH}--that makes it considerably easier to effectively explore and present results from these models. In particular I  especially results that are the result of complex multiplicative interactions. 
 
-\emph{simPH} is in the relatively early stages of development, but more more is on the way. Functions for spline simulation and graphing are noticeably lacking in the present version, but will be added in the coming months. It will be useful to add the ability to show results from interactions between different types of variables. For example, plotting quantities of interest from an interaction between a linear and spline fitted variable. The package would also be more useful if future versions were capable of simulating and plotting results for models with frailties, i.e. random effects \cite[see][]{BoxSteffensmeier2006}. Finally, I hope to expand the package so that it is an effective tool for presenting results from other proportional hazards event history analysis models, notably the Fine and Gray competing risks model.
+\emph{simPH} is in the early stages of development, but more is on the way. In particular, it will be useful to add the ability to show results from interactions between different types of variables. For example, plotting quantities of interest from an interaction between a linear and spline fitted variable. The package would also be more useful if future versions were capable of simulating and plotting results for models with frailties, i.e. random effects \cite[see][]{BoxSteffensmeier2006}. Finally, I hope to expand the package so that it is an effective tool for presenting results from other proportional hazards event history analysis models, notably the Fine and Gray competing risks model.
 
 \section*{Appendix}
 
