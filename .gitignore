@@ -10,8 +10,12 @@
 *.bbl
 *.blg
 *.log
+*.nav
 *.out
 *.pdf
+*.snm
 *.gz
+*.toc
 *.tex
+*.vrb
 bits_io2006_rev5_2008/*

@@ -1,0 +1,68 @@
+\documentclass{beamer}
+\usetheme{Stats}
+\setbeamercovered{transparent}
+\usepackage{color}
+\usepackage{hyperref}
+  \hypersetup{
+  	colorlinks=true
+		linkcolor=black
+		}
+\usepackage{graphics}
+\usepackage{tikz}
+\usepackage{booktabs}
+
+<<ParentGlobalOpts, echo=FALSE>>=
+  options(width=50)
+  opts_chunk$set(fig.align='center')
+@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Title Slide %%%%%%%%%%%%%%%%%%%%%%%%%%
+\title[Hazard Models]{Getting More Out of Proportional Hazard Models in Political Science \\[1cm] }
+\author[]{
+    \href{mailto:gandrud@yonsei.ac.kr}{Christopher Gandrud}
+}
+
+\institute{Yonsei University}
+
+\date{ISA Annual Convention (4 April 2013)}
+
+
+\begin{document}
+
+\frame{\titlepage}
+
+\section[Outline]{}
+\frame{\tableofcontents}
+
+%%%%%%%%%%%%%%% Motivation %%%%%%%%%%%%%%
+\section{Motivation}
+\frame{
+	\frametitle{Increasing Use}
+
+}
+
+%%%%%%%%%%%%%%% Modeling Strategy %%%%%%%%%%%%%%
+\section{Modeling Strategy}
+
+\frame{
+	\frametitle{Implementation Problems}
+	It is often difficult to actually implement this strategy using available computational tools.
+}
+
+%%%%%%%%%%%%%% simPH %%%%%%%%%%%%%%%%%%%%
+\section{simPH}
+\frame{
+	\frametitle{Introduce}
+	To help overcome these problems I created the \emph{simPH} package for R.
+}
+
+
+\begin{frame}[fragile]
+	\frametitle{Installation}
+<<eval=FALSE>>=
+devtools::install_github("simPH", "christophergandrud")
+@
+\end{frame}
+
+\end{document}
