@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science
 % Christopher Gandrud
-% 1 March 2013
+% 5 March 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper]{article}
