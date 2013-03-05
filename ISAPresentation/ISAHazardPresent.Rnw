@@ -18,7 +18,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Title Slide %%%%%%%%%%%%%%%%%%%%%%%%%%
-\title[Hazard Models]{Getting More Out of Proportional Hazard Models in Political Science \\[1cm] }
+\title[Hazard Modeling with simPH]{Getting More Out of Proportional Hazard Models in Political Science \\[1cm] }
 \author[]{
     \href{mailto:gandrud@yonsei.ac.kr}{Christopher Gandrud}
 }
@@ -47,22 +47,51 @@
 
 \frame{
 	\frametitle{Implementation Problems}
-	It is often difficult to actually implement this strategy using available computational tools.
+	{\Large{It is often \textbf{difficult to implement} this strategy using available computational tools.}}
 }
 
 %%%%%%%%%%%%%% simPH %%%%%%%%%%%%%%%%%%%%
 \section{simPH}
 \frame{
 	\frametitle{Introduce}
-	To help overcome these problems I created the \emph{simPH} package for R.
+	{\Large{To \textbf{help overcome} these problems I created the \emph{simPH} package for R.}}
+}
+
+\frame{
+	\frametitle{Basic Process}
+		\begin{itemize}
+			\item<1-> \textbf{Estimate} Cox PH model with \texttt{coxph}. \vspace{0.5cm}
+			\item<2-> \textbf{Simulate} quantities of interest (e.g. first differences, hazard ratios, hazard rates) with one of \emph{simPH}'s simulation commands. \vspace{0.5cm}
+			\item<3-> \textbf{Plot} the simulations with one of \emph{simPH}'s plotting commands. \vspace{0.5cm}
+		\end{itemize}
 }
 
 
 \begin{frame}[fragile]
 	\frametitle{Installation}
+	{\Large{Not currently available on CRAN. So:}}
+
+	\vspace{1cm}
+
+{\small{
 <<eval=FALSE>>=
 devtools::install_github("simPH", "christophergandrud")
 @
+}}
 \end{frame}
+
+%%%%%%%%%%%%%%% Examples %%%%%%%%%%%%%%%
+\section{Examples}
+\frame{
+	\frametitle{Examples}
+	{\Large{Let's see how \emph{simPH} works by replicating and representing results from:
+	\vspace{0.5cm}
+	\begin{itemize}
+	 	\item<1-> Keele (2010), 
+	 	\item<1-> Licht (2011), 
+	 	\item<1-> Gandrud (2012).
+	 \end{itemize}
+ 	}}
+}
 
 \end{document}
