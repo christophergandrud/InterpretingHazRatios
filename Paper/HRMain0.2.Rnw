@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science
 % Christopher Gandrud
-% 5 March 2013
+% 9 March 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper]{article}
@@ -44,7 +44,7 @@ data("GolubEUPData")
 FinData <- source_GitHubData("https://raw.github.com/christophergandrud/InterpretingHazRatios/master/AncillaryFiles/FinSurvData.csv")
 
 ##### Set Chunk Options ####
-opts_chunk$set(fig.align='center')
+opts_chunk$set(fig.align='center', dev='png')
 @
 
 \begin{document}
@@ -79,7 +79,7 @@ My aim in this paper is to lay out a strategy and corresponding computational to
 %%%%%% Section: Common issues
 \section{Common issues in analyses with Cox PH models}
 
-In this paper I focus on one of the more commonly used EHA models in political science, the Cox Proportional Hazard Model \citet{cox1972}.\footnote{See \cite[47]{boxsteffensmeier2004} for a discussion of the model's popularity in political science. In general my conclusions also apply to Fine and Gray's \citeyearpar{Fine1999} Competing Risks Model which is a Cox PH analogue for competing risks EHA.} The Cox PH is a semi-parametric EHA model that allows researchers to examine how specified factors influence the rate of a particular event happening--e.g. a policy is adopted, a government falls, or a war breaks out--at a particular point in time given that the event has not already occurred.
+In this paper I focus on one of the more commonly used EHA models in political science, the Cox Proportional Hazard Model \citet{cox1972}.\footnote{See Box-Steffensmeier and Jones \citeyearpar[47]{boxsteffensmeier2004} for a discussion of the model's popularity in political science. In general my conclusions also apply to Fine and Gray's \citeyearpar{Fine1999} Competing Risks Model which is a Cox PH analogue for competing risks EHA.} The Cox PH is a semi-parametric EHA model that allows researchers to examine how specified factors influence the rate of a particular event happening--e.g. a policy is adopted, a government falls, or a war breaks out--at a particular point in time given that the event has not already occurred.
 
 This rate is commonly referred to as the hazard rate ($h_{i}(t)$).\footnote{It is given formally by: $h_{i}(t) = \lim\limits_{\Delta t \rightarrow 0}\frac{\mathrm{Pr}(t \leq T < t + \Delta t | T \leq t)}{\Delta t}$, where $T$ is the time that an event occurred over the interval $[t,\:\Delta t]$.} The hazard rate for unit $i$ at time $t$ is estimated with the Cox PH model using: 
 %
@@ -174,7 +174,7 @@ Before moving on to examples, lets combine these suggestions into one research s
 	\item Test for nonlinearity using splines and polynomials. Include splines or polynomials as needed.
 	\item Test for violations of the proportional hazards assumption.
 	\item If non-proportionality exists include time interactions.
-	\item If non-proportionality still exists after including time interactions, consider another model that does not use the PHA. 
+	\item Rerun PHA test. If non-proportionality still exists after including time interactions, consider another model that does not use the PHA. 
     \item Regardless of the EHA chosen, consider possible study duration and time-period specific biases.
 \end{enumerate}
 
@@ -374,7 +374,7 @@ Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
 gglinear(Sim4, qi = "Hazard Rate", 
          xlab = "\n Years from 1988", lsize = 1)
 @
-{\scriptsize{The figure's points show the middle 95 percent of the simulations at each point in time and each fitted value. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation. \\ Note that the figure is based on the first imputed data set from \cite{Gandrud2012}, rather than being an average of all five.}}
+{\scriptsize{The figure's points show the middle 95 percent of the simulations at each point in time and each fitted value. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation. \\ Note that the figure is based on the first imputed data set from \cite{Gandrud2012}, rather than being an average of all five. \\ Also, the graph shows the simulated hazard rate when all other covariates are 0.}}
 \end{figure} 
 
 Though I did not find evidence of the time-varying effect I expected using standard proportional hazards tests, this does not mean there was no evidence for such an effect. Because of time-period specific events (or the lack of them) time-varying effects may exist but are only visible by plotting hazard rates over time and with careful consideration of the time-period that the sample is from.  
@@ -383,7 +383,7 @@ Though I did not find evidence of the time-varying effect I expected using stand
 
 In this brief paper I have combined a number of important insights about how to build proportional hazards models into a strategy that will help researchers avoid common causes of model misspecification and misinterpretation. An important insight is that the multiplicative interactions and time-period specific biases researchers should look out for in their models may actually be factors political scientists are interested in studying. So we need tools to fully explore them. Doing this is often difficult with currently available software. So, I have also created and demonstrated a new R package--\emph{simPH}--that makes it considerably easier to effectively explore and present results from these models. 
 
-\emph{simPH} is in the early stages of development, but more is on the way. In particular, it will be useful to add the ability to show results from interactions between different types of variables. For example, plotting quantities of interest from an interaction between linear and spline fitted variables. The package would also be more useful if future versions were capable of simulating and plotting results for models with frailties, i.e. random effects \cite[see][]{BoxSteffensmeier2006}. There are also a number of computational efficiency improvements that could be made as well as adding the option to show traditional confidence bounds rather than the full number of simulation results. Finally, I hope to expand the package so that it is an effective tool for presenting results from other proportional hazards event history analysis models, notably the Fine and Gray competing risks model.
+\emph{simPH} is in the early stages of development, but more is on the way. In particular, it will be useful to add the ability to show results from interactions between different types of variables. For example, plotting quantities of interest from an interaction between linear and spline fitted variables. Hazard rate graphs would be more usefully interpretable if you were able to fit all of the covariate values rather than just the variable you intend to plot. The package would also be more useful if future versions were capable of simulating and plotting results for models with frailties, i.e. random effects \cite[see][]{BoxSteffensmeier2006}. There are also a number of computational efficiency improvements that could be made as well as adding the option to show traditional confidence bounds rather than the full number of simulation results. Finally, I hope to expand the package so that it is an effective tool for presenting results from other proportional hazards event history analysis models, notably the Fine and Gray competing risks model.
 
 \section*{Appendix}
 

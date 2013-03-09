@@ -39,11 +39,61 @@
 \section{Motivation}
 \frame{
 	\frametitle{Increasing Use}
+	{\large{Event History Analysis and especially Cox Proportional Hazard (PH) models have been increasingly use in political science. 
+	\vspace{0.25cm}
+	See:}}
+	\vspace{1cm}
+	
+	Alem\'an and Yang (2011); Bueno de Mesquita et al. (1999); Brooks (2005); Gandrud (2012); Gates et al. (2006); Golub and Steunenberg (2007); Jordana and Levi-Faur (2005); Mccubbins, Paturi and Weller (2009); Neumayer (2002); Simmons, Dobbin and Garrett (2006).
+}
 
+\frame{
+	\frametitle{Issue}
+	\begin{center}
+		{\LARGE{But this research often uses \textbf{misspecified models} and \textbf{misinterpret results}.}}
+	\end{center}
+}
+
+\frame{
+	\frametitle{The problems}
+	{\large{Problems with Cox PH have been addressed by:
+	\vspace{1cm}
+	\begin{itemize}
+		\item Licht (2011)
+		\item Keele (2010)
+		\item Hern\'an (2010)
+		\item Gandrud (2012)
+	\end{itemize}
+	}}
+}
+
+\frame{
+	\frametitle{Goals}
+	{\large{
+	My goals in this presentation:
+	\vspace{0.5cm} 
+	\begin{itemize}
+		\item \textbf{Summarize} this work and show how Cox PH models have often been \textbf{underutilized} in political science.
+		\item Briefly discuss a Cox PH modeling \textbf{strategy}.
+		\item \textbf{Introduce \emph{simPH}}, an R package that makes implementing this strategy easier. 
+	\end{itemize}
+	}}
 }
 
 %%%%%%%%%%%%%%% Modeling Strategy %%%%%%%%%%%%%%
 \section{Modeling Strategy}
+\frame{
+	\frametitle{Steps for Proportional Hazards Modeling}
+	\begin{enumerate}
+		\item Determine the covariates and covariate interactions to include in the model.
+		\item Test for nonlinearity using splines and polynomials. Include splines or polynomials as needed.
+		\item Test for violations of the proportional hazards assumption.
+		\item If non-proportionality exists include time interactions.
+		\item Rerun PHA test. If non-proportionality still exists after including time interactions, consider another model that does not use the PHA. 
+	    \item Regardless of the EHA chosen, consider possible study duration and time-period specific biases.
+	\end{enumerate}
+}
+
 
 \frame{
 	\frametitle{Implementation Problems}
@@ -84,7 +134,7 @@ devtools::install_github("simPH", "christophergandrud")
 \section{Examples}
 \frame{
 	\frametitle{Examples}
-	{\Large{Let's see how \emph{simPH} works by replicating and representing results from:
+	{\Large{Let's see how \emph{simPH} works by replicating and plotting results from:
 	\vspace{0.5cm}
 	\begin{itemize}
 	 	\item<1-> Keele (2010), 
