@@ -19,7 +19,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Title Slide %%%%%%%%%%%%%%%%%%%%%%%%%%
 \title[Hazard Modeling with simPH]{Getting More Out of Proportional Hazard Models in Political Science \\[1cm] }
-\author[]{
+\author[]{\noindent
     \href{mailto:gandrud@yonsei.ac.kr}{Christopher Gandrud}
 }
 
@@ -57,12 +57,12 @@
 \frame{
 	\frametitle{The problems}
 	{\large{Problems with Cox PH have been addressed by:
-	\vspace{1cm}
+	\vspace{0.5cm}
 	\begin{itemize}
-		\item Licht (2011)
-		\item Keele (2010)
-		\item Hern\'an (2010)
-		\item Gandrud (2012)
+		\item Licht (2011): time-varying effects,
+		\item Keele (2010): non-linear effects,
+		\item Hern\'an (2010): study duration bias,
+		\item Gandrud (2012): historical time-period bias.
 	\end{itemize}
 	}}
 }
@@ -80,28 +80,149 @@
 	}}
 }
 
+%%%%%%%%%%%%%%% Problems and Advantages of CoxPH %%%%%%%%%%%%%%
+\section{Misspecification \& Misinterpretation}
+\frame{
+	\frametitle{Cox PH Set Up}
+	{\Large{Cox PH Models:}} estimate how covariates influence the rate of an event happening.
+	$$
+	    h(t|\mathbf{X}_{i})=h_{0}(t)\mathrm{e}^{(\mathbf{\beta X}_{i})}
+	$$
+}
+
+\frame{
+	\frametitle{Violating Assumptions}
+	{\large{Cox PH models may be \textbf{misspecified} because they violate the Proportional Hazards Assumption (PHA). 
+	$$
+		\frac{h_{j}(t)}{h_{l}(t)} = \mathrm{e}^{\beta\prime(X_{j} - X_{l})}
+	$$
+	for all $t$.
+	}}
+}
+
+\frame{
+	\frametitle{Licht (2011): Time-varying Effects (1)}
+	{\large{A possible cause of violations are \textbf{effects that vary over time}. \\
+	\vspace{0.25cm}
+	Licht argues that we don't just want to `correct' for time-varying violations of the PHA. \\
+	\vspace{0.25cm}
+	Political scientists are \textbf{often interested} in effects that vary with time.
+	}}
+}
+
+\frame{
+	\frametitle{Licht (2011): Time-varying Effects (2)}
+	{\large{Licht suggests directly modeling these effects by:
+	\vspace{0.5cm}
+	\begin{enumerate}
+		\item<1-> including \textbf{time-varying time interactions},\vspace{0.25cm}
+		\item<2-> \textbf{simulating parameter estimates} (as in King et al. (2000)),
+			\begin{itemize}
+				\item<2-> nice for estimating uncertainty\vspace{0.25cm}
+			\end{itemize}
+		\item<3-> \textbf{plotting} combined effects (e.g. first differences, relative hazards). 
+	\end{enumerate}
+	}}
+}
+
+\frame{
+	\frametitle{Keele (2010): Nonlinear Effects}
+	{\large{Keele (2010) highlights the fact that \textbf{non-linear effects} can also cause significant proportional hazard violation tests. \\
+	\vspace{0.5cm}
+	He suggests testing for non-linearity and including polynomials/splines \textbf{before testing} the PHA. \\
+	\vspace{0.5cm}
+	Polynomials and splines are difficult to interpret unless they are \textbf{plotted}, so plot them.
+	}}
+}
+
+\frame{
+	\frametitle{Her\'an (2010): Study Duration Biases (1)}
+	{\large{Her\'an urges researchers to examine if and how their parameter estimates may be \textbf{biased} by their particular \textbf{study's duration}. 
+	}}
+}
+
+\frame{
+	\frametitle{Her\'an (2010): Study Duration Biases (2)}
+	{\large {Especially a problem in cohort studies where units \textbf{drop out} of the risk set when they experience the event of interest. \\
+	\vspace{0.2cm}
+	There may be an \textbf{unobserved time specific factor} $Z$ that is \textbf{interacting} with an observed factor $X$ to make some units \textbf{more susceptible}.\\
+	\vspace{0.2cm}
+	Once the more susceptible units drop out then the \textbf{observed effect of $X$ will change}. \\
+	\vspace{0.2cm}
+	The observed effect of $X$ will be \textbf{different depending on the study's duration}. 
+	}}
+}
+
+\frame{
+	\frametitle{Her\'an (2010): Study Duration Biases (2)}
+	{\large {He suggests:
+	\vspace{0.5cm}
+	\begin{itemize}
+		\item \textbf{plotting} survival curves (or hazard rates), \vspace{0.2cm}
+		\item \textbf{rerunning} the analysis on \textbf{time-period subsets} of the data.
+	\end{itemize}
+	}}	
+}
+
+\frame{
+	\frametitle{Gandrud (2012) Historical Time-Period Biases}
+	{\large{Similarly, I argued that many of our Cox PH models use data from a \textbf{particular historical time period}. \\
+	\vspace{0.25cm}
+	There may be unobserved factors $Z$ common to all units that interact with observed variable $X$. \\
+	\vspace{0.25cm}
+	For example, \textbf{policy ideas} ($Z$) may be created and spread through diffusion mechanisms ($X$).\\
+	\vspace{0.25cm}
+	In extreme cases this can create time-varying effects that are \textbf{not picked up by PHA tests} and aren't easily modeled with time interactions.	
+	}}
+}
+
+\frame{
+	\frametitle{Gandrud (2012) Historical Time-Period Biases}
+	{\large{Possible solution:
+	\vspace{0.5cm}
+	\begin{itemize}
+		\item use theory \& historical knowledge to \textbf{develop} hypotheses time-period specific hypotheses
+		\item test by \textbf{plotting} hazard rates.
+	\end{itemize}
+	}}
+}
+
+
 %%%%%%%%%%%%%%% Modeling Strategy %%%%%%%%%%%%%%
 \section{Modeling Strategy}
 \frame{
 	\frametitle{Steps for Proportional Hazards Modeling}
 	\begin{enumerate}
-		\item Determine the covariates and covariate interactions to include in the model.
-		\item Test for nonlinearity using splines and polynomials. Include splines or polynomials as needed.
-		\item Test for violations of the proportional hazards assumption.
-		\item If non-proportionality exists include time interactions.
-		\item Rerun PHA test. If non-proportionality still exists after including time interactions, consider another model that does not use the PHA. 
-	    \item Regardless of the EHA chosen, consider possible study duration and time-period specific biases.
+		\item Determine the \textbf{covariates and covariate interactions} to include in the model.
+		\item \textbf{Test for nonlinearity} using splines and polynomials. Include splines or polynomials as needed.
+		\item Test for \textbf{violations of the PHA}.
+		\item If non-proportionality exists \textbf{include time interactions}.
+		\item Rerun PHA test. If non-proportionality still exists after including time interactions, \textbf{consider another model} that does not use the PHA. 
+	    \item Regardless of the EHA chosen, consider possible \textbf{study duration and time-period specific biases}.
 	\end{enumerate}
 }
 
+
+
+
+%%%%%%%%%%%%%% simPH %%%%%%%%%%%%%%%%%%%%
+\section{simPH}
+\frame{
+	\frametitle{Implementation Problems}
+	{\large{
+	The strategy relies on \textbf{plotting quantities of interest}.\\
+	\vspace{0.5cm}
+	\begin{center}
+		But \ldots
+	\end{center}
+	}}
+}
 
 \frame{
 	\frametitle{Implementation Problems}
 	{\Large{It is often \textbf{difficult to implement} this strategy using available computational tools.}}
 }
 
-%%%%%%%%%%%%%% simPH %%%%%%%%%%%%%%%%%%%%
-\section{simPH}
 \frame{
 	\frametitle{Introduce}
 	{\Large{To \textbf{help overcome} these problems I created the \emph{simPH} package for R.}}
@@ -130,10 +251,10 @@ devtools::install_github("simPH", "christophergandrud")
 }}
 \end{frame}
 
-%%%%%%%%%%%%%%% Examples %%%%%%%%%%%%%%%
-\section{Examples}
+%%%%%%%%%%%%%%% Demonstration %%%%%%%%%%%%%%%
+\section{Demonstration}
 \frame{
-	\frametitle{Examples}
+	\frametitle{Demonstrations}
 	{\Large{Let's see how \emph{simPH} works by replicating and plotting results from:
 	\vspace{0.5cm}
 	\begin{itemize}
@@ -142,6 +263,13 @@ devtools::install_github("simPH", "christophergandrud")
 	 	\item<1-> Gandrud (2012).
 	 \end{itemize}
  	}}
+}
+
+%%%%%%%%%%%%% Conclusion %%%%%%%%%%%%%%%%%%%
+\section{Conclusion \& Looking Forward}
+\frame{
+	\frametitle{Conclusion \& Looking Forward}
+	{\Large{\emph{simPH} is in active development.}} \\
 }
 
 \end{document}
