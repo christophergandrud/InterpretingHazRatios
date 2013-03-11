@@ -1,3 +1,10 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Interpreting Hazard Ratios in Political Science (ISA Presentation)
+% Christopher Gandrud
+% 11 March 2013
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \documentclass{beamer}
 \usetheme{Stats}
 \setbeamercovered{transparent}
@@ -39,10 +46,10 @@
 \section{Motivation}
 \frame{
 	\frametitle{Increasing Use}
-	{\large{Event History Analysis and especially Cox Proportional Hazard (PH) models have been increasingly use in political science. 
-	\vspace{0.25cm}
-	See:}}
+	{\large{Event History Analysis and especially Cox Proportional Hazard (PH) models have been \textbf{increasingly} used in political science. \\
 	\vspace{1cm}
+	See:}}
+	\vspace{0.5cm}
 	
 	Alem\'an and Yang (2011); Bueno de Mesquita et al. (1999); Brooks (2005); Gandrud (2012); Gates et al. (2006); Golub and Steunenberg (2007); Jordana and Levi-Faur (2005); Mccubbins, Paturi and Weller (2009); Neumayer (2002); Simmons, Dobbin and Garrett (2006).
 }
@@ -50,13 +57,13 @@
 \frame{
 	\frametitle{Issue}
 	\begin{center}
-		{\LARGE{But this research often uses \textbf{misspecified models} and \textbf{misinterpret results}.}}
+		{\LARGE{But this research often uses \textbf{misspecified models} and has \textbf{misinterpreted results}.}}
 	\end{center}
 }
 
 \frame{
 	\frametitle{The problems}
-	{\large{Problems with Cox PH have been addressed by:
+	{\large{\textbf{Problems} with how Cox PH has been used addressed by:
 	\vspace{0.5cm}
 	\begin{itemize}
 		\item Licht (2011): time-varying effects,
@@ -102,7 +109,7 @@
 
 \frame{
 	\frametitle{Licht (2011): Time-varying Effects (1)}
-	{\large{A possible cause of violations are \textbf{effects that vary over time}. \\
+	{\large{One cause of violations is an \textbf{effect that varies over time}. \\
 	\vspace{0.25cm}
 	Licht argues that we don't just want to `correct' for time-varying violations of the PHA. \\
 	\vspace{0.25cm}
@@ -112,7 +119,7 @@
 
 \frame{
 	\frametitle{Licht (2011): Time-varying Effects (2)}
-	{\large{Licht suggests directly modeling these effects by:
+	{\large{Licht suggests \textbf{directly modeling} these effects by:
 	\vspace{0.5cm}
 	\begin{enumerate}
 		\item<1-> including \textbf{time-varying time interactions},\vspace{0.25cm}
@@ -166,11 +173,11 @@
 
 \frame{
 	\frametitle{Gandrud (2012) Historical Time-Period Biases}
-	{\large{Similarly, I argued that many of our Cox PH models use data from a \textbf{particular historical time period}. \\
+	{\large{Similarly, I argued that many of our political science Cox PH models use data from a \textbf{particular historical time period}. \\
 	\vspace{0.25cm}
-	There may be unobserved factors $Z$ common to all units that interact with observed variable $X$. \\
+	There may be unobserved time-period specific factors $Z$ common to all units that interact with observed variable $X$. \\
 	\vspace{0.25cm}
-	For example, \textbf{policy ideas} ($Z$) may be created and spread through diffusion mechanisms ($X$).\\
+	For example, \textbf{policy ideas} ($Z$) may be created and spread through \textbf{diffusion mechanisms} ($X$).\\
 	\vspace{0.25cm}
 	In extreme cases this can create time-varying effects that are \textbf{not picked up by PHA tests} and aren't easily modeled with time interactions.	
 	}}
@@ -181,7 +188,7 @@
 	{\large{Possible solution:
 	\vspace{0.5cm}
 	\begin{itemize}
-		\item use theory \& historical knowledge to \textbf{develop} hypotheses time-period specific hypotheses
+		\item use \textbf{theory} \& \textbf{historical knowledge} to develop time-period specific hypotheses
 		\item test by \textbf{plotting} hazard rates.
 	\end{itemize}
 	}}
@@ -265,11 +272,219 @@ devtools::install_github("simPH", "christophergandrud")
  	}}
 }
 
+\frame{
+	\frametitle{Keele Replication of Carpenter (2002)}
+	{\large{
+	Explain the time it takes for a drug to get FDA approval. \\
+	\vspace{0.5cm}
+	Keele finds that a number of variables violate the PHA because of nonlinearity. \\
+	\vspace{0.5cm}
+	For example, the number of FDA Drug Review staff has a non-linear effect on the hazard.
+	}}
+}
+
+\begin{frame}[fragile]
+	\frametitle{simPH \& Splines}
+	{\large
+	First, run the Cox PH model swith splines (not shown). \\
+	\vspace{0.5cm}
+	Then \ldots
+	}
+	{\scriptsize{
+<<eval=FALSE, tidy=FALSE>>=
+# Simulated Fitted Values
+Sim1 <- coxsimSpline(M1, bspline = "pspline(stafcder, df = 4)", 
+                     bdata = CarpenterFdaData$stafcder,
+                     qi = "Hazard Ratio",
+                     Xj = seq(1100, 1700, by = 10), 
+                     Xl = seq(1099, 1699, by = 10), ci = "90")
+
+# Plot simulated values
+ggspline(Sim1, qi = "Hazard Ratio", 
+         xlab = "\n Number of FDA Drug Review Staff", palpha = 0.2)
+@
+}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{The Result}
+	\begin{figure}
+		\caption{Simulated Hazard Ratios for the Effect of FDA Staff on Drug Approval Time}
+		\begin{center}
+			\includegraphics[scale=0.3]{/Users/christophergandrud/Dropbox/Hazard_Ratio_Research_Note/InterpretingHazRatios/Paper/figure/Spline1Fig.png}
+		\end{center}
+		{\tiny{
+		Points are from the middle 90\% of simulations.
+		}}
+	\end{figure}
+\end{frame}
+
+\frame{
+	\frametitle{Licht Replication of Golub and Steunenberg (2007)}
+	Explain the time it takes for EU directives to pass. \\
+	\vspace{0.5cm}
+	Licht (\& original) find time-varying effects violate the PHA. \\
+	\vspace{0.5cm}
+	For example, she finds that whether or not the QMV procedure is used has a time-varying effect. So, she includes log-time interactions.
+}
+
+\begin{frame}[fragile]
+	\frametitle{simPH \& Splines}
+	{\large
+	First, run the Cox PH model with log-time interactions (not shown). \\
+	\vspace{0.25cm}
+	Then \ldots
+	}
+	{\scriptsize{
+<<eval=FALSE, tidy=FALSE>>=
+# Create simtvc object for first difference
+Sim2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
+                   qi = "First Difference",
+                   tfun = "log", from = 80, to = 2000,
+                   by = 15, ci = "95")
+
+# Create first difference plot
+ggtvc(Sim2, qi = "First Difference", xlab = "\nTime in Days")
+@
+
+ {\large{
+ \textbf{First differences} are especially useful for dichotomous variables.
+ }}
+}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{The Result}
+	\begin{figure}
+		\caption{Simulated First Differences for the Effect of Qualified Majority Voting on the Time it Takes to Pass Legislation}
+		\begin{center}
+			\includegraphics[scale=0.3]{/Users/christophergandrud/Dropbox/Hazard_Ratio_Research_Note/InterpretingHazRatios/Paper/figure/TVCqmv.png}
+		\end{center}
+		{\tiny{
+		Points are from the middle 95\% of simulations.
+		}}
+	\end{figure}
+\end{frame}
+
+\frame{
+	\frametitle{Relative Hazards}
+	{\large{
+	\textbf{Relative hazards} can be more useful for continuous variables. \\
+	\vspace{0.5cm}
+	For example, the number of pieces of backlogged legislation. 
+	}}
+}
+
+\begin{frame}
+	\frametitle{Relative Hazards}
+	\begin{figure}
+		\caption{Simulated Relative Hazards for the Effect of Different Levels of Legislative Backlog on Directive Deliberation Time}
+		\begin{center}
+			\includegraphics[scale=0.3]{/Users/christophergandrud/Dropbox/Hazard_Ratio_Research_Note/InterpretingHazRatios/Paper/figure/TVCbacklog.png}
+		\end{center}
+		{\tiny{
+		Points are from the middle 95\% of simulations.
+		}}
+	\end{figure}
+\end{frame}
+
+\frame{
+	\frametitle{Gandrud (forthcoming): Study Duration Bias}
+	{\large{
+	I examined why countries created \textbf{independent deposit insurers}. \\
+	\vspace{0.5cm}
+	I found that \textbf{democracy} had a time-varying effect: positive before 2000, then negative afterward. \\
+	\vspace{0.5cm}
+	By \textbf{subsetting} the sample, \textbf{rerunning} the analyses, \& examining the data \textbf{closely}, I found that all of the high democracy countries \textbf{dropped out} of the sample by 2002. Only Australia and New Zealand were left after this. \\
+	\vspace{0.5cm}
+	This created the time-varying effect not some duration with democracy. \\
+	\vspace{0.5cm}
+	When I \textbf{changed the duration} the \textbf{results changed}.
+	}}
+}
+
+\frame{
+	\frametitle{Not Shown}
+	\begin{center}
+		{\large{I haven't shown any hazard rate graphs because \emph{simPH} doesn't currently support Fine and Gray (1999).\\
+		\vspace{0.5cm}
+		I hope to include this in future versions.
+		}}
+	\end{center}
+}
+
+\frame{
+	\frametitle{Gandrud (2012): Historic time-period bias}
+	{\large{
+	I studied why countries adopted FSA-type \textbf{financial regulation}. \\
+	\vspace{0.5cm}
+	\textbf{Ideational diffusion} theories expected that the effect of crisis, peer groups, and other mechanisms would be positive and increase from \textbf{1997}. \\
+	\vspace{0.5cm}
+	Traditional PHA did not indicate a time-varying effect, but these tests only work at points in time when a \textbf{unit experiences the event}. \\
+	\vspace{0.5cm}
+	\textbf{No country} created an FSA-style regulator in the sample before 1997. \\
+	}}
+}
+
+\frame{
+	\frametitle{Test}
+	A \textbf{minimal test} of the ideational diffusion hypotheses then becomes. Does the \textbf{direction of effects} after 1997 match what the theory suggested? \\
+	\vspace{0.5cm}
+	A nice way to both find the underlying weakness in the model and do a minimal test is to plot \textbf{hazard rates}.
+
+}
+
+\begin{frame}[fragile]
+	\frametitle{Hazard rates with \textbf{simPH}}
+	{\large
+	First, run the Cox PH model (not shown). \\
+	\vspace{0.25cm}
+	Then \ldots
+	}
+	{\scriptsize{
+<<eval=FALSE, tidy=FALSE>>=
+# Simulate hazard rates
+Sim4 <- coxsimLinear(M3, b = "crisis6", qi = "Hazard Rate", 
+                     Xj = c(-1.79, 0))
+
+# Relabel values
+## Please see Gandrud (2012) for more details
+Sim4$HRValue[Sim4$HRValue == "-1.79"] <- "Crisis"
+Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
+
+# Create hazard rate plot
+gglinear(Sim4, qi = "Hazard Rate", 
+         xlab = "\n Years from 1988", lsize = 1)
+@
+\end{frame}
+
+\begin{frame}
+	\frametitle{Relative Hazards}
+	\begin{figure}
+		\caption{Simulated Relative Hazards for the Effect of Different Levels of Legislative Backlog on Directive Deliberation Time}
+		\begin{center}
+			\includegraphics[scale=0.3]{/Users/christophergandrud/Dropbox/Hazard_Ratio_Research_Note/InterpretingHazRatios/Paper/figure/FinHR.png}
+		\end{center}
+		{\tiny{
+		Points are from the middle 95\% of simulations.
+		}}
+	\end{figure}
+\end{frame}
+
 %%%%%%%%%%%%% Conclusion %%%%%%%%%%%%%%%%%%%
-\section{Conclusion \& Looking Forward}
+\section{Looking Forward}
 \frame{
 	\frametitle{Conclusion \& Looking Forward}
-	{\Large{\emph{simPH} is in active development.}} \\
+	{\Large{
+	\emph{simPH} is in active development. \\
+	\vspace{0.5cm}
+	\begin{itemize}
+		\item Trying to \textbf{expand capabilities}, e.g. Fine \& Gray Competing Risks, simulating/plotting interactions between variable types, frailties.
+		\item Increase \textbf{stability} and \textbf{speed}.
+		\item Expand \textbf{aesthetic options}.
+	\end{itemize}
+
+	}} 
 }
 
 \end{document}
