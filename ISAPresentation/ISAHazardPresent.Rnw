@@ -48,7 +48,7 @@
 	\frametitle{Increasing Use}
 	{\large{Event History Analysis and especially Cox Proportional Hazard (PH) models have been \textbf{increasingly} used in political science. \\
 	\vspace{1cm}
-	See:}}
+	\textbf{See:}}}
 	\vspace{0.5cm}
 	
 	Alem\'an and Yang (2011); Bueno de Mesquita et al. (1999); Brooks (2005); Gandrud (2012); Gates et al. (2006); Golub and Steunenberg (2007); Jordana and Levi-Faur (2005); Mccubbins, Paturi and Weller (2009); Neumayer (2002); Simmons, Dobbin and Garrett (2006).
@@ -204,7 +204,7 @@
 		\item \textbf{Test for nonlinearity} using splines and polynomials. Include splines or polynomials as needed.
 		\item Test for \textbf{violations of the PHA}.
 		\item If non-proportionality exists \textbf{include time interactions}.
-		\item Rerun PHA test. If non-proportionality still exists after including time interactions, \textbf{consider another model} that does not use the PHA. 
+		\item \textbf{Rerun PHA test}. If non-proportionality still exists after including time interactions, \textbf{consider another model} that does not use the PHA. 
 	    \item Regardless of the EHA chosen, consider possible \textbf{study duration and time-period specific biases}.
 	\end{enumerate}
 }
@@ -243,20 +243,6 @@
 			\item<3-> \textbf{Plot} the simulations with one of \emph{simPH}'s plotting commands. \vspace{0.5cm}
 		\end{itemize}
 }
-
-
-\begin{frame}[fragile]
-	\frametitle{Installation}
-	{\Large{Not currently available on CRAN. So:}}
-
-	\vspace{1cm}
-
-{\small{
-<<eval=FALSE>>=
-devtools::install_github("simPH", "christophergandrud")
-@
-}}
-\end{frame}
 
 %%%%%%%%%%%%%%% Demonstration %%%%%%%%%%%%%%%
 \section{Demonstration}
@@ -486,5 +472,28 @@ gglinear(Sim4, qi = "Hazard Rate",
 
 	}} 
 }
+
+\frame{
+	\frametitle{Contribute}
+	\begin{center}
+		{\large{Feel free to contribute to \emph{simPH}'s development: \\
+		\vspace{0.75cm}
+		\url{https://github.com/christophergandrud/simPH}
+		}}
+	\end{center}
+}
+
+\begin{frame}[fragile]
+	\frametitle{Installation}
+	{\Large{Not currently available on CRAN. So:}}
+
+	\vspace{1cm}
+
+{\small{
+<<eval=FALSE>>=
+devtools::install_github("simPH", "christophergandrud")
+@
+}}
+\end{frame}
 
 \end{document}
