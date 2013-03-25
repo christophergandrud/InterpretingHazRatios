@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science (ISA Presentation)
 % Christopher Gandrud
-% 16 March 2013
+% 25 March 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -205,7 +205,7 @@
 		\item Test for \textbf{violations of the PHA}.
 		\item If non-proportionality exists \textbf{include time interactions}.
 		\item \textbf{Rerun PHA test}. If non-proportionality still exists after including time interactions, \textbf{consider another model} that does not use the PHA. 
-	    \item Regardless of the EHA chosen, consider possible \textbf{study duration and time-period specific biases}.
+	    \item Regardless of the EHA chosen, consider possible \textbf{study duration and time-period specific biases}. \textbf{Show your estimates} and associated \textbf{uncertainty} by graphing simulated quantaties of interest.
 	\end{enumerate}
 }
 
