@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science (ISA Presentation)
 % Christopher Gandrud
-% 28 March 2013
+% 25 March 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -74,6 +74,19 @@
 	}}
 }
 
+\frame{
+	\frametitle{Goals}
+	{\large{
+	My goals in this presentation:
+	\vspace{0.5cm} 
+	\begin{itemize}
+		\item \textbf{Summarize} this work and show how Cox PH models have often been \textbf{underutilized} in political science.
+		\item Briefly discuss a Cox PH modeling \textbf{strategy}.
+		\item \textbf{Introduce \emph{simPH}}, an R package that makes implementing this strategy easier. 
+	\end{itemize}
+	}}
+}
+
 %%%%%%%%%%%%%%% Problems and Advantages of CoxPH %%%%%%%%%%%%%%
 \section{Misspecification \& Misinterpretation}
 \frame{
@@ -96,11 +109,11 @@
 
 \frame{
 	\frametitle{Licht (2011): Time-varying Effects (1)}
-	{\LARGE{One cause:}} {\large{effects that \textbf{vary over time} \\
-	\vspace{1cm}
-	Licht argues that we \textbf{don't} just want to `correct', \\
+	{\large{One cause of violations is an \textbf{effect that varies over time}. \\
 	\vspace{0.25cm}
-	we are \textbf{often interested} in effects that vary with time.
+	Licht argues that we don't just want to `correct' for time-varying violations of the PHA. \\
+	\vspace{0.25cm}
+	Political scientists are \textbf{often interested} in effects that vary with time.
 	}}
 }
 
@@ -121,17 +134,17 @@
 
 \frame{
 	\frametitle{Keele (2010): Nonlinear Effects}
-	{\LARGE{Another cause:}} {\large{\textbf{non-linear effects} \\
-	\vspace{1cm}
-	Keele suggests testing for non-linearity and including \textbf{polynomials/splines} \textbf{before testing} the PHA. \\
+	{\large{Keele (2010) highlights the fact that \textbf{non-linear effects} can also cause significant proportional hazard violation tests. \\
 	\vspace{0.5cm}
-	Polynomials and splines are difficult to interpret unless they are plotted, so \textbf{plot them}.
+	He suggests testing for non-linearity and including polynomials/splines \textbf{before testing} the PHA. \\
+	\vspace{0.5cm}
+	Polynomials and splines are difficult to interpret unless they are \textbf{plotted}, so plot them.
 	}}
 }
 
 \frame{
 	\frametitle{Her\'an (2010): Study Duration Biases (1)}
-	{\LARGE{Another Problem:} \large{parameter estimates may be \textbf{biased} by a \textbf{study's duration}. 
+	{\large{Her\'an urges researchers to examine if and how their parameter estimates may be \textbf{biased} by their particular \textbf{study's duration}. 
 	}}
 }
 
@@ -142,14 +155,15 @@
 	There may be an \textbf{unobserved time specific factor} $Z$ that is \textbf{interacting} with an observed factor $X$ to make some units \textbf{more susceptible}.\\
 	\vspace{0.2cm}
 	Once the more susceptible units drop out then the \textbf{observed effect of $X$ will change}. \\
+	\vspace{0.2cm}
+	The observed effect of $X$ will be \textbf{different depending on the study's duration}. 
 	}}
 }
 
 \frame{
 	\frametitle{Her\'an (2010): Study Duration Biases (2)}
-	{\LARGE{He suggests:}}
+	{\large {He suggests:
 	\vspace{0.5cm}
-	{\large{
 	\begin{itemize}
 		\item \textbf{plotting} survival curves (or hazard rates), \vspace{0.2cm}
 		\item \textbf{rerunning} the analysis on \textbf{time-period subsets} of the data.
@@ -159,8 +173,8 @@
 
 \frame{
 	\frametitle{Gandrud (2012) Historical Time-Period Biases}
-	{\LARGE{A Similar Problem:}} {\large{\textbf{historical time-period bias}. \\
-	\vspace{1cm}
+	{\large{Similarly, I argued that many of our political science Cox PH models use data from a \textbf{particular historical time period}. \\
+	\vspace{0.25cm}
 	There may be unobserved time-period specific factors $Z$ common to all units that interact with observed variable $X$. \\
 	\vspace{0.25cm}
 	For example, \textbf{policy ideas} ($Z$) may be created and spread through \textbf{diffusion mechanisms} ($X$).\\
@@ -180,23 +194,45 @@
 	}}
 }
 
+
+%%%%%%%%%%%%%%% Modeling Strategy %%%%%%%%%%%%%%
+\section{Modeling Strategy}
+\frame{
+	\frametitle{Steps for Proportional Hazards Modeling}
+	\begin{enumerate}
+		\item Determine the \textbf{covariates and covariate interactions} to include in the model.
+		\item \textbf{Test for nonlinearity} using splines and polynomials. Include splines or polynomials as needed.
+		\item Test for \textbf{violations of the PHA}.
+		\item If non-proportionality exists \textbf{include time interactions}.
+		\item \textbf{Rerun PHA test}. If non-proportionality still exists after including time interactions, \textbf{consider another model} that does not use the PHA. 
+	    \item Regardless of the EHA chosen, consider possible \textbf{study duration and time-period specific biases}. \textbf{Show your estimates} and associated \textbf{uncertainty} by graphing simulated quantaties of interest.
+	\end{enumerate}
+}
+
+
+
+
 %%%%%%%%%%%%%% simPH %%%%%%%%%%%%%%%%%%%%
 \section{simPH}
 \frame{
 	\frametitle{Implementation Problems}
 	{\large{
-	Need to be able to \textbf{plot quantities of interest}.\\
+	The strategy relies on \textbf{plotting quantities of interest}.\\
 	\vspace{0.5cm}
 	\begin{center}
-		But \ldots \\ \vspace{0.5cm}
+		But \ldots
 	\end{center}
-	Often difficult with current computational tools.
 	}}
 }
 
 \frame{
+	\frametitle{Implementation Problems}
+	{\Large{It is often \textbf{difficult to implement} this strategy using available computational tools.}}
+}
+
+\frame{
 	\frametitle{Introduce}
-	{\Large{To \textbf{help overcome} these problems I created the \emph{simPH} package for R.}} \\
+	{\Large{To \textbf{help overcome} these problems I created the \emph{simPH} package for R.
 	\vspace{0.5cm}
 	Simulates and plots Cox PH quantities that are currently difficult to do:
 	\vspace{0.25cm}
@@ -204,9 +240,9 @@
 		\item Splines,
 		\item Polynomials,
 		\item Time-interactions,
-		\item Linear interactions,
-		\item Linear effects.
+		\item Linear interactions.
 	\end{itemize}
+	}}
 }
 
 \frame{
@@ -347,6 +383,31 @@ ggtvc(Sim2, qi = "First Difference", xlab = "\nTime in Days")
 		}}
 	\end{figure}
 \end{frame}
+
+\frame{
+	\frametitle{Gandrud (forthcoming): Study Duration Bias}
+	{\large{
+	I examined why countries created \textbf{independent deposit insurers}. \\
+	\vspace{0.5cm}
+	I found that \textbf{democracy} had a time-varying effect: positive before 2000, then negative afterward. \\
+	\vspace{0.5cm}
+	By \textbf{subsetting} the sample, \textbf{rerunning} the analyses, \& examining the data \textbf{closely}, I found that all of the high democracy countries \textbf{dropped out} of the sample by 2002. Only Australia and New Zealand were left after this. \\
+	\vspace{0.5cm}
+	This created the time-varying effect not some duration with democracy. \\
+	\vspace{0.5cm}
+	When I \textbf{changed the duration} the \textbf{results changed}.
+	}}
+}
+
+\frame{
+	\frametitle{Not Shown}
+	\begin{center}
+		{\large{I haven't shown any hazard rate graphs because \emph{simPH} doesn't currently support Fine and Gray (1999).\\
+		\vspace{0.5cm}
+		I hope to include this in future versions.
+		}}
+	\end{center}
+}
 
 \frame{
 	\frametitle{Gandrud (2012): Historic time-period bias}
