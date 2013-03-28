@@ -227,7 +227,7 @@
 	\begin{itemize}
 	 	\item<1-> Keele (2010), 
 	 	\item<1-> Licht (2011), 
-	 	\item<1-> Gandrud (2012).
+	 	\item<1-> See the paper for replications of time-period biases.
 	 \end{itemize}
  	}}
 }
@@ -341,64 +341,6 @@ ggtvc(Sim2, qi = "First Difference", xlab = "\nTime in Days")
 		\caption{Simulated Relative Hazards for the Effect of Different Levels of Legislative Backlog on Directive Deliberation Time}
 		\begin{center}
 			\includegraphics[scale=0.3]{/Users/christophergandrud/Dropbox/Hazard_Ratio_Research_Note/InterpretingHazRatios/Paper/figure/TVCbacklog.png}
-		\end{center}
-		{\tiny{
-		Points are from the middle 95\% of simulations.
-		}}
-	\end{figure}
-\end{frame}
-
-\frame{
-	\frametitle{Gandrud (2012): Historic time-period bias}
-	{\large{
-	I studied why countries adopted FSA-type \textbf{financial regulation}. \\
-	\vspace{0.5cm}
-	\textbf{Ideational diffusion} theories expected that the effect of crisis, peer groups, and other mechanisms would be positive and increase from \textbf{1997}. \\
-	\vspace{0.5cm}
-	Traditional PHA did not indicate a time-varying effect, but these tests only work at points in time when a \textbf{unit experiences the event}. \\
-	\vspace{0.5cm}
-	\textbf{No country} created an FSA-style regulator in the sample before 1997. \\
-	}}
-}
-
-\frame{
-	\frametitle{Test}
-	A \textbf{minimal test} of the ideational diffusion hypotheses then becomes. Does the \textbf{direction of effects} after 1997 match what the theory suggested? \\
-	\vspace{0.5cm}
-	A nice way to both find the underlying weakness in the model and do a minimal test is to plot \textbf{hazard rates}.
-
-}
-
-\begin{frame}[fragile]
-	\frametitle{Hazard rates with \textbf{simPH}}
-	{\large
-	First, run the Cox PH model (not shown). \\
-	\vspace{0.25cm}
-	Then \ldots
-	}
-	{\scriptsize{
-<<eval=FALSE, tidy=FALSE>>=
-# Simulate hazard rates
-Sim4 <- coxsimLinear(M3, b = "crisis6", qi = "Hazard Rate", 
-                     Xj = c(-1.79, 0))
-
-# Relabel values
-## Please see Gandrud (2012) for more details
-Sim4$HRValue[Sim4$HRValue == "-1.79"] <- "Crisis"
-Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
-
-# Create hazard rate plot
-gglinear(Sim4, qi = "Hazard Rate", 
-         xlab = "\n Years from 1988", lsize = 1)
-@
-\end{frame}
-
-\begin{frame}
-	\frametitle{Relative Hazards}
-	\begin{figure}
-		\caption{Simulated Relative Hazards for the Effect of Different Levels of Legislative Backlog on Directive Deliberation Time}
-		\begin{center}
-			\includegraphics[scale=0.3]{/Users/christophergandrud/Dropbox/Hazard_Ratio_Research_Note/InterpretingHazRatios/Paper/figure/FinHR.png}
 		\end{center}
 		{\tiny{
 		Points are from the middle 95\% of simulations.
