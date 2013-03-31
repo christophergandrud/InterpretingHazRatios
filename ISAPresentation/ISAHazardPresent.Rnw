@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science (ISA Presentation)
 % Christopher Gandrud
-% 28 March 2013
+% 31 March 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -66,10 +66,10 @@
 	{\large{\textbf{Problems} with how Cox PH has been used addressed by:
 	\vspace{0.5cm}
 	\begin{itemize}
-		\item Licht (2011): time-varying effects,
-		\item Keele (2010): non-linear effects,
-		\item Hern\'an (2010): study duration bias,
-		\item Gandrud (2012): historical time-period bias.
+		\item<1-> Licht (2011): time-varying effects,
+		\item<2-> Keele (2010): non-linear effects,
+		\item<3-> Hern\'an (2010): study duration bias,
+		\item<3-> Gandrud (2012): historical time-period bias.
 	\end{itemize}
 	}}
 }
@@ -130,47 +130,26 @@
 }
 
 \frame{
-	\frametitle{Her\'an (2010): Study Duration Biases (1)}
-	{\LARGE{Another Problem:} \large{parameter estimates may be \textbf{biased} by a \textbf{study's duration}. 
+	\frametitle{Her\'an (2010) \& Gandrud (2012): Duration \& Time-period Biases (1)}
+	{\LARGE{Another Problem:} \large{parameter estimates may be \textbf{biased} by a study's \textbf{duration} and \textbf{historical time-period}. 
 	}}
 }
 
 \frame{
-	\frametitle{Her\'an (2010): Study Duration Biases (2)}
-	{\large {Especially a problem in cohort studies where units \textbf{drop out} of the risk set when they experience the event of interest. \\
-	\vspace{0.2cm}
-	There may be an \textbf{unobserved time specific factor} $Z$ that is \textbf{interacting} with an observed factor $X$ to make some units \textbf{more susceptible}.\\
-	\vspace{0.2cm}
-	Once the more susceptible units drop out then the \textbf{observed effect of $X$ will change}. \\
-	}}
-}
-
-\frame{
-	\frametitle{Her\'an (2010): Study Duration Biases (2)}
-	{\LARGE{He suggests:}}
-	\vspace{0.5cm}
-	{\large{
-	\begin{itemize}
-		\item \textbf{plotting} survival curves (or hazard rates), \vspace{0.2cm}
-		\item \textbf{rerunning} the analysis on \textbf{time-period subsets} of the data.
-	\end{itemize}
-	}}	
-}
-
-\frame{
-	\frametitle{Gandrud (2012) Historical Time-Period Biases}
-	{\LARGE{A Similar Problem:}} {\large{\textbf{historical time-period bias}. \\
+	\frametitle{Her\'an (2010) \& Gandrud (2012) (2)}
+	{\LARGE{Interpreting time-varying effects:}} \\
 	\vspace{1cm}
-	There may be unobserved time-period specific factors $Z$ common to all units that interact with observed variable $X$. \\
-	\vspace{0.25cm}
-	For example, \textbf{policy ideas} ($Z$) may be created and spread through \textbf{diffusion mechanisms} ($X$).\\
-	\vspace{0.25cm}
-	In extreme cases this can create time-varying effects that are \textbf{not picked up by PHA tests} and aren't easily modeled with time interactions.	
-	}}
+	\begin{itemize}
+		\item Time-varying effects are usually modelled as $\beta_{1}X_{i} + \beta_{2}f(t)X_{i}$. 
+		\item However, an observed `time-varying effect' may actually be caused by $X$ \textbf{interacting} with some \textbf{unobserved} factor $Z$, which is \textbf{highly correlated with time},
+		\item i.e. $\beta_{1}X_{i} + \beta_{2}Z_{i} +\beta_{3}X_{i}Z_{i}$ 
+		\vspace{0.5cm}
+		\item Ex: include time-period specific \textbf{ideas}. 
+		\item 	In extreme cases this can create time-varying effects that are \textbf{not picked up by PHA tests} and aren't easily modeled with time interactions.
+	\end{itemize}
 }
-
 \frame{
-	\frametitle{Gandrud (2012) Historical Time-Period Biases}
+	\frametitle{Her\'an (2010) \& Gandrud (2012) (3)}
 	{\large{Possible solution:
 	\vspace{0.5cm}
 	\begin{itemize}
@@ -190,15 +169,15 @@
 	\begin{center}
 		But \ldots \\ \vspace{0.5cm}
 	\end{center}
-	Often difficult with current computational tools.
+	\textbf{Often difficult} with current computational tools.
 	}}
 }
 
 \frame{
 	\frametitle{Introduce}
-	{\Large{To \textbf{help overcome} these problems I created the \emph{simPH} package for R.}} \\
+	{\Large{To \textbf{help overcome} this problem I created the \emph{simPH} package for R.}} \\
 	\vspace{0.5cm}
-	Simulates and plots Cox PH quantities that are currently difficult to do:
+	\textbf{Simulates} and \textbf{plots} Cox PH quantities of interest for:
 	\vspace{0.25cm}
 	\begin{itemize}
 		\item Splines,
@@ -246,7 +225,7 @@
 \begin{frame}[fragile]
 	\frametitle{simPH \& Splines}
 	{\large
-	First, run the Cox PH model swith splines (not shown). \\
+	First, run the Cox PH model with splines (not shown). \\
 	\vspace{0.5cm}
 	Then \ldots
 	}
@@ -307,9 +286,6 @@ Sim2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
 ggtvc(Sim2, qi = "First Difference", xlab = "\nTime in Days")
 @
 
- {\large{
- \textbf{First differences} are especially useful for dichotomous variables.
- }}
 }}
 \end{frame}
 
@@ -326,14 +302,30 @@ ggtvc(Sim2, qi = "First Difference", xlab = "\nTime in Days")
 	\end{figure}
 \end{frame}
 
-\frame{
-	\frametitle{Relative Hazards}
-	{\large{
-	\textbf{Relative hazards} can be more useful for continuous variables. \\
-	\vspace{0.5cm}
-	For example, the number of pieces of backlogged legislation. 
-	}}
-}
+\begin{frame}[fragile]
+	\frametitle{\emph{simPH \& Relative Hazards}}
+	{\large
+	First, run the Cox PH model with log-time interactions (not shown). \\
+	\vspace{0.25cm}
+	Then \ldots
+	}
+	{\scriptsize{
+<<BacklogCode, eval=FALSE, tidy=FALSE>>=
+# Create simtvc object for relative hazard
+Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
+                  qi = "Relative Hazard",
+                  Xj = seq(40, 200, 40),
+                  tfun = "log", from = 1200, to = 2000,
+                  by = 10, ci = "95")
+
+# Create relative hazard plot
+ggtvc(Sim3, qi = "Relative Hazard", 
+      xlab = "\nTime in Days", leg.name = "Backlogged \n Items")
+@
+
+}}	
+
+\end{frame}
 
 \begin{frame}
 	\frametitle{Relative Hazards}
