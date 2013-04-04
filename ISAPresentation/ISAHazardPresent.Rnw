@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science (ISA Presentation)
 % Christopher Gandrud
-% 1 April 2013
+% 4 April 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -43,7 +43,7 @@
 \frame{\tableofcontents}
 
 %%%%%%%%%%%%%%% Motivation %%%%%%%%%%%%%%
-\section{Motivation}
+\section{Motivation: Misspecification \& Misinterpretation}
 \frame{
 	\frametitle{Increasing Use}
 	{\large{Event History Analysis and especially Cox Proportional Hazard (PH) models have been \textbf{increasingly} used in political science. \\
@@ -63,7 +63,7 @@
 
 \frame{
 	\frametitle{The problems}
-	{\large{\textbf{Problems} with how Cox PH has been used addressed by:
+	{\large{\textbf{Problems} with Cox PH research discussed by:
 	\vspace{0.5cm}
 	\begin{itemize}
 		\item<1-> Licht (2011): time-varying effects,
@@ -74,8 +74,6 @@
 	}}
 }
 
-%%%%%%%%%%%%%%% Problems and Advantages of CoxPH %%%%%%%%%%%%%%
-\section{Misspecification \& Misinterpretation}
 \frame{
 	\frametitle{Cox PH Set Up}
 	{\Large{Cox PH Models:}} estimate how covariates influence the rate of an event happening.
