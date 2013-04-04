@@ -212,11 +212,11 @@
 \frame{
 	\frametitle{Keele Replication of Carpenter (2002)}
 	{\large{
-	Explain the time it takes for a drug to get FDA approval. \\
+	Time it takes for \textbf{FDA approval}. \\
 	\vspace{0.5cm}
-	Keele finds that a number of variables violate the PHA because of nonlinearity. \\
+	A number of variables violate the PHA because of \textbf{nonlinearity}. \\
 	\vspace{0.5cm}
-	For example, the number of FDA Drug Review staff has a non-linear effect on the hazard.
+	For example, the \textbf{number of FDA Drug Review staff} has a non-linear effect.
 	}}
 }
 
@@ -258,11 +258,11 @@ ggspline(Sim1, qi = "Hazard Ratio",
 
 \frame{
 	\frametitle{Licht Replication of Golub and Steunenberg (2007)}
-	Explain the time it takes for EU directives to pass. \\
+	Time it takes to \textbf{pass EU directives}. \\
 	\vspace{0.5cm}
-	Licht (\& original) find time-varying effects violate the PHA. \\
+	Licht (\& original) find \textbf{time-varying effects} violate the PHA. \\
 	\vspace{0.5cm}
-	For example, she finds that whether or not the QMV procedure is used has a time-varying effect. So, she includes log-time interactions.
+	For example, she finds that the use of \textbf{QMV} procedure is used has a time-varying effect. So, she includes \textbf{log-time interactions}.
 }
 
 \begin{frame}[fragile]
