@@ -51,7 +51,7 @@ opts_chunk$set(fig.align='center', dev='png')
 
 % Title
 \title{Getting More Out of Proportional Hazard Models in Political Science}
-    \author{Christopher Gandrud\footnote{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}). Thank you to Jeffrey Chwieroth. Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
+    \author{Christopher Gandrud\footnote{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}). Thank you to Jeffrey Chwieroth, Kelly Kadera, and participants at the International Studies Association Annual Convention (2013). Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
 
 \maketitle
 

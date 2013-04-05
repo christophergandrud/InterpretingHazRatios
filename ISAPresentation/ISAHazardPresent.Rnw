@@ -43,7 +43,7 @@
 \frame{\tableofcontents}
 
 %%%%%%%%%%%%%%% Motivation %%%%%%%%%%%%%%
-\section{Motivation: Misspecification \& Misinterpretation}
+\section{Cox PH Misspecification \& Misinterpretation}
 \frame{
 	\frametitle{Increasing Use}
 	{\large{Event History Analysis and especially Cox Proportional Hazard (PH) models have been \textbf{increasingly} used in political science. \\
@@ -67,7 +67,7 @@
 	\vspace{0.5cm}
 	\begin{itemize}
 		\item<1-> Licht (2011): time-varying effects,
-		\item<2-> Keele (2010): non-linear effects,
+		\item<2-> Keele (2010): nonlinear effects,
 		\item<3-> Hern\'an (2010): study duration bias,
 		\item<3-> Gandrud (2012): historical time-period bias.
 	\end{itemize}
@@ -119,9 +119,9 @@
 
 \frame{
 	\frametitle{Keele (2010): Nonlinear Effects}
-	{\LARGE{Another cause:}} {\large{\textbf{non-linear effects} \\
+	{\LARGE{Another cause:}} {\large{\textbf{nonlinear effects} \\
 	\vspace{1cm}
-	Keele suggests testing for non-linearity and including \textbf{polynomials/splines} \textbf{before testing} the PHA. \\
+	Keele suggests testing for nonlinearity and including \textbf{polynomials/splines} \textbf{before testing} the PHA. \\
 	\vspace{0.5cm}
 	Polynomials and splines are difficult to interpret unless they are plotted, so \textbf{plot them}.
 	}}
@@ -216,7 +216,7 @@
 	\vspace{0.5cm}
 	A number of variables violate the PHA because of \textbf{nonlinearity}. \\
 	\vspace{0.5cm}
-	For example, the \textbf{number of FDA Drug Review staff} has a non-linear effect.
+	For example, the \textbf{number of FDA drug review staff} has a nonlinear effect.
 	}}
 }
 
@@ -347,7 +347,7 @@ ggtvc(Sim3, qi = "Relative Hazard",
 	\vspace{0.5cm}
 	\begin{itemize}
 		\item Trying to \textbf{expand capabilities}, e.g. Fine \& Gray Competing Risks, simulating/plotting interactions between variable types, frailties.
-		\item Options for finding highest density regions (Hyndman 1996), especially useful for quanties on non-linear scales.
+		\item Options for finding \textbf{highest density regions} (Hyndman 1996), especially useful for quanties on nonlinear scales.
 		\item Increase \textbf{stability} and \textbf{speed}.
 		\item Expand \textbf{aesthetic options}.
 	\end{itemize}
