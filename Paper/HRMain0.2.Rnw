@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science
 % Christopher Gandrud
-% 5 April 2013
+% 9 April 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper]{article}
@@ -58,7 +58,7 @@ opts_chunk$set(fig.align='center', dev='png')
 % Abstract
 \begin{abstract}
 
-\noindent\emph{Very early draft prepared for the International Studies Association Annual Convention, 2013. \\ Comments welcome.} \\[0.2cm]
+\noindent\emph{Draft Version. Comments welcome.} \\[0.2cm]
 
 Recently the Cox Proportional Hazard (PH) model has become a popular tool for political scientists for examining cross-unit cross-time data. However, as \cite{Licht2011}, \cite{Keele2010}, and \cite{Hern'an2010} have pointed out many researchers using EHA have inadequately addressed issues of model misspecification. This is unfortunate because causes of model misspecification, particularly nonlinearity and time-varying effects may be substantively meaningful for political scientists. Ignoring them means that researchers are not only presenting biased estimates, but also not using EHA to its full potential. For example, focusing on time averaged effects ignores EHA's ability to examine how time-period specific events--such as global shocks or the promotion of new policy ideas--interact with traditional covariates. In this article I advocate a strategy for political scientists using Cox PH models to address these issues. The computational tools for implementing this strategy are currently lacking. So I introduce a new R package--\emph{simPH}--that includes tools for graphically exploring time-varying and nonlinear Cox PH estimates along with estimation uncertainty. I illustrate \emph{simPH}'s capabilities by replicating results from recent political science research.
 
@@ -72,12 +72,12 @@ Recently the Cox Proportional Hazard (PH) model has become a popular tool for po
 
 Recent articles in \emph{Political Analysis} have highlighted two frequently overlooked sources of model misspecification and misinterpretation in the popular Cox Proportional Hazard (PH) model \citep{cox1972}. \cite{Licht2011} discusses how to model and interpret time-varying covariate effects that violate the proportional hazards assumption. \cite{Keele2010} cautions that violations of the proportional hazards assumption can also be caused by forms of model misspecification other than  time-varying effects, such as un-modeled nonlinearity. He argues that political scientists rarely test for this possibility. In addition, \cite{Hern'an2010} recently published a short article in \emph{Epidemiology} highlighting how a study's time-period can bias parameter estimates. These types of bias are often overlooked in political science research.
 
-The Cox PH model and Event History Analysis (EHA) in general is increasingly being used to address political science questions. A small sample of recent studies using Cox PH and EHA includes: \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. As the Cox PH model has become more prevalent in political science we need better strategies and tools for addressing the issues that \cite{Licht2011}, \cite{Keele2010}, and \cite{Hern'an2010} identify.
+The Cox PH model and Event History Analysis (EHA) in general is increasingly being used to address political science questions. A small sample of recent studies using Cox PH and EHA generally includes: \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. As the Cox PH model has become more prevalent in political science we need better strategies and tools for addressing the issues that \cite{Licht2011}, \cite{Keele2010}, and \cite{Hern'an2010} identify.
 
 My aim in this paper is to lay out a strategy and corresponding computational tools for addressing these problems. First, I briefly summarize Licht, Keele, and Hern\'{a}n's arguments. Second, I combine them together into a single strategy for political scientists using Cox PH models. Graphically presenting results can be a useful way of addressing these issues, so I introduce a new R \citeyearpar{RLanguage} package--\emph{simPH} \citep{R-simPH}--that includes tools for graphically exploring time-varying and nonlinear Cox PH estimates along with corresponding estimation uncertainty. I illustrate \emph{simPH}'s capabilities by replicating results from recent political science research.
 
 %%%%%% Section: Common issues
-\section{Common issues in analyses with Cox PH models}
+\section{Common issues in analyses using Cox PH models}
 
 In this paper I focus on one of the more commonly used EHA models in political science, the Cox Proportional Hazard Model \citet{cox1972}.\footnote{See Box-Steffensmeier and Jones \citeyearpar[47]{boxsteffensmeier2004} for a discussion of the model's popularity in political science. In general my conclusions also apply to Fine and Gray's \citeyearpar{Fine1999} Competing Risks Model which is a Cox PH analogue for competing risks EHA.} The Cox PH is a semi-parametric EHA model that allows researchers to examine how specified factors influence the rate of a particular event happening--e.g. a policy is adopted, a government falls, or a war breaks out--at a particular point in time given that the event has not already occurred.
 
@@ -186,7 +186,7 @@ To solve these problems I am introducing the \emph{simPH} package for R.\footnot
 \begin{enumerate}
 	\item Estimate a Cox PH model using \emph{survival}'s \texttt{coxph} command,
 	\item Simulate parameter estimates and calculate the relative hazards, first differences, hazard ratios, or hazard rates\footnote{Marginal effects can also be estimated for linear multiplicative interactions.} for a given parameter using the \emph{simPH} command corresponding to the variable type.\footnote{\texttt{coxsimLinear} can be used for linear, time constant variables, \texttt{coxsimInteract} for linear multiplicative interactions, \texttt{coxsimPoly} for polynomials, \texttt{coxsimSpline} for penalised splines, and \texttt{coxsimtvc} for time-varying coefficients.}
-	\item Plot the simulations using the appropriate \emph{simPH} plotting command.\footnote{Commands include: \texttt{gglinear}, \texttt{gginteract}, \texttt{ggpoly}, \texttt{ggspline}, and \texttt{ggtvc}. These commands use \emph{ggplot2} \citep{R-ggplot2} and in some cases \texttt{scatter3d} from the \emph{car} packages \citep{R-car} to plot the simulations. You can use the simulation objects created by \emph{simPH} to make graphs with any other plotting package.} 
+	\item Plot the simulations using the \texttt{simGG} method command.\footnote{It uses \emph{ggplot2} \citep{R-ggplot2} and in some cases \texttt{scatter3d} from the \emph{car} packages \citep{R-car} to plot the simulations. You can use the simulation objects created by \emph{simPH} to make graphs with any other plotting package.} 
 \end{enumerate}
 
 \noindent The simulation functions follow \cite{King2000} (discussed above) to simulate and calculate a variety of quantities of interest. The user can specify the number of simulations to run. The more simulations we conduct,\footnote{The \emph{simPH} default is 1,000.} the better picture we get of the probability distributions our parameters are from \citep[349]{King2000}.\footnote{Note that in some cases, such as with hazard rates with penalised splines, it is easy to ask the program to create more simulations than average desktop computers can easily handle. Therefore the user may need to balance a desire for a clear view of the probability distribution a quantity of interest comes from with what is computationally possible.} The plot functions then take these simulated values and plot them along with a smoothing line specified by the user to summarize their distribution's central tendency.
@@ -238,7 +238,7 @@ Sim1 <- coxsimSpline(M1, bspline = "pspline(stafcder, df = 4)",
                      Xl = seq(1099, 1699, by = 10), ci = "90")
 
 # Plot simulated values
-ggspline(Sim1, qi = "Hazard Ratio", 
+simGG(Sim1, qi = "Hazard Ratio", 
          xlab = "\n Number of FDA Drug Review Staff", palpha = 0.2)
 @  
 
@@ -301,7 +301,7 @@ Sim2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
                    by = 15, ci = "95")
 
 # Create first difference plot
-ggtvc(Sim2, qi = "First Difference", xlab = "\nTime in Days")
+simGG(Sim2, qi = "First Difference", xlab = "\nTime in Days")
 @
 {\scriptsize {The figure's points show the middle 95 percent of the simulations at each point in time. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation. \\ As in Licht's original the time period plotted is truncated from 80 to 2,000 to make the estimates more easily interpretable.}}
 \end{figure}
@@ -321,7 +321,7 @@ Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
                   by = 10)
 
 # Create relative hazard plot
-ggtvc(Sim3, qi = "Relative Hazard", xlab = "\nTime in Days", leg.name = "Backlogged \n Items")
+simGG(Sim3, qi = "Relative Hazard", xlab = "\nTime in Days", leg.name = "Backlogged \n Items")
 @
 {\scriptsize{The figure's points show the middle 95 percent of the simulations at each point in time and each fitted value. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.}}
 \end{figure}
@@ -369,7 +369,7 @@ Sim4$HRValue[Sim4$HRValue == "-1.79"] <- "Crisis"
 Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
 
 # Create hazard rate plot
-gglinear(Sim4, qi = "Hazard Rate", 
+simGG(Sim4, qi = "Hazard Rate", 
          xlab = "\n Years from 1988", lsize = 1)
 @
 {\scriptsize{The figure's points show the middle 95 percent of the simulations at each point in time and each fitted value. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation. \\ Note that the figure is based on the first imputed data set from \cite{Gandrud2012}, rather than being an average of all five. \\ Also, the graph shows the simulated hazard rate when all other covariates are 0.}}
@@ -431,7 +431,7 @@ Sim1 <- coxsimSpline(M1, bspline = "pspline(stafcder, df = 4)",
                      Xl = seq(1099, 1699, by = 10), ci = "90")
 
 # Plot simulated Hazard Ratios
-ggspline(Sim1, qi = "Hazard Ratio", 
+simGG(Sim1, qi = "Hazard Ratio", 
          xlab = "\nNumber of FDA Drug Review Staff ", palpha = 0.2)
 @
 
@@ -478,7 +478,7 @@ Sim2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
                    by = 15, ci = "95")
 
 # Create first difference plot
-ggtvc(Sim2, qi = "First Difference", xlab = "\nTime in Days")
+simGG(Sim2, qi = "First Difference", xlab = "\nTime in Days")
 @
 
 \subsubsection*{Figure \ref{BacklogRH}}
@@ -493,7 +493,7 @@ Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
                   by = 10, ci = "95")
 
 # Create relative hazard plot
-ggtvc(Sim3, qi = "Relative Hazard", 
+simGG(Sim3, qi = "Relative Hazard", 
       xlab = "\nTime in Days", leg.name = "Backlogged \n Items")
 @
 
@@ -527,7 +527,7 @@ Sim4$HRValue[Sim4$HRValue == "-1.79"] <- "Crisis"
 Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
 
 # Create hazard rate plot
-gglinear(Sim4, qi = "Hazard Rate", 
+simGG(Sim4, qi = "Hazard Rate", 
          xlab = "\n Years from 1988", lsize = 1)
 @
 
