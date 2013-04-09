@@ -50,7 +50,7 @@ opts_chunk$set(fig.align='center', dev='png')
 \begin{document}
 
 % Title
-\title{Getting More Out of Proportional Hazard Models in Political Science}
+\title{Cox Proportional Hazards Models \& Political Science: Solutions for Model Misspecification \& Misinterpretation}
     \author{Christopher Gandrud\footnote{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}). Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, and participants at the International Studies Association Annual Convention (2013). Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper can be completely reproduced from source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
 
 \maketitle
@@ -382,7 +382,7 @@ Though I did not find evidence of the time-varying effect I expected using stand
 
 \section{Conclusion}
 
-In this brief paper I have combined a number of important insights about avoid proportional hazard model misspecification and misinterpretation into one modeling strategy. In particular many of the multiplicative interactions and time-period specific biases that can trip up researchers may actually be factors political scientists are interested in studying. So we need tools to fully explore them. Doing this is often difficult with currently available software. So, I have also created and illustrated a new R package--\emph{simPH}--that makes it considerably easier to effectively explore and present results from Cox proportional hazard models. 
+In this brief paper I have combined a number of important insights about avoid proportional hazard model misspecification and misinterpretation into one modeling strategy. Looking out for and properly estimating many of the multiplicative interactions and time-period specific biases that can trip up researchers is crucial for political scientists as they are factors that we are interested in studying. So we need tools to fully explore them. Exploring results and their associated uncertainty estimated from proportional hazards models is often difficult with currently available software. So, an important contribution of this paper has been to created and illustrate a new R package--\emph{simPH}--that makes it considerably easier to effectively explore and present results from Cox proportional hazard models. 
 
 \todo{Rewrite Conclusion}
 
