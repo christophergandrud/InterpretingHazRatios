@@ -51,7 +51,7 @@ opts_chunk$set(fig.align='center', dev='png')
 
 % Title
 \title{Getting More Out of Proportional Hazard Models in Political Science}
-    \author{Christopher Gandrud\footnote{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}). Thank you to Jeffrey Chwieroth, Kelly Kadera, and participants at the International Studies Association Annual Convention (2013). Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper, including all empirical analyses and graphs can be reproduced with the source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
+    \author{Christopher Gandrud\footnote{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}). Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, and participants at the International Studies Association Annual Convention (2013). Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper can be completely reproduced from source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
 
 \maketitle
 
@@ -173,13 +173,13 @@ Before moving on to examples, lets combine these suggestions into one research s
 	\item Test for violations of the proportional hazards assumption.
 	\item If non-proportionality exists include time interactions.
 	\item Rerun PHA test. If non-proportionality still exists after including time interactions, consider another model that does not use the PHA. 
-    \item Regardless of the EHA chosen, consider possible study duration and time-period specific biases. Show your estimates and associated uncertainty by graphing simulated quantaties of interest.
+    \item Regardless of the EHA chosen, consider possible study duration and time-period specific biases. Also, show your estimates and associated uncertainty by graphing simulated quantities of interest.
 \end{enumerate}
 
 %%%%%% Section: simPH
 \section{\emph{simPH}: tools for simulating and graphing effects from Cox PH models}
 
-One reason that researchers have inconsistently incorporated these suggestions is that there has been a lack of computational capabilities to easly do so. In R the \emph{survival} \citep{R-survival} and \emph{Zelig} \citep{R-zelig} packages have functions for estimating splines and time interactions. However, their capabilities for graphically showing results, especially over time, have been limited. Current capabilities for showing results from splines\footnote{Primarily R's \texttt{termplot} command. See \cite{Keele2008}, chapter 6.} do not simulate uncertainty in the way described earlier from Cox PH models. They also do not show how effects are estimated to change over time. In general the capabilities for showing results with time interactions is very limited. Usually, showing these types of results requires considerable researcher effort to extract estimates from model objects and then devise ways to show them graphically. See for example Licht's code for replicating the time-interaction plots in her paper.\footnote{It is available at: \url{http://hdl.handle.net/1902.1/15633}.}
+One reason that researchers have inconsistently incorporated these suggestions is that there has been a lack of computational capabilities to easily do so. In R the \emph{survival} \citep{R-survival} and \emph{Zelig} \citep{R-zelig} packages have functions for estimating splines and time interactions. However, their capabilities for graphically showing estimates and associated uncertainty, especially over time, have been limited. Current capabilities for showing results from splines\footnote{Primarily R's \texttt{termplot} command. See \cite{Keele2008}, chapter 6.} do not simulate uncertainty in the way described earlier from Cox PH models. They also do not show how effects are estimated to change over time. In general the capabilities for showing results with time interactions is very limited. Usually, showing these types of results requires considerable researcher effort to extract estimates from model objects and then devise ways to show them graphically. See for example Licht's code for replicating the time-interaction plots in her paper.\footnote{It is available at: \url{http://hdl.handle.net/1902.1/15633}.}
 
 To solve these problems I am introducing the \emph{simPH} package for R.\footnote{See the Appendix for installation instructions and source code for the following examples.} There are three basic steps to use the package:
 
@@ -368,6 +368,9 @@ Sim4 <- coxsimLinear(M3, b = "crisis6", qi = "Hazard Rate",
 Sim4$HRValue[Sim4$HRValue == "-1.79"] <- "Crisis"
 Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
 
+# Convert time from 1988 to calendar years
+Sim4$time <- Sim4$time + 1987
+
 # Create hazard rate plot
 simGG(Sim4, qi = "Hazard Rate", 
          xlab = "\n Years from 1988", lsize = 1)
@@ -379,9 +382,11 @@ Though I did not find evidence of the time-varying effect I expected using stand
 
 \section{Conclusion}
 
-In this brief paper I have combined a number of important insights about how to build proportional hazards models into a strategy that will help researchers avoid common causes of model misspecification and misinterpretation. An important insight is that the multiplicative interactions and time-period specific biases researchers should look out for in their models may actually be factors political scientists are interested in studying. So we need tools to fully explore them. Doing this is often difficult with currently available software. So, I have also created and illustrated a new R package--\emph{simPH}--that makes it considerably easier to effectively explore and present results from these models. 
+In this brief paper I have combined a number of important insights about avoid proportional hazard model misspecification and misinterpretation into one modeling strategy. In particular many of the multiplicative interactions and time-period specific biases that can trip up researchers may actually be factors political scientists are interested in studying. So we need tools to fully explore them. Doing this is often difficult with currently available software. So, I have also created and illustrated a new R package--\emph{simPH}--that makes it considerably easier to effectively explore and present results from Cox proportional hazard models. 
 
-\emph{simPH} is in the early stages of development, but more is on the way. In particular, it will be useful to add the ability to show results from interactions between different types of variables. For example, plotting quantities of interest from an interaction between linear and spline fitted variables. Hazard rate graphs would be more usefully interpretable if you were able to fit all of the covariate values rather than just the variable you intend to plot. The package would also be more useful if future versions were capable of simulating and plotting results from models with frailties, i.e. random effects \cite[see][]{BoxSteffensmeier2006}. There are a number of computational efficiency improvements that could be made as well as adding the option to show traditional confidence bounds rather than the full number of simulation results. Finally, I hope to expand the package so that it is an effective tool for presenting results from other proportional hazards event history analysis models, notably the Fine and Gray competing risks model.
+\todo{Rewrite Conclusion}
+
+\emph{simPH} is available for researchers.  In particular, it will be useful to add the ability to show results from interactions between different types of variables. For example, plotting quantities of interest from an interaction between linear and spline fitted variables. Hazard rate graphs would be more usefully interpretable if you were able to fit all of the covariate values rather than just the variable you intend to plot. The package would also be more useful if future versions were capable of simulating and plotting results from models with frailties, i.e. random effects \cite[see][]{BoxSteffensmeier2006}. There are a number of computational efficiency improvements that could be made as well as adding the option to show traditional confidence bounds rather than the full number of simulation results. Finally, I hope to expand the package so that it is an effective tool for presenting results from other proportional hazards event history analysis models, notably the Fine and Gray competing risks model.
 
 \section*{Appendix}
 
@@ -505,7 +510,7 @@ library(repmis)
 
 # Load Gandrud (2012) data
 ## File modified using https://raw.github.com/christophergandrud/
-# InterpretingHazRatios/master/AncillaryFiles/FinReplicateData.do
+##      InterpretingHazRatios/master/AncillaryFiles/FinReplicateData.do
 FinData <- source_GitHubData("https://raw.github.com/christophergandrud/
             InterpretingHazRatios/master/AncillaryFiles/FinSurvData.csv")
 
@@ -525,6 +530,9 @@ Sim4 <- coxsimLinear(M3, b = "crisis6", qi = "Hazard Rate",
 ## Please see Gandrud (2012) for more details
 Sim4$HRValue[Sim4$HRValue == "-1.79"] <- "Crisis"
 Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
+
+# Convert time from 1988 to calendar years
+Sim4$time <- Sim4$time + 1987
 
 # Create hazard rate plot
 simGG(Sim4, qi = "Hazard Rate", 
