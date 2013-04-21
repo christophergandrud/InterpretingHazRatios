@@ -161,7 +161,7 @@ Finding SDSB and HPSB can be tricky. You should estimate and plot hazard rates o
 
 
 %%%%%% Section: Modeling Strategy
-\section{A Cox PH modeling strategy}
+\section{A Cox PH Modeling Strategy}
 
 Before moving on to examples, lets combine these suggestions into one research strategy for examining phenomena with Cox PH models. The strategy has a number of steps:
 
@@ -175,7 +175,7 @@ Before moving on to examples, lets combine these suggestions into one research s
 \end{enumerate}
 
 %%%%%% Section: simPH
-\section{\emph{simPH}: tools for simulating and graphing effects from Cox PH models}
+\section{\emph{simPH}: Tools for Simulating and Graphing Effects from Cox PH Models}
 
 One reason that researchers have inconsistently incorporated these suggestions is that there has been a lack of computational capabilities to easily do so, especially when it comes to examining the substantively interpreting interactive and nonlinear estimates and their associated uncertainty. In R the \emph{survival} \citep{R-survival} and \emph{Zelig} \citep{R-zelig} packages have functions for testing the proportional hazards assumption and estimating splines and time interactions. However, their capabilities for graphically showing estimates and associated uncertainty, especially over time, have been limited. Current capabilities for showing results from splines\footnote{Primarily R's \texttt{termplot} command. See \cite{Keele2008}, chapter 6.} present results in difficult to interpret quantities and without indicating substantively meaningful estimation uncertainty. They also do not show how spline effects are estimated to change over time. In general the capabilities for showing results with time interactions is very limited. Usually, showing these types of results requires considerable researcher effort to extract estimates from model objects and then devise ways to show them graphically. See for example Licht's code for replicating the time-interaction plots in her paper.\footnote{It is available at: \url{http://hdl.handle.net/1902.1/15633}.}
 
@@ -202,7 +202,7 @@ where $k$ is a `group'.\footnote{Currently, \emph{simPH} does not simulate uncer
 %%%%%% Section: Demonstrations
 \section{Demonstrations}
 
-To illustrate how \emph{simPH} can be used by political scientists, I will use it to replicate key figures and findings from \cite{Keele2010}, \cite{Licht2011}, and \cite{Gandrud2012, Gandrud2013}.
+To illustrate how \emph{simPH} can be used by political scientists, I will use it to replicate key figures and findings from \cite{Keele2010}, \cite{Licht2011}, and \cite{Gandrud2012, Gandrud2013}. The purpose of this section is not to verify the results of these studies, but to verify \emph{simPH}'s' accuracy and usefulness.
 
 \subsection{Non-proportional hazards \& Nonlinear effects}
 
@@ -258,7 +258,7 @@ Figure \ref{TermPlot} uses \texttt{termplot} to plot the log hazard of the effec
 
 \emph{simPH} also allows us to plot hazard rates from spline estimates. This allows us to examine the possibility of any study duration or historical time-period specific biases.\footnote{Currently, \emph{simPH} cannot calculate hazard rates from stratified regression. Also, as a practical note researchers should carefully consider the number of simulations that they ask \emph{simPH} to make. It is very easy to attempt to draw many more simulations than the average computer can handle when finding hazard rates for spline estimates.} 
 
-\subsection{Time-varying effects}
+\subsection{Time-varying Effects}
 
 Though current capabilities for showing quantities of interest for splines are marginally improved by the simulation capabilities of \emph{simPH}, there are currently no easy to use ways to visually explore time-varying effects. As such \emph{simPH} substantially improves researchers' abilities to effectively show these results. To demonstrate this, I will recreate plots from \cite{Licht2011}.\footnote{As I mentioned earlier, she makes the Stata source code available. \emph{simPH} largely makes it much easier to implement these methods.} 
 
@@ -324,7 +324,7 @@ simGG(Sim3, qi = "Relative Hazard", xlab = "\nTime in Days", leg.name = "Backlog
 {\scriptsize{The figure's points show the middle 95 percent of the simulations at each point in time and each fitted value. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.}}
 \end{figure}
 
-\subsection{Time-period biases}
+\subsection{Time-period Biases}
 
 The examples we have looked at so far study phenomenon using generic rather than calendar time\footnote{\cite{Golub2007} do explicitly model particular time-period specific effects using dummies for whether or not legislation was proposed before or after the Single European Act.} and without examining how study duration may have affected hazard estimates. Let's now turn to look at how to examine these potential issues. Probably more so than with nonlinear and traditional time-varying effects, accounting for study duration selection and time-period specific biases requires not only the use of computational tools like \emph{simPH}, but also a close reading of the underlying data and events surrounding a study's observation period.
 
