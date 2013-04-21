@@ -4,7 +4,7 @@
 .DS_Store
 .Rproj.user
 .Rhistory
-.RData
+*.RData
 *Cache/
 *figure/
 *.aux
