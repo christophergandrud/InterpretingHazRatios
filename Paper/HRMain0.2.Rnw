@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science
 % Christopher Gandrud
-% 21 April 2013
+% 22 April 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper]{article}
@@ -370,10 +370,14 @@ Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
 Sim4$time <- Sim4$time + 1987
 
 # Create hazard rate plot
-simGG(Sim4, qi = "Hazard Rate", 
-         xlab = "\n Years from 1988", lsize = 1)
+Plot4 <- simGG(Sim4, qi = "Hazard Rate", 
+               xlab = "", lsize = 1)
+
+# Use ggplot2 to add a dotted vertical line at 1998
+Plot4 + geom_vline(aes(xintercept = 1997), 
+                   linetype = "dotted")
 @
-{\scriptsize{The figure's points show the middle 95 percent of the simulations at each point in time and each fitted value. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation. \\ Note that the figure is based on the first imputed data set from \cite{Gandrud2012}, rather than being an average of all five. \\ Also, the graph shows the simulated hazard rate when all other covariates are 0.}}
+{\scriptsize{The figure's points show the middle 95 percent of the simulations at each point in time and each fitted value. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation. \\ The dotted vertical line indicates the year 1997. \\ Note that the figure is based on the first imputed data set from \cite{Gandrud2012}, rather than being an average of all five. \\ Also, the graph shows the simulated hazard rate when all other covariates are 0.}}
 \end{figure} 
 
 Though I did not find evidence of the time-varying effect I expected using standard proportional hazards tests, this does not mean there was no evidence for such an effect. Because of time-period specific events (or the lack of them) time-varying effects may exist but are only visible by plotting hazard rates over time and with careful consideration of the time-period that the sample is from.  
@@ -531,8 +535,13 @@ Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
 Sim4$time <- Sim4$time + 1987
 
 # Create hazard rate plot
-simGG(Sim4, qi = "Hazard Rate", 
-         xlab = "\n Years from 1988", lsize = 1)
+Plot4 <- simGG(Sim4, qi = "Hazard Rate", 
+               xlab = "", lsize = 1)
+
+# Use ggplot2 to add a dotted vertical line at 1998
+library(ggplot2)
+Plot4 + geom_vline(aes(xintercept = 1997), 
+                   linetype = "dotted")
 @
 
 % Bibliography
