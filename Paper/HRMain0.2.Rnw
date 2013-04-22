@@ -511,8 +511,8 @@ library(repmis)
 # Load Gandrud (2012) data
 ## File modified using https://raw.github.com/christophergandrud/
 ##      InterpretingHazRatios/master/AncillaryFiles/FinReplicateData.do
-FinData <- source_GitHubData("https://raw.github.com/christophergandrud/
-            InterpretingHazRatios/master/AncillaryFiles/FinSurvData.csv")
+FinData <- source_GitHubData(paste0("https://raw.github.com/christophergandrud/",
+            "InterpretingHazRatios/master/AncillaryFiles/FinSurvData.csv"))
 
 
 # Replicate model B6
