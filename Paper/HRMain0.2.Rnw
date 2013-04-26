@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science
 % Christopher Gandrud
-% 22 April 2013
+% 26 April 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper]{article}
@@ -233,11 +233,10 @@ Sim1 <- coxsimSpline(M1, bspline = "pspline(stafcder, df = 4)",
                      bdata = CarpenterFdaData$stafcder,
                      qi = "Hazard Ratio",
                      Xj = seq(1100, 1700, by = 10), 
-                     Xl = seq(1099, 1699, by = 10), ci = "90")
+                     Xl = seq(1099, 1699, by = 10), ci = 0.90)
 
 # Plot simulated values
-simGG(Sim1, qi = "Hazard Ratio", 
-         xlab = "\n Number of FDA Drug Review Staff", palpha = 0.2)
+simGG(Sim1, xlab = "\n Number of FDA Drug Review Staff", palpha = 0.2)
 @  
 
 {\scriptsize {The figure's points show the middle 90 percent of the simulations at each value of FDA staff. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.}}
@@ -296,10 +295,10 @@ M2 <- coxph(Surv(begin, end, event) ~
 Sim2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
                    qi = "First Difference",
                    tfun = "log", from = 80, to = 2000,
-                   by = 15, ci = "95")
+                   by = 15, ci = 0.95)
 
 # Create first difference plot
-simGG(Sim2, qi = "First Difference", xlab = "\nTime in Days")
+simGG(Sim2, xlab = "\nTime in Days")
 @
 {\scriptsize {The figure's points show the middle 95 percent of the simulations at each point in time. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation. \\ As in Licht's original the time period plotted is truncated from 80 to 2,000 to make the estimates more easily interpretable.}}
 \end{figure}
@@ -319,7 +318,7 @@ Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
                   by = 10)
 
 # Create relative hazard plot
-simGG(Sim3, qi = "Relative Hazard", xlab = "\nTime in Days", leg.name = "Backlogged \n Items")
+simGG(Sim3, xlab = "\nTime in Days", leg.name = "Backlogged \n Items")
 @
 {\scriptsize{The figure's points show the middle 95 percent of the simulations at each point in time and each fitted value. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.}}
 \end{figure}
@@ -346,7 +345,7 @@ He found that as expected variables were predicted to have a positive effect whe
 
 He did not find similar violations of the proportional hazards tests for any variables in models looking at adoption of unified independent supervision. Can we conclude that these variables didn't have a time-varying effect? Such a conclusion is not necessary supported by the model and data. This is because before 1997 almost no countries created this type of supervision. When he graphed hazard rates over time (see Figure \ref{FinHR} for an example) it was clear that the variables were estimated to have had no affect on adoption before 1997. But, many of the predicted ideational diffusion mechanisms did have an effect on unified independent supervision in the direction predicted \emph{after} 1997. This provided evidence for an interaction between time-period specific ideational promotion and mechanisms that could make countries more receptive to adopting the ideas.
 
-Figure \ref{FinHR} shows the simulated hazard rate for the effect of banking crises on countries with multiple specialized regulators creating a unified and specialized system. It was created using \emph{simPH}\footnote{See the replication code in the Appendix} and approximates Figure 4 from Gandrud \citeyearpar[20]{Gandrud2012}.\footnote{The original figure used a bootstrapping method implemented in Stata to approximate the hazard rates. This method does not show uncertainty surrounding the estimates. Note that for hazard rates \emph{simPH} currently only simulates uncertainty around the coefficient estimates, but not the baseline hazard.} We can clearly see that before 1997 (time 9 on the graph) having a crisis is predicted to have no affect on unifying multiple specialized financial supervisors. It's effect increases after 1997. This effect is statistically significant at the 95 percent level. This is exactly the time-varying effect we would expect to see based on theories that countries in crisis are more likely to adopt heavily promoted ideas as a way of overcoming means-ends uncertainty \citep[see][]{blyth2002,blyth2003,mcnamara1998,mcnamara2002,Windmaier2007}. 
+Figure \ref{FinHR} shows the simulated hazard rate for the effect of banking crises on countries with multiple specialized regulators creating a unified and specialized system. It was created using \emph{simPH}\footnote{See the replication code in the Appendix} and approximates Figure 4 from Gandrud \citeyearpar[20]{Gandrud2012}.\footnote{The original figure used a bootstrapping method implemented in Stata to approximate the hazard rates. This method does not show uncertainty surrounding the estimates. Note that for hazard rates \emph{simPH} currently only simulates uncertainty around the coefficient estimates, but not the baseline hazard.} We can clearly see that before 1997 (time 9 on the graph) having a crisis is predicted to have no affect on unifying multiple specialized financial supervisors. It's effect increases \emph{after} 1997. This effect is statistically significant at the 95 percent level. This is exactly the time-varying effect we would expect to see based on theories that countries in crisis are more likely to adopt heavily promoted ideas as a way of overcoming means-ends uncertainty \citep[see][]{blyth2002,blyth2003,mcnamara1998,mcnamara2002,Windmaier2007}. 
 
 \begin{figure}
     \caption{Hazard Rate for Unifying Multiple Financial Supervisors for Countries with Banking Crisis}
@@ -370,10 +369,9 @@ Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
 Sim4$time <- Sim4$time + 1987
 
 # Create hazard rate plot
-Plot4 <- simGG(Sim4, qi = "Hazard Rate", 
-               xlab = "", lsize = 1)
+Plot4 <- simGG(Sim4, xlab = "", lsize = 1)
 
-# Use ggplot2 to add a dotted vertical line at 1998
+# Use ggplot2 to add a dotted vertical line at 1997
 Plot4 + geom_vline(aes(xintercept = 1997), 
                    linetype = "dotted")
 @
@@ -400,7 +398,7 @@ devtools::install_github("simPH", "christophergandrud")
 
 \noindent You need to have the \emph{devtools} package \citep{R-devtools} set up to install \emph{simPH}.
 
-For more information about \emph{simPH} see: \url{http://christophergandrud.github.com/simPH/}. Please report any bugs to \url{https://github.com/christophergandrud/simPH/issues}. Also please feel free to contribute to the package's development by making a pull request on GitHub.
+For more information about \emph{simPH} see: \url{http://christophergandrud.github.io/simPH/}. Please report any bugs to \url{https://github.com/christophergandrud/simPH/issues}. Also please feel free to contribute to the package's development by making a pull request on GitHub.
 
 \subsection*{Source Code}
 
@@ -433,11 +431,10 @@ Sim1 <- coxsimSpline(M1, bspline = "pspline(stafcder, df = 4)",
                      bdata = CarpenterFdaData$stafcder,
                      qi = "Hazard Ratio",
                      Xj = seq(1100, 1700, by = 10), 
-                     Xl = seq(1099, 1699, by = 10), ci = "90")
+                     Xl = seq(1099, 1699, by = 10), ci = 0.90)
 
 # Plot simulated Hazard Ratios
-simGG(Sim1, qi = "Hazard Ratio", 
-         xlab = "\nNumber of FDA Drug Review Staff ", palpha = 0.2)
+simGG(Sim1, xlab = "\nNumber of FDA Drug Review Staff ", palpha = 0.2)
 @
 
 \subsubsection*{Figure \ref{TermPlot}}
@@ -480,10 +477,10 @@ M2 <- coxph(Surv(begin, end, event) ~
 Sim2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
                    qi = "First Difference",
                    tfun = "log", from = 80, to = 2000,
-                   by = 15, ci = "95")
+                   by = 15, ci = 0.95)
 
 # Create first difference plot
-simGG(Sim2, qi = "First Difference", xlab = "\nTime in Days")
+simGG(Sim2, xlab = "\nTime in Days")
 @
 
 \subsubsection*{Figure \ref{BacklogRH}}
@@ -495,11 +492,10 @@ Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
                   qi = "Relative Hazard",
                   Xj = seq(40, 200, 40),
                   tfun = "log", from = 1200, to = 2000,
-                  by = 10, ci = "95")
+                  by = 10, ci = 0.95)
 
 # Create relative hazard plot
-simGG(Sim3, qi = "Relative Hazard", 
-      xlab = "\nTime in Days", leg.name = "Backlogged \n Items")
+simGG(Sim3, xlab = "\nTime in Days", leg.name = "Backlogged \n Items")
 @
 
 \subsubsection*{Figure \ref{FinHR}}
@@ -535,10 +531,9 @@ Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
 Sim4$time <- Sim4$time + 1987
 
 # Create hazard rate plot
-Plot4 <- simGG(Sim4, qi = "Hazard Rate", 
-               xlab = "", lsize = 1)
+Plot4 <- simGG(Sim4, xlab = "", lsize = 1)
 
-# Use ggplot2 to add a dotted vertical line at 1998
+# Use ggplot2 to add a dotted vertical line at 1997
 library(ggplot2)
 Plot4 + geom_vline(aes(xintercept = 1997), 
                    linetype = "dotted")
