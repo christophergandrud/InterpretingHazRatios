@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science
 % Christopher Gandrud
-% 26 April 2013
+% 27 April 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper]{article}
@@ -41,7 +41,9 @@ data("GolubEUPData")
 
 # Load Gandrud (2012) data
 ## File modified using https://raw.github.com/christophergandrud/InterpretingHazRatios/master/AncillaryFiles/FinReplicateData.do
-FinData <- source_GitHubData("https://raw.github.com/christophergandrud/InterpretingHazRatios/master/AncillaryFiles/FinSurvData.csv")
+FinData <- source_data(paste0("https://raw.github.com/christophergandrud/",
+                "InterpretingHazRatios/master/AncillaryFiles/FinSurvData.csv"),
+                sha1 = "f9cddf75e7fb00e3981e557dd24ee7bc92fbcf3a")
 
 ##### Set Chunk Options ####
 opts_chunk$set(fig.align='center', dev='png')
@@ -187,9 +189,11 @@ To solve these problems I am introducing the \emph{simPH} package for R.\footnot
 	\item Plot the simulations using the \texttt{simGG} method command.\footnote{It uses \emph{ggplot2} \citep{R-ggplot2} and in some cases \texttt{scatter3d} from the \emph{car} packages \citep{R-car} to plot the simulations. You can use the simulation objects created by \emph{simPH} to make graphs with any other plotting package.} 
 \end{enumerate}
 
-The simulation functions follow \cite{King2000} (discussed above) to simulate and calculate a variety of quantities of interest. The user can specify the number of simulations to run. The more simulations we conduct,\footnote{The \emph{simPH} default is 1,000.} the better picture we get of the probability distributions our parameters are from \citep[349]{King2000}.\footnote{Note that in some cases, such as with hazard rates with penalised splines, it is easy to ask the program to create more simulations than average desktop computers can easily handle. Therefore the user may need to balance a desire for a clear view of the probability distribution a quantity of interest comes from with what is computationally possible.} The \texttt{simGG} plotting method then takes these simulated values and plots them along with a smoothing line specified by the user to summarize their distributions' central tendencies.
+The functions in this package directly complement the strategy discussed in the previous section. They make it easy to spot study duration and historical period biases for a range of quantities of interest as well as interpret and present results without resorting to `train schedule' tables of coefficients and standard errors. Given that almost all of the quantities of interest, even hazard rates for single linear covariates, involve some type of interaction,\footnote{They are created by multiplying the baseline hazard and the exponentiated coefficients and fitted values.} the `train schedule' approach is a highly inadequate way to present results. \emph{simPH} offers an attractive alternative.
 
-The functions in this package directly complement the strategy discussed in the previous section. They make it easy to spot study duration and historical period biases for a range of quantities of interest as well as interpret and present results without resorting to `train schedule' tables of coefficients and standard errors. Given that almost all of the quantities of interest, even hazard rates for single linear covariates, involve some interaction,\footnote{They created by multiplying the baseline hazard and the exponentiated coefficients and fitted values.} the `train schedule' approach is a highly inadequate way to present results. 
+The simulation functions follow \cite{King2000} (discussed above) to simulate and calculate a variety of quantities of interest. The user can specify the number of simulations to run. The more simulations we conduct,\footnote{The \emph{simPH} default is 1,000.} the better picture we get of the probability distributions our parameters are from \citep[349]{King2000}.\footnote{Note that in some cases, such as with hazard rates with penalised splines, it is easy to ask the program to create more simulations than average desktop computers can easily handle. Therefore the user may need to balance a desire for a clear view of the probability distribution a quantity of interest comes from with what is computationally possible.} The \texttt{simGG} plotting method then takes these simulated values and plots them along with a smoothing line specified by the user to summarize their distributions' central tendencies.\footnote{Many quantities of interest from Cox PH models have asymmetric probability distributions and can therefore be poorly summarized by the central probability or `confidence' intervals. Recall that for most quantities of interest--e.g. relative hazards and first differences--are on an exponential scale with a lower bound of 0. In these cases it can be more useful to look at highest density regions \citep[see][]{Box1973,Hyndman1996}. To tell \emph{simPH} to find the shortest probability interval, rather than the central interval. To do this with any of the simulation commands simply set the argument \texttt{spin = TRUE}. This capability was developed from \cite{Liu2013}.}
+
+Many quantities of interest from Cox PH models have asymmetric probability distributions and can therefore be poorly summarized by the central probability or `confidence' intervals.\footnote{The central probability interval is the} Recall that for most quantities of interest--e.g. relative hazards and first differences--are on an exponential scale with a lower bound of 0. 
 
 Most of \emph{simPH}'s functions are capable of simulating and plotting hazard rates for multiple strata, i.e. when the baseline hazard is allowed to vary across different groups \cite[see][]{BoxSteffensmeier2006}.\footnote{Currently \emph{simPH} does not present hazard rates for penalised splines from stratified models. This is mostly because of the difficulty presenting 4 dimensional results (i.e. time, hazard rate, fitted values of the variable, and strata.)} A stratified Cox PH model is given by
 %
@@ -358,7 +362,7 @@ M3 <- coxph(Surv(begin, end, event) ~ crisis6 + imf_2 + percent_se_cbss_ocbu +
 
 # Simulate hazard rates
 Sim4 <- coxsimLinear(M3, b = "crisis6", qi = "Hazard Rate", 
-                     Xj = c(-1.79, 0))
+                     Xj = c(-1.79, 0), ci = 0.9)
 
 # Relabel values
 ## Please see Gandrud (2012) for more details
@@ -375,7 +379,7 @@ Plot4 <- simGG(Sim4, xlab = "", lsize = 1)
 Plot4 + geom_vline(aes(xintercept = 1997), 
                    linetype = "dotted")
 @
-{\scriptsize{The figure's points show the middle 95 percent of the simulations at each point in time and each fitted value. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation. \\ The dotted vertical line indicates the year 1997. \\ Note that the figure is based on the first imputed data set from \cite{Gandrud2012}, rather than being an average of all five. \\ Also, the graph shows the simulated hazard rate when all other covariates are 0.}}
+{\scriptsize{The figure's points show the middle 90 percent of the simulations at each point in time and each fitted value. Note that the crisis coefficient is significant at the 95\% level. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation. \\ The dotted vertical line indicates the year 1997. \\ Note that the figure is based on the first imputed data set from \cite{Gandrud2012}, rather than being an average of all five. \\ Also, the graph shows the simulated hazard rate when all other covariates are 0.}}
 \end{figure} 
 
 Though I did not find evidence of the time-varying effect I expected using standard proportional hazards tests, this does not mean there was no evidence for such an effect. Because of time-period specific events (or the lack of them) time-varying effects may exist but are only visible by plotting hazard rates over time and with careful consideration of the time-period that the sample is from.  
@@ -507,8 +511,9 @@ library(repmis)
 # Load Gandrud (2012) data
 ## File modified using https://raw.github.com/christophergandrud/
 ##      InterpretingHazRatios/master/AncillaryFiles/FinReplicateData.do
-FinData <- source_GitHubData(paste0("https://raw.github.com/christophergandrud/",
-            "InterpretingHazRatios/master/AncillaryFiles/FinSurvData.csv"))
+FinData <- source_data(paste0("https://raw.github.com/christophergandrud/",
+                "InterpretingHazRatios/master/AncillaryFiles/FinSurvData.csv"),
+                sha1 = "f9cddf75e7fb00e3981e557dd24ee7bc92fbcf3a")
 
 
 # Replicate model B6
@@ -520,7 +525,7 @@ M3 <- coxph(Surv(begin, end, event) ~ crisis6 + imf_2 +
 
 # Simulate hazard rates
 Sim4 <- coxsimLinear(M3, b = "crisis6", qi = "Hazard Rate", 
-                     Xj = c(-1.79, 0))
+                     Xj = c(-1.79, 0), ci = 0.9)
 
 # Relabel values
 ## Please see Gandrud (2012) for more details
