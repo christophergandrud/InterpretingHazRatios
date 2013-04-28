@@ -1,4 +1,4 @@
-/////////////////////
+///////////////////////
 // Export Replication Data Set From Gandrud (2012) that can be used with simPH
 // Christopher Gandrud
 // 1 March 2013
