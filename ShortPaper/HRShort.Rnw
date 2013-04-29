@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Interpreting Hazard Ratios in Political Science
+% Interpreting Hazard Ratios in Political Science (short version)
 % Christopher Gandrud
 % 29 April 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
