@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science (short version)
 % Christopher Gandrud
-% 29 April 2013
+% 30 April 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper]{article}
@@ -53,7 +53,7 @@ opts_chunk$set(fig.align='center', dev='png')
 
 % Title
 \title{Cox Proportional Hazards Models \& Political Science: Solutions for Model Misspecification \& Misinterpretation}
-    \author{Christopher Gandrud\footnote{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}). Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, Meredith Wilf, and participants at the International Studies Association Annual Convention (2013). Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper can be completely reproduced from source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
+    \author{Christopher Gandrud\footnote{Lecturer in International Relations (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}). Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, Luke Keele, Meredith Wilf, and participants at the International Studies Association Annual Convention (2013). Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper can be completely reproduced from source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
 
 \maketitle
 
@@ -72,16 +72,14 @@ The Cox Proportional Hazard (PH) model has become a popular tool for political s
 
 \vspace{0.3cm}
 
-The Cox \citeyearpar{cox1972} Proportional Hazards (PH) model and Event History Analysis (EHA) in general are increasingly being used to help answer political science questions. A small sample of recent studies using Cox PH and EHA generally includes: \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. This article aims to improve the way political scientists use Cox PH models by (1) advocating a clear Cox PH diagnostic and interpretive strategy based on disparate recent critiques of the ways these models have been used and (2) introducing a new R \citeyearpar{RLanguage} package--\emph{simPH} \citep{R-simPH}--that makes implementing this strategy much easier than currently available software. \emph{simPH} makes it easy to graphically show a wide variety of quantities of interest estimated from Cox PH models and their associated uncertainty. Quantities of interest \emph{simPH} can handle include hazard ratios, first differences, relative hazards, marginal effects (when applicable), and hazard rates for linear, linear-interactive, time-varying, and nonlinear coefficients.
-
-In this article I first briefly summarize recent work by \cite{Licht2011}, \cite{Keele2010}, \cite{Hernan2010}, and \cite{Gandrud2012} that has highlighted how Cox PH models can be misspecified and misinterpreted. Second, I combine these insights together into a single diagnostic and interpretive strategy. So that researchers are able to fully implement this strategy I, thirdly, introduce \emph{simPH}, which includes tools for graphically exploring Cox PH quantities of interest along with corresponding estimation uncertainty. Finally, I illustrate \emph{simPH}'s capabilities by replicating results from recent political science research. All of the source code needed to replicate the figures in this paper is available in the Appendix. This article makes it easier for political scientists to use Cox PH models in robust ways so that they can answer their research questions.
+The Cox \citeyearpar{cox1972} Proportional Hazards (PH) model and Event History Analysis (EHA) in general are increasingly being used to help answer political science questions. A small sample of recent studies using Cox PH and EHA generally includes: \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. This article aims to improve the way political scientists use Cox PH models by (1) advocating a clear Cox PH diagnostic and interpretive strategy based on recent critiques of the ways these models have been used and (2) introducing a new R \citeyearpar{RLanguage} package--\emph{simPH} \citep{R-simPH}--that makes implementing this strategy much easier than currently available software. \emph{simPH} makes it easy to graphically show a wide variety of quantities of interest estimated from Cox PH models and their associated uncertainty. Quantities of interest \emph{simPH} can handle include hazard ratios, first differences, relative hazards, marginal effects (when applicable), and hazard rates for linear, linear-interactive, time-varying, and nonlinear coefficients. I use empirical demonstrations to illustrate \emph{simPH}'s capabilities. This article makes it easier for political scientists to use Cox PH models in robust ways so that they can answer their research questions.
 
 %%%%%% Section: Common issues
 \section{Common Issues in Analyses Using Cox PH Models}
 
-In this paper I focus on one of the more commonly used EHA models in political science, the Cox Proportional Hazard model \citet{cox1972}.\footnote{See Box-Steffensmeier and Jones \citeyearpar[47]{boxsteffensmeier2004} for a discussion of the model's popularity in political science. In general my conclusions also apply to Fine and Gray's \citeyearpar{Fine1999} Competing Risks Model which is a Cox PH analogue for competing risks EHA.} The Cox PH model is a semi-parametric EHA model that allows researchers to examine how specified factors influence the rate of a particular event happening--e.g. a policy is adopted, a government falls, or a war breaks out--at a particular point in time given that the event has not already occurred.
+In this paper I focus on one of the more commonly used EHA models in political science, the Cox Proportional Hazard model \citet{cox1972}.\footnote{See Box-Steffensmeier and Jones \citeyearpar[47]{boxsteffensmeier2004} for a discussion of the model's popularity in political science. In general my conclusions also apply to Fine and Gray's \citeyearpar{Fine1999} Competing Risks Model, a Cox PH analogue for competing risks EHA.} The Cox PH model is a semi-parametric EHA model that allows researchers to examine how specified factors influence the rate of a particular event happening--e.g. a policy is adopted, a government falls, or a war breaks out--at a particular point in time given that the event has not already occurred.
 
-This rate is commonly referred to as the hazard rate ($h_{i}(t)$).\footnote{It is given formally by: $h_{i}(t) = \lim\limits_{\Delta t \rightarrow 0}\frac{\mathrm{Pr}(t \leq T < t + \Delta t | T \leq t)}{\Delta t}$, where $T$ is the time that an event occurred over the interval $[t,\:\Delta t]$.} The hazard rate for unit $i$ at time $t$ is estimated with the Cox PH model using: 
+This rate is commonly referred to as the hazard rate ($h_{i}(t)$).\footnote{Formally: $h_{i}(t) = \lim\limits_{\Delta t \rightarrow 0}\frac{\mathrm{Pr}(t \leq T < t + \Delta t | T \leq t)}{\Delta t}$, where $T$ is the time that an event occurred over the interval $[t,\:\Delta t]$.} The hazard rate for unit $i$ at time $t$ is estimated with the Cox PH model using: 
 %
 \begin{equation}
     h(t|\mathbf{X}_{i})=h_{0}(t)\mathrm{e}^{(\mathbf{\beta X}_{i})},
@@ -101,7 +99,7 @@ One of the most important sources of estimation bias in Cox PH models discussed 
 %
 for all points in time $t$. If the PHA is violated and measures are not taken to correct for the violation, then researchers may create biased parameter estimates and statistical tests with lower power \citep{Therneau1990,Keele2010}. Beyond these statistical problems, not adjusting for violations of the PHA can obscure phenomenon that political researchers are interested in studying.
 
-\cite{Licht2011} identifies a number of important political science theories that actually lead us to expect that the PHA will be violated. She argues that ``the nature of the political processes of learning, institutionalization, strategic developments, and information transmission \ldots are likely to produce frequent violations of the PHA'' \citeyearpar[228]{Licht2011}. For example, building on \cite{Finnemore1998} and \cite{blyth1997} researchers have attempted to empirically examine how ideas may affect policy change and diffusion relative to geopolitical and domestic political and economic factors, among others. An important empirically observable difference between these types of theories is how they predict the effects of specific factors \emph{change over time relative to others}.\footnote{Note that the effects of variables in Cox PH can change over time without violating the PHA via a change in the baseline hazard. We will look at this issue in more detail later.} For example, the effect of norms and ideational diffusion mechanisms \citep[see][]{Yee1996} are generally predicted to strengthen over time. Whereas the effects of most domestic political and economic and geopolitical factors are expected to be constant or perhaps decreasing over time \citep[228]{Licht2011}. It is likely that more than one of these approaches impacts any given political event of interest. Therefore we should expect that some of our covariates will violate the PHA because their affects on the hazard of an event happening change non-proportionally over time. Properly modeling how covariate effects change over time is crucial for adequately testing our hypotheses. 
+\cite{Licht2011} identifies a number of important political science theories that actually lead us to expect that the PHA will be violated. She argues that ``the nature of the political processes of learning, institutionalization, strategic developments, and information transmission \ldots are likely to produce frequent violations of the PHA'' \citeyearpar[228]{Licht2011}. For example, building on \cite{Finnemore1998} and \cite{blyth1997} researchers have attempted to empirically examine how ideas may affect policy change and diffusion relative to geopolitical and domestic political and economic factors, among others. An important empirically observable difference between these types of theories is how they predict the effects of specific factors \emph{change over time relative to others}.\footnote{Note that the effects of variables in Cox PH can change over time without violating the PHA via a change in the baseline hazard. We will look at this issue in more detail later.} 
 
 There are a number of widely used tests to examine whether or not the PHA has been violated. See \cite{Grambsch1994}, \cite{BoxSteffensmeier2001}, and \cite{boxsteffensmeier2004} for discussions of various PHA testing methods.\footnote{Many common software packages implement versions of these tests. R's \emph{survival} package \citep{R-survival} implements Grambsch and Therneau's \citeyearpar{Grambsch1994} modified Schoenfeld residuals test. This is done with the \texttt{cox.zph} command.} If a covariate is determined to violate the PHA, Box-Steffensmeier and co-authors \citep[see][]{BoxSteffensmeier2003,boxsteffensmeier2004} suggest directly modeling the relationship between the variable and time. This usually entails including an interaction between the variable and some function of time such as the natural logarithm or some exponent.\footnote{The decision to use a particular functional form should be guided by theory and will likely also be influenced by findings in the data.} If $f(t)$ is some function of time then a simple Cox PH model estimating the hazard rate for unit $i$ with one time-interaction is given by:
 %
@@ -111,7 +109,7 @@ There are a number of widely used tests to examine whether or not the PHA has be
 
 Like any other interaction effect \cite[see][]{Brambor2006} extra care should be taken when interpreting the $\beta_{1}$ and $\beta_{2}$ parameter estimates. We cannot simply interpret the effect by looking at $\beta_{1}$ or $\beta_{2}$ in isolation. They need to be combined. Licht argues that post-estimation simulation techniques should be employed to substantively interpret these combined coefficients and the uncertainty surrounding them. 
 
-She describes two methods of calculating the combined effect of a time interaction in ways that are relatively easy to interpret: (a) first differences and (b) relative hazards. A first difference is the percentage change in the hazard rate at time ($t$) between two values of $X$:
+Licht describes two methods of calculating the combined effect of a time interaction in ways that are relatively easy to interpret: (a) first differences and (b) relative hazards. A first difference is the percentage change in the hazard rate at time ($t$) between two values of $X$:
 %
 \begin{equation}
 	\%\triangle h_{i}(t) = (e^{(X_{j} - X_{l})(\beta_{1} + \beta{2}f(t))} - 1) * 100.
@@ -126,8 +124,6 @@ Relative hazards\footnote{The term was advanced by \cite{Golub2007}.} are given 
 In this situation the covariate $X_{l}$ is 0. Relative hazards represent the change in the hazard when $X$ is ``switched on'' as it would be when comparing a European Union member to a non-member, for example. As such, relative hazards are a special case of the hazard ratio \citep[231]{Licht2011}, i.e. the expected change in the hazard when $X$ is fitted at a value different from zero compared to when $X$ is zero.
 
 Relative hazards are particularly useful for binary variables because they can reflect the change in the hazards from $X = 0$ to $X = 1$. The first difference can be more useful for continuous variables as changes in $X$ from 0 to 1 may be inconsequential or even impossible when we are looking at, for example, the effect of gross domestic product per capita. In these cases the first difference will be more appropriate. Nonetheless, the choice between relative hazards and first differences can be cosmetic. They are virtually the same if $X_{j} - X_{l} = 1$.\footnote{Of course first differences are percentage changes, so their absolute values are 100 times larger.}
-
-Following \cite{King2000}, Licht advocates post-estimation simulation techniques to make it easier to estimate the uncertainty surrounding the first differences and relative hazards. In both cases we first find the parameter estimates for $\hat{\beta_{1}}$ and $\hat{\beta_{2}}$ from a Cox PH model as well as the variance matrix $\hat{V}(\hat{\beta})$. Second, we draw $n$ values of $\beta_{1}$ and $\beta_{2}$ from the multivariate normal distribution given by $\hat{\beta} \sim N(\hat{\beta}, \hat{V}(\hat{\beta}))$. Third, we use these simulated values to calculate a quantity of interest such as the first difference or relative hazard for a range of times $T = [t_{1}\ldots t_{T}]$ as well as specified values of $X_{j}$ and $X_{l}$ (as appropriate). Finally, we can plot the results. Using this simulation technique allows us to estimate the full time-varying effect, how it changes over time, substantively asses the effect, and show the uncertainty surrounding our estimates.
  
 \subsection{Nonlinear Effects}
 
@@ -137,49 +133,41 @@ Because of this Keele suggests that \emph{before} testing the PHA we should (a) 
 
 After omitted variables and nonlinearities have been addressed, then (c) we should test the PHA. If it is violated we can add time interactions as before. If after doing all of these steps non-proportional hazards are still present then (d) he suggests we look for an EHA model, such as the log-logistic model--that does not assume proportional hazards.
 
-\subsection{Time-period biases}
+\subsection{Show Your Uncertainty: Quantities of interest \& probability distributions}
 
-Finally, we should avoid interpreting estimated effects, regardless of whether the effects are nonlinear, time-varying, or not, without reference to time. \cite{Hernan2010} highlights two problems with interpreting EHA results without reference to time. These are: (a) hazard ratios are averaged over studies' observation periods and (b) period-specific results have a ``built-in selection-bias". 
+%%%%%%%%%%%% Clean Up & Build %%%%%%%%%%%%%%%
 
-Coefficient estimates and hazard ratios--i.e. exponentiated Cox PH coefficients--are the estimated effects of variables on the hazard rate averaged over a study's observation period. Equation 2 gives us a variable's time-averaged hazard ratio. As with any mean value, HRs may in fact be large at one point in the study and then small in another. Only presenting time-averaged HRs does not reveal these trends. We have already seen how effects may vary non-proportionally over time and how finding and graphing first differences or relative hazards estimated from explicitly modeled time interactions is an important way of overcoming model misspecification and misinterpretation. Importantly, we'll see that this problem can happen \emph{even if the proportional hazards assumption is not violated}. In either case it can be important to carefully consider how time-periods may be affecting results. 
+How can we effectively examine and communicate both the point estimates of and our uncertainty about quantities of interest from time interactive and nonlinear effects? Following \cite{King2000}, Licht advocates post-estimation simulation techniques to make it easier to estimate the uncertainty surrounding the first differences and relative hazards for time-varying effects. In both cases we first find the parameter estimates for $\hat{\beta_{1}}$ and $\hat{\beta_{2}}$ from a Cox PH model that make up the time-varying effect as well as the variance matrix $\hat{V}(\hat{\beta})$. Second, we draw $n$ values of $\beta_{1}$ and $\beta_{2}$ from the multivariate normal distribution given by $\hat{\beta} \sim N(\hat{\beta}, \hat{V}(\hat{\beta}))$. Third, we use these simulated values to calculate a quantity of interest such as the first difference or relative hazard for a range of times $T = [t_{1}\ldots t_{T}]$ as well as specified values of $x_{j}$ and $x_{l}$ (as appropriate). Finally, we can plot the results. Using this simulation technique allows us to estimate the full time-varying effect, how it changes over time, substantively asses the effect, and show the uncertainty surrounding our estimates.
 
-Researchers often do not consider how a study's observation period can bias hazards over time. Estimates can be influenced by a study's duration. I'll refer to this as Study Duration Selection Bias (SDSB). Similarly, though not mentioned by Hern\'{a}n's epidemiologically oriented study, hazard rates can be affected by events common to all units in specific historical time-periods. I'll call this variant Historical Period Specific Bias (HPSB). Let's look at how these biases might manifest themselves in political science data and what we can do about them.
+We can easily extend Licht and King et al.'s simulation technique to quantities of interest for other estimated effect types, including nonlinear effects. For example if a nonlinear effect is modeled with a second order polynomial--i.e. $\beta_{1}x_{i} + \beta_{2}x_{i}^{2}$--we can once again draw $n$ simulations from the multivariate normal distribution $\hat{\beta} \sim N(\hat{\beta}, \hat{V}(\hat{\beta}))$ for both $\beta_{1}$ and $\beta_{2}$. Then we simply calculate quantities of interest for a range of values of $x{i}$ as before. Note this will not show the effect over time,\footnote{For this we need to estimate the hazard rate.} but over a range of values of $X$. 
 
-\paragraph{Study Duration Selection Bias}
+Again, we can use a similar procedure for splines. Penalized splines \citep{Eilers1996}, for example, are basically ``linear combinations of B-spline basis functions'' \citep[5]{Strasak2009} joined at points in the range of observed values of $x$ called ``knots'' \citep[50]{Keele2008}. A Cox PH model with one penalized spline is given by:
+%
+\begin{equation}
+    h(t|\mathbf{X}_{i})=h_{0}(t)\mathrm{e}^{f(x)},
+\end{equation}
+%
+Where $f(x)$ is the penalized spline function. For our post-estimation purposes $f(x)$ is basically a series of regression coefficients such that:
+%
+\begin{equation}
+    f(x) = \beta_{k_{1}}(x)_{+} + \beta_{k_{2}}(x)_{+} + \beta_{k_{3}}(x)_{+} + \ldots + \beta_{k_{n}}(x)_{+}
+\end{equation}  
+%
+$k$ are the spline knots. $x_{+}$ indicates that $x$ equals $x$ if $x$ is greater than $k_{c}$ and less than or equal to $k_{c+1}$. It is 0 otherwise, i.e:
+%
+\begin{equation}
+    (x)_{+} = 
+\end{equation}
+%
+We can use King et al.'s simulation procedure for many other quantities of interest including hazard rates and even marginal effects for interactions \cite[see][]{Brambor2006}. 
 
-Since effects estimated from Cox PH models can change at each point in time, a study's specific observation period can affect its results. For example, imagine that we are interested in how long it takes countries to adopt a policy $P$. We create a Cox PH model with various independent variables $X$. One of the variables is level of democracy. We estimate the model using twenty years of cross-country data. Imagine that the averaged hazard ratio for democracy from this model is positive--higher democracy scores increase the hazard of adopting policy $P$. We find that the variable violates the PHA, but not because it has a nonlinear effect. So we reestimate the model with a time interaction. When we plot the first difference over time we find that in the first ten years of the observation period the HR is positive. Then it becomes weakly negative for the last decade. 
 
-What causal story could explain this? SDSB may be at work. There could be a proportion of countries in our sample that are more likely to adopt policy $P$ when they also have a high level of democracy, because democracy level is interacting with some unobserved factor $Z$ shared by these countries to produce a common effect $C$. In epidemiological terminology these countries are more `susceptible'. Over the course of the observation period, the more susceptible countries adopt policy $P$ at a higher rate than countries that just have high values of democracy. After the susceptible countries exit the risk set,\footnote{The risk set at any point in time is the set of units that have not experienced the event of interest before that time.} we are left with a sample of less susceptible countries. Democracy in the absence of $Z$ may actually have a slight negative causal effect, which we observe after the susceptible countries drop out of our sample. 
-
-SDSB is a particular problem in cohort studies following one group of subjects that drop out of the risk set when they experience the event of interest. Studies of national level policy choices are an example, because once countries adopt a policy they are no longer in the risk set. 
-
-\paragraph{Historical Period Specific Bias} 
-
-In many cross-country cross-time studies data is taken from specific historical time periods. This can cause Historical Period Specific Bias. As should be obvious, not all historical time-periods are the same. For example, in certain time periods particular ideas are heavily prompted by international organizations while in other periods different, even conflicting ideas are advanced. Many or all countries could be exposed to the same ideas at the same time \citep[see][]{Gandrud2012}. These common historical period specific factors $Z$ may interact with some observed variable $x$ to change the hazard of a country adopting a given policy. As the common factor appears and dissipates or is replaced with a different factor with a different interactive effect with $x$ it will seem as though $x$ by itself has a time-varying effect. In essence a combined modeled time interaction $\beta_{1}X_{i} + \beta_{2}f(t)X_{i}$ is actually just a proxy for the real interaction $\beta_{1}X_{i} + \beta_{2}Z_{i} +\beta_{3}X_{i}Z_{i}$, where $Z$ is highly correlated with specific points in \emph{historical} time. Researchers therefore need to carefully consider if common historical period specific factors are interacting with a variable $x$ causing it to appear to have a generic time-varying effect. If we do not, we may accidentally over generalize our results. 
-
-In some cases, however, standard tests for non-proportional hazards will not indicate a time-varying effect even if there are historical period specific common factors. For example any country adopting a given policy may only do so after some event common to all countries occurs, i.e. the idea for the policy is created and promoted. In these cases we will not observe a violation of the PHA. Standard tests of non-proportional hazards tend to use Shoenfeld residuals \citep[see][]{Grambsch1994}, which are calculated for each variable in $X$ when a unit is observed to have an event \citep[181]{Kleinbaum2011}. If no or very few units have an event before another particular historical period specific event happens then times before this event will essentially be ignored by the PHA test. Yet it would be wrong to assume that there is no historical period specific effect. If a variable is found to have a significant and meaningfully sized effect over the period when events do occur, but not before, then we could actually conclude that there is evidence for an effect. It goes from no effect to an effect across a given historical period.
-
-Finding SDSB and HPSB can be tricky. You should estimate and plot hazard rates or survival curves for fitted values of the variables. Unlike hazard ratios and first differences, these measures include estimated baseline hazards $h_{0}(t)$, which change at each point in time and effectively include information on possible time-period biases. Plots of survival curves and hazard rates give us a sense of the variables' effects at each point in time. Correctly interpreting hazards that change over time takes both computational tools for estimating and graphically representing the functional form of these changes as well as a careful consideration--using theory and historical knowledge--of how study duration and historic periods may affect them. We will look at examples below that illustrate how researchers may do this. 
-
-
-%%%%%% Section: Modeling Strategy
-\section{A Cox PH Modeling Strategy}
-
-So far, these Cox PH model insights have been spread over a number of articles. So, to make them easier to use let's combine them into one research strategy for examining phenomena with Cox PH models. The strategy has a number of steps:
-
-\begin{enumerate}
-	\item Determine the covariates and covariate interactions to include in the model.
-	\item Test for nonlinearity using splines and polynomials. Include splines or polynomials as needed.
-	\item Test for violations of the proportional hazards assumption.
-	\item If non-proportionality exists include time interactions.
-	\item Rerun PHA test. If non-proportionality still exists after including time interactions, consider another model that does not use the PHA. 
-    \item Regardless of the EHA chosen, consider possible study duration and historic period specific biases. Also, show your estimates and associated uncertainty by graphing simulated quantities of interest.
-\end{enumerate}
+Many quantities of interest from Cox PH models have asymmetric probability distributions and can therefore be poorly summarized by the central probability or `confidence' intervals. Recall that most quantities of interest are on an exponential scale with a lower bound of 0. In these cases it can be more useful to look at highest density regions \citep[see][]{Box1973,Hyndman1996}.
 
 %%%%%% Section: simPH
 \section{\emph{simPH}: Tools for Simulating and Graphing Effects from Cox PH Models}
 
-One reason that researchers have inconsistently incorporated these suggestions is that there has been a lack of computational capabilities to easily do so, especially when it comes to substantively interpreting interactive and nonlinear estimates and their associated uncertainty. In R the \emph{survival} \citep{R-survival} has functions for testing the proportional hazards assumption. The \emph{survival} and \emph{Zelig} \citep{R-zelig} packages can estimate models with splines and time interactions. However, their capabilities for graphically showing these estimates and associated uncertainty, especially over time, have been limited. Current capabilities for showing results from splines\footnote{Primarily R's \texttt{termplot} command. See \cite{Keele2008}, chapter 6.} present results in difficult to interpret quantities and without indicating substantively meaningful estimation uncertainty. They also do not show how spline effects are estimated to change over time. In general the capabilities for showing results with time interactions is very limited. Usually, showing these types of results requires considerable researcher effort to extract estimates from model objects and then devise ways to show them graphically. See for example Licht's code for replicating the time-interaction plots in her paper.\footnote{It is available at: \url{http://hdl.handle.net/1902.1/15633}.}
+One reason that researchers have inconsistently incorporated suggestions to test for and examine time interactions and nonlinearities in their Cox PH models is that there has been a lack of computational capabilities to easily do so, especially when it comes to substantively interpreting interactive and nonlinear estimates and their associated uncertainty. In R the \emph{survival} \citep{R-survival} has functions for testing the proportional hazards assumption. The \emph{survival} and \emph{Zelig} \citep{R-zelig} packages can estimate models with splines and time interactions. However, their capabilities for graphically showing these estimates and associated uncertainty, especially over time, have been limited. Current capabilities for showing results from splines\footnote{Primarily R's \texttt{termplot} command. See \cite{Keele2008}, chapter 6.} present results in difficult to interpret quantities and without indicating substantively meaningful estimation uncertainty. They also do not show how spline effects are estimated to change over time. In general the capabilities for showing results with time interactions is very limited. Usually, showing these types of results requires considerable researcher effort to extract estimates from model objects and then devise ways to show them graphically. See for example Licht's code for replicating the time-interaction plots in her paper.\footnote{It is available at: \url{http://hdl.handle.net/1902.1/15633}.}
 
 To solve these problems I am introducing the \emph{simPH} package for R.\footnote{See the Appendix for installation instructions and source code for the following examples.} There are three basic steps to use the package:
 
@@ -191,7 +179,7 @@ To solve these problems I am introducing the \emph{simPH} package for R.\footnot
 
 The functions in this package directly complement the strategy discussed in the previous section. They make it easier to spot study duration and historical period biases for a range of quantities of interest as well as interpret and present results without resorting to `train schedule' tables of coefficients and standard errors. Given that almost all of the quantities of interest, even hazard rates for single linear covariates, involve some type of interaction,\footnote{They are created by multiplying the baseline hazard and the exponentiated coefficients and fitted values.} the `train schedule' approach is a highly inadequate way to present results. \emph{simPH} offers an attractive alternative.
 
-The simulation functions follow \cite{King2000} (discussed above) to simulate and calculate a variety of quantities of interest. The user can specify the number of simulations to run. The more simulations we conduct,\footnote{The \emph{simPH} default is 1,000.} the better picture we get of the probability distributions our parameters are from \citep[349]{King2000}.\footnote{Warning: in some cases, such as with hazard rates with penalised splines, it is easy to ask the program to create more simulations than average desktop computers can easily handle. Therefore the user may need to balance a desire for a clear view of the probability distribution a quantity of interest comes from with what is computationally feasible.} The \texttt{simGG} plotting method then takes these simulated values and plots them along with a smoothing line specified by the user to summarize their distributions' central tendencies. It allows the user to keep either the traditional central interval--the middle 95 percent by default--of the simulations' distribution or use the shortest probability interval \citep{Liu2013}--also 95 percent by default.\footnote{Many quantities of interest from Cox PH models have asymmetric probability distributions and can therefore be poorly summarized by the central probability or `confidence' intervals. Recall that most quantities of interest are on an exponential scale with a lower bound of 0. In these cases it can be more useful to look at highest density regions \citep[see][]{Box1973,Hyndman1996}. To tell \emph{simPH} to find the shortest probability interval--a type of highest density region--rather than the central interval, with any of \emph{simPH}'s' simulation commands simply set the argument \texttt{spin = TRUE}. This capability was developed from \cite{Liu2013} and the accompanying code in Liu's \citeyearpar{R-SPIn} \emph{SPIn} R package.} 
+The simulation functions follow \cite{King2000} (discussed above) to simulate and calculate a variety of quantities of interest. The user can specify the number of simulations to run. The more simulations we conduct,\footnote{The \emph{simPH} default is 1,000.} the better picture we get of the probability distributions our parameters are from \citep[349]{King2000}.\footnote{Warning: in some cases, such as with hazard rates with penalised splines, it is easy to ask the program to create more simulations than average desktop computers can easily handle. Therefore the user may need to balance a desire for a clear view of the probability distribution a quantity of interest comes from with what is computationally feasible.} The \texttt{simGG} plotting method then takes these simulated values and plots them along with a smoothing line specified by the user to summarize their distributions' central tendencies. It allows the user to keep either the traditional central interval--the middle 95 percent by default--of the simulations' distribution or use the shortest probability interval \citep{Liu2013}--also 95 percent by default.\footnote{To tell \emph{simPH} to find the shortest probability interval--a type of highest density region--rather than the central interval, with any of \emph{simPH}'s' simulation commands simply set the argument \texttt{spin = TRUE}. This capability was developed from \cite{Liu2013} and the accompanying code in Liu's \citeyearpar{R-SPIn} \emph{SPIn} R package.} 
 
 Most of \emph{simPH}'s functions are capable of simulating and plotting hazard rates for multiple strata, i.e. when the baseline hazard is allowed to vary across different groups \cite[see][]{BoxSteffensmeier2006}.\footnote{Currently \emph{simPH} does not present hazard rates for penalised splines from stratified models. This is mostly because of the difficulty presenting 4 dimensional results (i.e. time, hazard rate, fitted values of the variable, and strata.)} A stratified Cox PH model is given by
 %
@@ -199,10 +187,10 @@ Most of \emph{simPH}'s functions are capable of simulating and plotting hazard r
    h(t|\mathbf{X}_{i})=h_{k0}(t)\mathrm{e}^{(\mathbf{\beta X}_{i})},
 \end{equation}
 %
-where $k$ is a `group'.\footnote{Currently, \emph{simPH} does not simulate uncertainty for the baseline hazard parameter estimate. Hopefully this will be included in future versions.} Groups can be defined in a variety of ways. One common use of stratification is to account for repeated event dependence \citep{BoxSteffensmeier2006}. An example of examining time-period specific biases in repeated event situations is whether or not a time-period specific idea may effect units that have already implemented one type of a policy in the past compared to units that have never had a similar policy. Stratified Cox PH models are particularly useful when examining time-period specific biases as it allows researchers to see if a common time period specific phenomenon affects these different groups differently. 
+where $k$ is a `group'. Groups can be defined in a variety of ways. One common use of stratification is to account for repeated event dependence \citep{BoxSteffensmeier2006}.  
 
 %%%%%% Section: Demonstrations
-\section{Demonstrations}
+\section{Empirical Demonstrations}
 
 To illustrate how \emph{simPH} can be used by political scientists, I will use it to replicate key figures and findings from \cite{Keele2010}, \cite{Licht2011}, and \cite{Gandrud2012, Gandrud2013}. The purpose of this section is not to verify the results of these studies, but to verify \emph{simPH}'s' accuracy and usefulness as well as illustrate how it can fit into a Cox PH analysis.
 
@@ -325,68 +313,10 @@ simGG(Sim3, xlab = "\nTime in Days", leg.name = "Backlogged \n Items")
 {\scriptsize{The figure's points show the middle 95 percent of the simulations at each point in time and each fitted value. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.}}
 \end{figure}
 
-\subsection{Time-period Biases}
-
-The examples we have looked at so far study phenomenon using generic rather than historic calendar time\footnote{\cite{Golub2007} do explicitly model particular time-period specific effects using dummies for whether or not legislation was proposed before or after the Single European Act.} and without examining how study duration may have affected hazard estimates. Let's now turn to look at how to examine these potential issues. Probably more so than with nonlinear and traditional time-varying effects, accounting for study duration selection and time-period specific biases requires not only the use of computational tools like \emph{simPH}, but also a close reading of the underlying data and events surrounding a study's observation period.
-
-\paragraph{Study Duration Selection Bias in Deposit Insurance Choices}
-
-\cite{Gandrud2013} used a Fine and Gray competing risks PH model to examine the reasons that countries created new independent deposit insurers. He used a sample of 70 countries from 1984 through 2007. With this sample he found that countries' level of democracy\footnote{Democracy was measured with the latent democracy scores found by \cite{Pemstein2010}.} had a time-varying effect on whether or not a country created an independent deposit insurer. By looking at the form of the linear time-varying estimates\footnote{These are not shown because \emph{simPH} does not currently support competing risks models. For the source code to create the time-interaction plots see \url{https://raw.github.com/christophergandrud/di-governance/master/commands/public_DI_replicible_tables.do}.} He found that democracy had a positive effect on adoption of independent deposit insurance before about the year 2000. After this point it had a negative effect, i.e. democracies were estimated to be less likely to adopt independent deposit insurance. What could explain this?
-
-After a careful examination of the data, he found that only two countries with high democracy scores were still in the risk set after 2002: Australia and New Zealand. All of the other more democratic countries in the sample adopted deposit insurance by 2002 and were therefore removed from the risk set. These two countries can be treated as being highly related as New Zealand's major banks are based in Australia. Deposit insurance choices for one country are highly related to the choices of the other. We can see how changing the sample's duration can affect this result. When he shortened the sample from 1984 until 2000, the time-varying effect disappeared. If the sample was extended by a few years beyond 2007 the effect may also have disappeared as the two countries introduced deposit insurance schemes on the same day in 2008.\footnote{New Zealand has since disbanded its program.} 
-
-This example clearly shows how researchers using cohort studies should carefully consider how time-varying effects may be driven by study duration selection bias, rather than traditional duration effects.
-
-\paragraph{Time-period Specific Bias}
-
-\cite{Gandrud2012} used both Cox PH and Fine and Gray Competing risks to examine why 83 countries chose the types of financial supervisory governance that they did. One of the key factors for why countries may have chosen to create a unified and independent supervisor is that they were influenced by a new idea for such a system. The idea for unified independent supervision was heavily promoted by prominent international organizations and countries with important financial centers. It emerged and was heavily promoted from 1997.\footnote{This was the year that the United Kingdom created its unified and independent Financial Services Authority.} A competing idea that preceded this one was based on the United State's Securities and Exchange Commission. This idea for this style promoted around 1990. In the paper he showed how the level of promotion for this idea decreased over time, especially following the introduction of the other.
-
-All countries were exposed to these ideas at about the same times. So he predicted that the effect of mechanisms through which the ideas would diffuse--e.g. peer adoption and crises--would have a time-varying effect on regulatory design choices. Mechanisms with a positive effect on adoption of the US-style would have decreasing effects over the course of the sample (1988-2007). Mechanisms that positively affected adoption of the unified and independent system would have increasing effects from about 1997. 
-
-He found that as expected variables were predicted to have a positive effect when the US-style of governance was promoted did indeed have a declining time-varying effect on adoption of this style of governance. He determined this by using standard proportional hazards tests and graphing the combined coefficients. Interestingly, if the sample had looked at the 1980s through the early 1990s we would likely have seen these variables having an increasingly positive effect.\footnote{He did this due to a lack of data in the early to mid 1980s} Using theory and a close reading of events he was able to have a more nuanced understanding of how the historic time-period specific events could be driving the time-varying estimates. 
-
-He did not find similar violations of the proportional hazards tests for any variables in models looking at adoption of unified independent supervision. Can we conclude that these variables didn't have a time-varying effect? Such a conclusion is not necessary supported by the model and data. This is because before 1997 almost no countries created this type of supervision. When he graphed hazard rates over time it was clear that the variables were estimated to have had no affect on adoption before 1997. But, many of the predicted ideational diffusion mechanisms did have an affect on unified independent supervision in the direction predicted \emph{after} 1997. This provided evidence for an interaction between time-period specific ideational promotion and mechanisms that could make countries more receptive to adopting the idea.
-
-Figure \ref{FinHR} shows the simulated hazard rate for the effect of banking crises on countries with multiple specialized regulators creating a unified and specialized system. It was created using \emph{simPH}. We can clearly see that before 1997 having a crisis is predicted to have no affect on unifying multiple specialized financial supervisors. Its predicted effect increases \emph{after} 1997. This effect is statistically significant at the 95 percent level. This is exactly the time-varying results we would expect to see based on theories that countries in crisis are more likely to adopt heavily promoted ideas as a way of overcoming means-ends uncertainty \citep[see][]{blyth2002,blyth2003,mcnamara1998,mcnamara2002,Windmaier2007}.   
-
-Figure \ref{FinHR} approximates the findings in Figure 4 from Gandrud \citeyearpar[20]{Gandrud2012}. The original figure used a bootstrapping method implemented in Stata \citeyearpar{Stata2011} to approximate the hazard rates. This method does not show uncertainty surrounding the estimates as \emph{simPH} does.\footnote{Note that for hazard rates \emph{simPH} currently only simulates uncertainty around the coefficient estimates, but not the baseline hazard.} We can see in Figure \ref{FinHR} that the uncertainty is not insubstantial even though the crisis coefficient estimate is statistically significant using standard p-values. \emph{simPH} gives us a much more nuanced understanding of the uncertainty surrounding this quantity of interest compared to currently available methods.
-
-\begin{figure}
-    \caption{Hazard Rate for Unifying Multiple Financial Supervisors}
-    \label{FinHR}
-<<FinHR, echo=FALSE, message=FALSE, out.width="9cm", out.height="8cm", cache=TRUE>>=
-# Replicate model B6
-M3 <- coxph(Surv(begin, end, event) ~ crisis6 + imf_2 + percent_se_cbss_ocbu + 
-              percent_se_eu_ocbu + percent_se_basel_ocbu + pr_bur + dbagdp + 
-              concentration + cbg_time_in_office + cluster(country), data = FinData)
-
-# Simulate hazard rates
-Sim4 <- coxsimLinear(M3, b = "crisis6", qi = "Hazard Rate", 
-                     Xj = c(-1.79, 0), ci = 0.9)
-
-# Relabel values
-## Please see Gandrud (2012) for more details
-Sim4$HRValue[Sim4$HRValue == "-1.79"] <- "Crisis"
-Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
-
-# Convert time from 1988 to calendar years
-Sim4$time <- Sim4$time + 1987
-
-# Create hazard rate plot
-Plot4 <- simGG(Sim4, xlab = "", lsize = 1)
-
-# Use ggplot2 to add a dotted vertical line at 1997
-Plot4 + geom_vline(aes(xintercept = 1997), 
-                   linetype = "dotted")
-@
-{\scriptsize{The figure's points show the middle 90 percent of the simulations at each point in time and each fitted value. Note that the crisis coefficient is significant at the 95 percent level. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation. \\ The dotted vertical line indicates the year 1997. \\ Note that the figure is based on the first imputed data set from \cite{Gandrud2012}, rather than being an average of all five. \\ Also, the graph shows the simulated hazard rate when all other covariates are 0.}}
-\end{figure} 
 
 \section{Conclusion}
 
 In this brief paper I have combined a number of important insights about avoiding proportional hazard model misspecification and misinterpretation into one modeling strategy. Looking out for and properly estimating many of the multiplicative interactions and time-period specific biases that can trip up researchers is crucial for political scientists. They are factors that we are interested in studying. So we need tools to fully explore them. Exploring results and their associated uncertainty estimated from proportional hazards models is often difficult with currently available software. So, an important contribution of this paper has been to create and illustrate a new R package--\emph{simPH}--that makes it considerably easier to effectively explore and present a variety of quantities of interest estimated from Cox proportional hazard models. \emph{simPH} is freely available for researchers to download using instructions in the Appendix.
-
-There are a number of concrete improvements to future versions of the package that will further help political scientists more effectively estimate and interpret their proportional hazards models. It would be useful if \emph{simPH} had the ability to show results from interactions between different types of variables. For example, plotting quantities of interest from an interaction between linear and spline fitted variables. Hazard rate graphs would be more usefully interpretable if you were able to fit all of the covariate values rather than just the variable you intend to plot. The package would also be more useful if future versions were capable of simulating and plotting results from models with frailties, i.e. random effects \cite[see][]{BoxSteffensmeier2006}. There are a number of computational efficiency improvements that could be made, especially when very many simulations are run and plotted. Finally, I hope to expand the package so that it is an effective tool for presenting results from other proportional hazards event history analysis models, notably the Fine and Gray competing risks model.
 
 \section*{Appendix}
 
@@ -500,47 +430,7 @@ Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
 simGG(Sim3, xlab = "\nTime in Days", leg.name = "Backlogged \n Items")
 @
 
-\subsubsection*{Figure \ref{FinHR}}
 
-<<FinCode, eval=FALSE, tidy=FALSE>>=
-# Load repmis package
-library(repmis)
-
-# Load Gandrud (2012) data
-## File modified using https://raw.github.com/christophergandrud/
-##      InterpretingHazRatios/master/AncillaryFiles/FinReplicateData.do
-FinData <- source_data(paste0("https://raw.github.com/christophergandrud/",
-                "InterpretingHazRatios/master/AncillaryFiles/FinSurvData.csv"),
-                sha1 = "f9cddf75e7fb00e3981e557dd24ee7bc92fbcf3a")
-
-
-# Replicate model B6
-M3 <- coxph(Surv(begin, end, event) ~ crisis6 + imf_2 + 
-            percent_se_cbss_ocbu + percent_se_eu_ocbu + 
-            percent_se_basel_ocbu + pr_bur + dbagdp + 
-            concentration + cbg_time_in_office + 
-            cluster(country), data = FinData)
-
-# Simulate hazard rates
-Sim4 <- coxsimLinear(M3, b = "crisis6", qi = "Hazard Rate", 
-                     Xj = c(-1.79, 0), ci = 0.9)
-
-# Relabel values
-## Please see Gandrud (2012) for more details
-Sim4$HRValue[Sim4$HRValue == "-1.79"] <- "Crisis"
-Sim4$HRValue[Sim4$HRValue == "0"] <- "No Crisis"
-
-# Convert time from 1988 to calendar years
-Sim4$time <- Sim4$time + 1987
-
-# Create hazard rate plot
-Plot4 <- simGG(Sim4, xlab = "", lsize = 1)
-
-# Use ggplot2 to add a dotted vertical line at 1997
-library(ggplot2)
-Plot4 + geom_vline(aes(xintercept = 1997), 
-                   linetype = "dotted")
-@
 
 % Bibliography
 \bibliographystyle{apsr}
