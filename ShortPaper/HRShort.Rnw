@@ -9,6 +9,7 @@
 \usepackage[authoryear]{natbib}
 \usepackage{setspace}
     \doublespacing
+\usepackage{amsmath}
 \usepackage{hyperref}
 \hypersetup{
     colorlinks,
@@ -129,19 +130,17 @@ Relative hazards are particularly useful for binary variables because they can r
 
 Time-varying coefficient effects are not the only cause of PHA violations. Building on \cite{Grambsch1994} and \cite{Therneau2000}, \cite{Keele2010}\footnote{See also \cite{Keele2008} chapter 6.} points out that common diagnostic tests will also indicate PHA violations if the model is misspecified for other reasons. Omitting an important covariate, using a proportional hazards model even if another EHA model is more appropriate, or including a covariate as linear when its effect is actually nonlinear can lead to significant PHA tests. 
 
-Because of this Keele suggests that \emph{before} testing the PHA we should (a) try to make sure that we are not omitting important variables and (b) find the covariates' appropriate functional form, typically using either polynomials or splines.\footnote{See \cite{Keele2008} for a review of methods for identifying nonlinear effects and different spline types.} He demonstrates this in replication studies by adding splines then using a Wald test to examine if the spline estimates have a better fit than their linear counterparts.\footnote{He also suggests that likelihood ratio tests can be used \citepyearpar[195]{Keele2010}.} Many studies using Cox PH models did not test for nonlinearity, but instead jumped straight to testing the PHA, including time-interactions when it was violated. As Keele \citeyearpar{Keele2010} demonstrates ascribing a time-varying effect to a covariate when in fact the effect varies not over time, but nonlinearly over values of the covariate can have major implications for substantive interpretation of results from Cox PH models.
+Because of this Keele suggests that \emph{before} testing the PHA we should (a) try to make sure that we are not omitting important variables and (b) find the covariates' appropriate functional form, typically using either polynomials or splines.\footnote{See \cite{Keele2008} for a review of methods for identifying nonlinear effects and different spline types.} He demonstrates this in replication studies by adding splines then using a Wald test to examine if the spline estimates have a better fit than their linear counterparts.\footnote{He also suggests that likelihood ratio tests can be used \citeyearpar[195]{Keele2010}.} Many studies using Cox PH models did not test for nonlinearity, but instead jumped straight to testing the PHA, including time-interactions when it was violated. As Keele \citeyearpar{Keele2010} demonstrates ascribing a time-varying effect to a covariate when in fact the effect varies not over time, but nonlinearly over values of the covariate can have major implications for substantive interpretation of results from Cox PH models.
 
 After omitted variables and nonlinearities have been addressed, then (c) we should test the PHA. If it is violated we can add time interactions as before. If after doing all of these steps non-proportional hazards are still present then (d) he suggests we look for an EHA model, such as the log-logistic model--that does not assume proportional hazards.
 
 \subsection{Show Your Uncertainty: Quantities of interest \& probability distributions}
 
-%%%%%%%%%%%% Clean Up & Build %%%%%%%%%%%%%%%
-
 How can we effectively examine and communicate both the point estimates of and our uncertainty about quantities of interest from time interactive and nonlinear effects? Following \cite{King2000}, Licht advocates post-estimation simulation techniques to make it easier to estimate the uncertainty surrounding the first differences and relative hazards for time-varying effects. In both cases we first find the parameter estimates for $\hat{\beta_{1}}$ and $\hat{\beta_{2}}$ from a Cox PH model that make up the time-varying effect as well as the variance matrix $\hat{V}(\hat{\beta})$. Second, we draw $n$ values of $\beta_{1}$ and $\beta_{2}$ from the multivariate normal distribution given by $\hat{\beta} \sim N(\hat{\beta}, \hat{V}(\hat{\beta}))$. Third, we use these simulated values to calculate a quantity of interest such as the first difference or relative hazard for a range of times $T = [t_{1}\ldots t_{T}]$ as well as specified values of $x_{j}$ and $x_{l}$ (as appropriate). Finally, we can plot the results. Using this simulation technique allows us to estimate the full time-varying effect, how it changes over time, substantively asses the effect, and show the uncertainty surrounding our estimates.
 
 We can easily extend Licht and King et al.'s simulation technique to quantities of interest for other estimated effect types, including nonlinear effects. For example if a nonlinear effect is modeled with a second order polynomial--i.e. $\beta_{1}x_{i} + \beta_{2}x_{i}^{2}$--we can once again draw $n$ simulations from the multivariate normal distribution $\hat{\beta} \sim N(\hat{\beta}, \hat{V}(\hat{\beta}))$ for both $\beta_{1}$ and $\beta_{2}$. Then we simply calculate quantities of interest for a range of values of $x{i}$ as before. Note this will not show the effect over time,\footnote{For this we need to estimate the hazard rate.} but over a range of values of $X$. 
 
-Again, we can use a similar procedure for splines. Penalized splines \citep{Eilers1996}, for example, are basically ``linear combinations of B-spline basis functions'' \citep[5]{Strasak2009} joined at points in the range of observed values of $x$ called ``knots'' \citep[50]{Keele2008}. A Cox PH model with one penalized spline is given by:
+We can use a similar procedure for splines. Penalized splines \citep{Eilers1996}, which Keele recommends, are basically ``linear combinations of B-spline basis functions'' \citep[5]{Strasak2009} joined at points in the range of observed values of $x$ called ``knots'' \citep[50]{Keele2008}. A Cox PH model with one penalized spline is given by:
 %
 \begin{equation}
     h(t|\mathbf{X}_{i})=h_{0}(t)\mathrm{e}^{f(x)},
@@ -156,11 +155,21 @@ Where $f(x)$ is the penalized spline function. For our post-estimation purposes 
 $k$ are the spline knots. $x_{+}$ indicates that $x$ equals $x$ if $x$ is greater than $k_{c}$ and less than or equal to $k_{c+1}$. It is 0 otherwise, i.e:
 %
 \begin{equation}
-    (x)_{+} = 
+    (x)_{+} = \left \{
+    \begin{array}{1 1}
+        x & \quad \textrm{if $k_{c} < x \leq k_{c+1}$}\\
+        x & \quad x \leq k_{1} \\
+        x & \quad x \geq k_{n} \\
+        0 & \quad \textrm{otherwise} 
+    \end{array}
+    \right.
 \end{equation}
 %
-We can use King et al.'s simulation procedure for many other quantities of interest including hazard rates and even marginal effects for interactions \cite[see][]{Brambor2006}. 
+Note, $x$ should be within the observed data. 
 
+We can again draw values of each $\beta_{k_{1}}, \ldots \beta_{k_{n}}$ from the multivariate normal distribution described above. We can use these simulated coefficients to estimates quantities of interest for a range covariate values.
+
+This post-estimation technique is not limited to time-varying covariates, but can be used for virtually any quantities of interest estimated from Cox PH models including hazard rates and marginal effects for interactions \cite[see][]{Brambor2006}. 
 
 Many quantities of interest from Cox PH models have asymmetric probability distributions and can therefore be poorly summarized by the central probability or `confidence' intervals. Recall that most quantities of interest are on an exponential scale with a lower bound of 0. In these cases it can be more useful to look at highest density regions \citep[see][]{Box1973,Hyndman1996}.
 
