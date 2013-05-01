@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Interpreting Hazard Ratios in Political Science (short version)
+% Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models in Political Science
 % Christopher Gandrud
 % 1 May 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,7 +47,7 @@ opts_chunk$set(fig.align='center', dev='png')
 \begin{document}
 
 % Title
-\title{Cox Proportional Hazards Models \& Political Science: Solutions for Model Misspecification \& Misinterpretation}
+\title{Showing Estimates for Interactive and Nonlinear Effects in Cox Proportional Hazard Models}
     \author{Christopher Gandrud\footnote{Lecturer in International Relations Yonsei University (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}). Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, Luke Keele, Meredith Wilf, and participants at the International Studies Association Annual Convention (2013). Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper can be completely reproduced from source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
 
 \maketitle
@@ -57,7 +57,7 @@ opts_chunk$set(fig.align='center', dev='png')
 
 \noindent\emph{Draft Version. Comments welcome.} \\[0.2cm]
 
-The Cox Proportional Hazard (PH) model has become a popular tool for political scientists examining cross-unit cross-time data. However many researchers inadequately address Cox PH model misspecification problems. This is particularly unfortunate because causes of model misspecification--e.g. interactive and nonlinear effects--may be substantively meaningful. Part of the problem is that it has been difficult to explore and communicate these effects and associated uncertainty using available computational tools. This article aims to improve the way political scientists use Cox PH models by introducing a new R package--\emph{simPH}. \emph{simPH} makes it easy to graphically show a wide variety of quantities of interest estimated from Cox PH models and their associated uncertainty.
+The Cox Proportional Hazard (PH) model has become a popular tool for political scientists examining cross-unit cross-time data. However many researchers inadequately address Cox PH model misspecification problems. This is particularly unfortunate because causes of model misspecification--e.g. interactive and nonlinear effects--may be substantively meaningful. Part of the problem is that it has been difficult to explore and communicate these effects and associated uncertainty using available computational tools. This article aims to improve the way political scientists use Cox PH models by introducing a new R package--\emph{simPH}. The package makes it easy to graphically show a wide variety of quantities of interest, including interactive and nonlinear effects, estimated from Cox PH models along with their associated uncertainty.
 
 \end{abstract}
 
@@ -67,7 +67,7 @@ The Cox Proportional Hazard (PH) model has become a popular tool for political s
 
 \vspace{0.3cm}
 
-The Cox \citeyearpar{cox1972} Proportional Hazards (PH) model and Event History Analysis (EHA) in general are increasingly being used to help answer political science questions. A small sample of recent studies using Cox PH and EHA generally includes: \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. However many researchers inadequately address Cox PH model misspecification problems. This is particularly unfortunate because causes of model misspecification--e.g. interactive and nonlinear effects--may be substantively meaningful. Part of the problem is that it has been difficult to explore and communicate these effects and associated uncertainty using available computational tools. This article aims to improve the way political scientists use Cox PH models by introducing a new R \citeyear{RLanguage} package--\emph{simPH} \citep{R-simPH}. \emph{simPH} makes it easy to graphically show a wide variety of quantities of interest estimated from Cox PH models and their associated uncertainty. Quantities of interest \emph{simPH} can handle include hazard ratios, first differences, relative hazards, marginal effects (when applicable), and hazard rates for linear, linear-interactive, time-varying, and nonlinear coefficients. I use empirical demonstrations to illustrate \emph{simPH}'s capabilities. This article makes it easier for political scientists to use Cox PH models in robust ways so that they can answer their research questions.
+The Cox \citeyearpar{cox1972} Proportional Hazards (PH) model and Event History Analysis (EHA) in general are increasingly being used to help answer political science questions. A small sample of recent studies using Cox PH and EHA generally includes: \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. However many researchers inadequately address Cox PH model misspecification problems. This is particularly unfortunate because causes of model misspecification--e.g. interactive and nonlinear effects--may be substantively meaningful. Part of the problem is that it has been difficult to explore and communicate these effects and associated uncertainty using available computational tools. This article aims to improve the way political scientists use Cox PH models by introducing a new R \citeyear{RLanguage} package--\emph{simPH} \citep{R-simPH}. \emph{simPH} makes it easy to graphically show a wide variety of quantities of interest estimated from Cox PH models and their associated uncertainty. Quantities of interest \emph{simPH} can handle include hazard ratios, first differences, relative hazards, marginal effects (when applicable), and hazard rates from linear, linear-interactive, time-varying, and nonlinear coefficients. I use empirical demonstrations to illustrate \emph{simPH}'s capabilities. 
 
 %%%%%% Section: Common issues
 \section{Common Issues in Analyses Using Cox PH Models}
