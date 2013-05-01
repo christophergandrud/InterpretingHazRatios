@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interpreting Hazard Ratios in Political Science (short version)
 % Christopher Gandrud
-% 30 April 2013
+% 1 May 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper]{article}
@@ -67,7 +67,7 @@ The Cox Proportional Hazard (PH) model has become a popular tool for political s
 
 \vspace{0.3cm}
 
-The Cox \citeyearpar{cox1972} Proportional Hazards (PH) model and Event History Analysis (EHA) in general are increasingly being used to help answer political science questions. A small sample of recent studies using Cox PH and EHA generally includes: \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. However many researchers inadequately address Cox PH model misspecification problems. This is particularly unfortunate because causes of model misspecification--e.g. interactive and nonlinear effects--may be substantively meaningful. Part of the problem is that it has been difficult to explore and communicate these effects and associated uncertainty using available computational tools. This article aims to improve the way political scientists use Cox PH models by introducing a new R \cite{RLanguage} package--\emph{simPH} \citep{R-simPH}. \emph{simPH} makes it easy to graphically show a wide variety of quantities of interest estimated from Cox PH models and their associated uncertainty. Quantities of interest \emph{simPH} can handle include hazard ratios, first differences, relative hazards, marginal effects (when applicable), and hazard rates for linear, linear-interactive, time-varying, and nonlinear coefficients. I use empirical demonstrations to illustrate \emph{simPH}'s capabilities. This article makes it easier for political scientists to use Cox PH models in robust ways so that they can answer their research questions.
+The Cox \citeyearpar{cox1972} Proportional Hazards (PH) model and Event History Analysis (EHA) in general are increasingly being used to help answer political science questions. A small sample of recent studies using Cox PH and EHA generally includes: \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Jordana2005, Mccubbins2009, Neumayer2002, Simmons2006}. However many researchers inadequately address Cox PH model misspecification problems. This is particularly unfortunate because causes of model misspecification--e.g. interactive and nonlinear effects--may be substantively meaningful. Part of the problem is that it has been difficult to explore and communicate these effects and associated uncertainty using available computational tools. This article aims to improve the way political scientists use Cox PH models by introducing a new R \citeyear{RLanguage} package--\emph{simPH} \citep{R-simPH}. \emph{simPH} makes it easy to graphically show a wide variety of quantities of interest estimated from Cox PH models and their associated uncertainty. Quantities of interest \emph{simPH} can handle include hazard ratios, first differences, relative hazards, marginal effects (when applicable), and hazard rates for linear, linear-interactive, time-varying, and nonlinear coefficients. I use empirical demonstrations to illustrate \emph{simPH}'s capabilities. This article makes it easier for political scientists to use Cox PH models in robust ways so that they can answer their research questions.
 
 %%%%%% Section: Common issues
 \section{Common Issues in Analyses Using Cox PH Models}
@@ -134,7 +134,7 @@ How can we effectively examine and communicate both the point estimates of and o
 
 \paragraph{Post Estimation Simulations}
 
-Following \cite{King2000}, Licht advocates post-estimation simulation techniques to make it easier to estimate the uncertainty surrounding the first differences and relative hazards for time-varying effects.\footnote{See King et al. \citep[352-353]{King2000} for a discussion of alternative approaches.} In both cases we first find the parameter point estimates for $\hat{\beta_{1}}$ and $\hat{\beta_{2}}$ from a Cox PH model that make up the time-varying effect as well as the variance matrix $\hat{V}(\hat{\beta})$. Second, we draw $n$ values of $\beta_{1}$ and $\beta_{2}$ from the multivariate normal distribution given by $\hat{\beta} \sim N(\hat{\beta}, \hat{V}(\hat{\beta}))$.\footnote{In fact we draw all of the parameters from the model, but only use certain ones to find quantities of interest \cite[see][343]{King2000}.} Third, we use these simulated values to calculate a quantity of interest such as the first difference or relative hazard for a range of times $T = [t_{1}\ldots t_{T}]$ as well as specified values of $x_{j}$ and $x_{l}$ (as appropriate). Finally, we can plot the results. Using this simulation technique allows us to estimate the full time-varying effect, how it changes over time, substantively asses the effect, and show the uncertainty surrounding our estimates.
+Following \cite{King2000}, Licht advocates post-estimation simulation techniques to make it easier to estimate the uncertainty surrounding the first differences and relative hazards for time-varying effects.\footnote{See King et al. \citep[352-353]{King2000} for a discussion of alternative approaches including fully Bayesian Markov-Chain Monte Carlo techniques and bootstraping. In essence the main difference between these three approaches is how the paramaters are drawn.} In both cases we first find the parameter point estimates for $\hat{\beta_{1}}$ and $\hat{\beta_{2}}$ from a Cox PH model that make up the time-varying effect as well as the variance matrix $\hat{V}(\hat{\beta})$. Second, we draw $n$ values of $\beta_{1}$ and $\beta_{2}$ from the multivariate normal distribution given by $\hat{\beta} \sim N(\hat{\beta}, \hat{V}(\hat{\beta}))$.\footnote{In fact we draw all of the parameters from the model, but only use certain ones to find quantities of interest \cite[see][343]{King2000}.} Third, we use these simulated values to calculate a quantity of interest such as the first difference or relative hazard for a range of times $T = [t_{1}\ldots t_{T}]$ as well as specified values of $x_{j}$ and $x_{l}$ (as appropriate). Finally, we can plot the results. Using this simulation technique allows us to estimate the full time-varying effect, how it changes over time, substantively asses the effect, and show the uncertainty surrounding our estimates.
 
 We can easily extend Licht and King et al.'s simulation technique to quantities of interest for other estimated effect types, including nonlinear effects. For example if a nonlinear effect is modeled with a second order polynomial--i.e. $\beta_{1}x_{i} + \beta_{2}x_{i}^{2}$--we can once again draw $n$ simulations from the multivariate normal distribution $\hat{\beta} \sim N(\hat{\beta}, \hat{V}(\hat{\beta}))$ for both $\beta_{1}$ and $\beta_{2}$. Then we simply calculate quantities of interest for a range of values of $x{i}$ as before. Note this will not show the effect over time,\footnote{For this we need to estimate the hazard rate.} but over a range of values of $X$. 
 
@@ -144,7 +144,7 @@ We can use a similar procedure for splines. Penalized splines \citep{Eilers1996}
     h(t|\mathbf{X}_{i})=h_{0}(t)\mathrm{e}^{f(x)},
 \end{equation}
 %
-Where $f(x)$ is the penalized spline function. For our post-estimation purposes $f(x)$ is basically a series of regression coefficients such that:
+Where $f(x)$ is the penalized spline function. For our post-estimation purposes $f(x)$ is basically a series of linearly combined coefficients such that:
 %
 \begin{equation}
     f(x) = \beta_{k_{1}}(x)_{+} + \beta_{k_{2}}(x)_{+} + \beta_{k_{3}}(x)_{+} + \ldots + \beta_{k_{n}}(x)_{+}
@@ -178,7 +178,7 @@ Many quantities of interest from Cox PH models have asymmetric probability distr
 %%%%%% Section: simPH
 \section{\emph{simPH}: Tools for Simulating and Graphing Effects from Cox PH Models}
 
-One reason that researchers have inconsistently incorporated suggestions to test for and examine time interactions and nonlinearities in their Cox PH models and show their estimation uncertainty is that there has been a lack of computational capabilities to easily do so. In R the \emph{survival} \citep{R-survival} has functions for testing the proportional hazards assumption. The \emph{survival} and \emph{Zelig} \citep{R-zelig} packages can estimate models with splines and time interactions. However, their capabilities for graphically showing these estimates and associated uncertainty are limited. Current capabilities for showing results from splines\footnote{Primarily R's \texttt{termplot} command. See \cite{Keele2008}, chapter 6.} present results in difficult to interpret quantities and without indicating substantively meaningful estimation uncertainty. They also do not show how spline effects are estimated to change over time. In general the capabilities for showing results from time interactions is very limited. Usually, showing these types of results requires considerable researcher effort to extract estimates from model objects and then devise ways to show them graphically. See for example Licht's code for replicating the time-interaction plots in her paper.\footnote{It is available at: \url{http://hdl.handle.net/1902.1/15633}.}
+One reason that researchers have inconsistently incorporated suggestions to test for and examine time interactions and nonlinearities in their Cox PH models and show their estimation uncertainty is that there has been a lack of computational capabilities to easily do so. In R the \emph{survival} \citep{R-survival} has functions for testing the proportional hazards assumption. The \emph{survival} and \emph{Zelig} \citep{R-zelig} packages\footnote{\cite{King2000} also developed the \emph{Clarify} package for Stata. It has very similar capabilities as \emph{Zelig}.} can estimate models with splines and interactions. However, their capabilities for graphically showing these estimates and associated uncertainty are very limited. Current capabilities for showing results from splines\footnote{Primarily R's \texttt{termplot} command. See \cite{Keele2008}, chapter 6.} present results in difficult to interpret quantities and without indicating substantively meaningful estimation uncertainty. They also do not show how spline effects are estimated to change over time. In general the capabilities for showing results from time interactions is very limited. Usually, showing these types of results requires considerable researcher effort to extract estimates from model objects and then devise ways to show them graphically. See for example Licht's code for replicating the time-interaction plots in her paper.\footnote{It is available at: \url{http://hdl.handle.net/1902.1/15633}.}
 
 To solve these problems I am introducing the \emph{simPH} package for R.\footnote{See the Appendix for installation instructions and source code for the following examples.} There are three basic steps to use the package:
 
@@ -321,7 +321,7 @@ termplot(M1, term = 17, se = TRUE, rug = TRUE,
 
 Figure \ref{TermPlot} uses \texttt{termplot} to plot the log hazard of the effect and the standard errors. Apart from showing related but different quantities of interest, Figure \ref{TermPlot} gives us less useful information than Figure \ref{Spline1} about the probability distribution that the parameter is from. By only describing the distribution of the parameter with the mean value and standard error, Figure \ref{TermPlot} makes it difficult for us to know what the distribution is. Figure \ref{Spline1} simulates this distribution and shows it directly.
 
-We can see in the plot the simulated values are concentrated near the bottom of the distribution. Following \citeauthor{Liu2013} we may choose to show not the central 90 percent interval, but the shortest 90 percent probability interval. Figure \ref{CentProbSpline} shows this interval. Using the shortest 90 percent probability interval reveals that there is actually a higher probability that the hazard ratio is 1--i.e. no effect--than the central 90 percent interval when there are less than about 1400 FDA drug review staff.
+We can see in the plot the simulated values are concentrated near the bottom of the distribution. Following \citeauthor{Liu2013} we may choose to show not the central 90 percent interval, but the shortest 90 percent probability interval. Figure \ref{CentProbSpline} shows this interval. Using the shortest 90 percent probability interval indicates that there is actually a higher probability that the hazard ratio is 1--i.e. no effect--than the central 90 percent interval when there are less than about 1400 FDA drug review staff. It also demphasizes the probability of the higher hazard ratio values.
 
 
 \begin{figure}
@@ -338,7 +338,13 @@ Sim4 <- coxsimSpline(M2, bspline = "pspline(stafcder, df = 4)",
                      spin = TRUE)
 
 # Plot simulated values
-simGG(Sim4, xlab = "\n Number of FDA Drug Review Staff", palpha = 0.2)
+SimPlot <- simGG(Sim4, xlab = "\n Number of FDA Drug Review Staff", 
+                palpha = 0.2)
+
+# Place on the same scale as the central interval figure
+library(ggplot2)
+
+SimPlot + scale_y_continuous(breaks = c(0, 10, 20, 30, 40, 50), limits = c(0, 50))
 @  
 
 {\scriptsize {The figure's points show the shortest 90 percent probability interval at each value of FDA staff. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.}}
@@ -350,7 +356,7 @@ Note that \emph{simPH} also allows us to plot hazard rates from spline estimates
 
 \section{Conclusion}
 
-In this brief paper I have combined a number of important insights about avoiding proportional hazard model misspecification and misinterpretation into one modeling strategy. Looking out for and properly estimating many of the multiplicative interactions and time-period specific biases that can trip up researchers is crucial for political scientists. They are factors that we are interested in studying. So we need tools to fully explore them. Exploring results and their associated uncertainty estimated from proportional hazards models is often difficult with currently available software. So, an important contribution of this paper has been to create and illustrate a new R package--\emph{simPH}--that makes it considerably easier to effectively explore and present a variety of quantities of interest estimated from Cox proportional hazard models. \emph{simPH} is freely available for researchers to download using instructions in the Appendix.
+In this brief paper I reviewed a number of important insights about avoiding proportional hazard model misspecification and misinterpretation. Looking out for and properly estimating many of the multiplicative interactions and non-linearities that can trip up researchers is crucial for political scientists. They are factors that we are interested in studying. So we need tools to fully explore them. Exploring results estimated from proportional hazards models and their associated uncertainty is often difficult with currently available software. So, an important contribution of this paper has been to create and illustrate a new R package--\emph{simPH}--that makes it considerably easier to effectively explore and present a variety of quantities of interest estimated from Cox proportional hazard models. \emph{simPH} is freely available for researchers to download using instructions in the Appendix.
 
 \section*{Appendix}
 
@@ -477,7 +483,14 @@ Sim4 <- coxsimSpline(M2, bspline = "pspline(stafcder, df = 4)",
                      spin = TRUE)
 
 # Plot simulated values
-simGG(Sim4, xlab = "\n Number of FDA Drug Review Staff", palpha = 0.2)
+SimPlot <- simGG(Sim4, xlab = "\n Number of FDA Drug Review Staff", 
+                palpha = 0.2)
+
+# Place on the same scale as the central interval figure
+library(ggplot2)
+
+SimPlot + scale_y_continuous(breaks = c(0, 10, 20, 30, 40, 50), 
+            limits = c(0, 50))
 @  
 
 % Bibliography
