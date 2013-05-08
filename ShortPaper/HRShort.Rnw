@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models in Political Science
 % Christopher Gandrud
-% 6 May 2013
+% 8 May 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper]{article}
@@ -232,7 +232,7 @@ M1 <- coxph(Surv(begin, end, event) ~
 <<TVCqmv, echo=FALSE, message=FALSE, out.width="9cm", out.height="8cm", cache=TRUE>>=
 # Create simtvc object for first difference
 Sim1 <- coxsimtvc(obj = M1, b = "qmv", btvc = "Lqmv",
-                   qi = "First Difference",
+                   qi = "First Difference", Xj = 1,
                    tfun = "log", from = 80, to = 2000,
                    by = 15, ci = 0.95)
 
@@ -392,7 +392,7 @@ M1 <- coxph(Surv(begin, end, event) ~
 
 # Create simtvc object for first difference
 Sim1 <- coxsimtvc(obj = M1, b = "qmv", btvc = "Lqmv",
-                   qi = "First Difference",
+                   qi = "First Difference", Xj = 1,
                    tfun = "log", from = 80, to = 2000,
                    by = 15, ci = 0.95)
 
