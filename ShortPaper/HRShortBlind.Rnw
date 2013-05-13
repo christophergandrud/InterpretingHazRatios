@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models in Political Science
-% Christopher Gandrud
+% [REMOVED FOR BLIND REVIEW]
 % 13 May 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -48,14 +48,12 @@ opts_chunk$set(fig.align='center', dev='png')
 
 % Title
 \title{Showing Estimates for Interactive and Nonlinear Effects from Cox Proportional Hazard Models}
-    \author{Christopher Gandrud\footnote{Lecturer in International Relations Yonsei University (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}). Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, Luke Keele, Meredith Wilf, and participants at the International Studies Association Annual Convention (2013). Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper can be completely reproduced from source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
+
 
 \maketitle
 
 % Abstract
 \begin{abstract}
-
-\noindent\emph{Draft Version. Comments welcome.} \\[0.2cm]
 
 The Cox Proportional Hazard (PH) model is a popular tool for political scientists examining cross-unit cross-time data. However, many researchers misspecify their models and poorly communicate uncertainty about their estimates. This is unfortunate because causes of model misspecification--e.g. interactive and nonlinear effects--may be substantively meaningful. Uncertainty about these effects can be difficult to assess because quantities of interest are often on asymmetric and nonlinear scales. Part of the problem has been that available computational tools make it difficult to explore and communicate these effects. This paper improves the way researchers use Cox-type models in two ways. First it advocates using  visually-weighted shortest probability intervals to display simulated quantities of interest for interactive and nonlinear effects. Second, it makes it easy for researchers to use these methods by demonstrating a new R package--\emph{simPH}.
 
@@ -69,7 +67,7 @@ The Cox Proportional Hazard (PH) model is a popular tool for political scientist
 
 The Cox \citeyearpar{cox1972} Proportional Hazards (PH) model and Event History Analysis (EHA) in general are increasingly being used to help answer political science questions. A small sample of recent studies using Cox PH and EHA generally includes: \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Mccubbins2009, Neumayer2002, Simmons2006}. However, many researchers misspecify their models and poorly communicate uncertainty about their estimates. This is unfortunate because causes of model misspecification--e.g. interactive and nonlinear effects--may be substantively meaningful. Uncertainty about these effects can be difficult to assess because quantities of interest are often on asymmetric and nonlinear scales. Part of the problem has been that available computational tools make it difficult to explore and communicate these effects. 
 
-This article aims to improve the way political scientists use Cox-type models\footnote{I use the term `Cox-type' model to refer to both proportional and nonproportional Cox Hazard models.} in two ways. After laying out previous research on how Cox-type models can be misspecified by ignoring time interactions and nonlinear effects, it (a) advocates using shortest probability intervals and visual-weighting to display simulated quantities of interest that describe these estimated effects. Then (b) it makes it easy for researchers to use these methods by demonstrating a new R \citep{RLanguage} package--\emph{simPH} \citep{R-simPH}. The package makes it easier to create visually-weighted plots of central or shortest probability intervals of simulated distributions of quantities of interest estimated from Cox-type models. The latter type of interval is often more appropriate for Cox-type model results. Quantities of interest \emph{simPH} can handle include hazard ratios, first differences, relative hazards, marginal effects (when applicable), and hazard rates from linear, linear-interactive, time-varying, and nonlinear coefficients. I use empirical examples to illustrate \emph{simPH}'s capabilities. 
+This article aims to improve the way political scientists use Cox-type models\footnote{I use the term `Cox-type' model to refer to both proportional and nonproportional Cox Hazard models.} in two ways. After laying out previous research on how Cox-type models can be misspecified by ignoring time interactions and nonlinear effects, it (a) advocates using shortest probability intervals and visual-weighting to display simulated quantities of interest that describe these estimated effects. Then (b) it makes it easy for researchers to use these methods by demonstrating a new R \citep{RLanguage} package--\emph{simPH} [[REMOVED FOR BLIND REVIEW]]. The package makes it easier to create visually-weighted plots of central or shortest probability intervals of simulated distributions of quantities of interest estimated from Cox-type models. The latter type of interval is often more appropriate for Cox-type model results. Quantities of interest \emph{simPH} can handle include hazard ratios, first differences, relative hazards, marginal effects (when applicable), and hazard rates from linear, linear-interactive, time-varying, and nonlinear coefficients. I use empirical examples to illustrate \emph{simPH}'s capabilities. 
 
 %%%%%% Section: Common issues
 \section{Issues in Analyses Using Cox PH Models}
@@ -404,12 +402,12 @@ In this paper I have reviewed a number of important insights about avoiding Cox 
 \emph{simPH} is currently available for download from GitHub.\footnote{\url{https://github.com/}} To install it in R type the following code into your R Console:
 
 <<eval=FALSE>>=
-devtools::install_github("simPH", "christophergandrud")
+devtools::install_github("simPH", [REMOVED FOR BLIND REVIEW])
 @
 
 \noindent You need to have the \emph{devtools} package \citep{R-devtools} set up to install \emph{simPH}.
 
-For more information about \emph{simPH} see: \url{http://christophergandrud.github.io/simPH/}. Please report any bugs to \url{https://github.com/christophergandrud/simPH/issues}.
+For more information about \emph{simPH} see: [REMOVED FOR BLIND REVIEW]. Please report any bugs to [REMOVED FOR BLIND REVIEW].
 
 \subsection*{Source Code}
 
