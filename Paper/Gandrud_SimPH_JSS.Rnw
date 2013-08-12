@@ -1,23 +1,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models in Political Science
+% SimPH: Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models
 % Christopher Gandrud
-% 31 July 2013
+% 12 August 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentclass[a4paper]{article}
-\usepackage{fullpage}
-\usepackage[authoryear]{natbib}
-\usepackage{setspace}
-    \doublespacing
+\documentclass[article]{jss}
 \usepackage{amsmath}
-\usepackage{hyperref}
-\hypersetup{
-    colorlinks,
-    citecolor=black,
-    filecolor=black,
-    linkcolor=cyan,
-    urlcolor=cyan
-}
+
 \usepackage{dcolumn}
 \usepackage{tikz}
 \usepackage{todonotes}
@@ -26,8 +15,8 @@
 #### Load Packages ####
 library(repmis)
 
-Packages <- c("car", "knitr", "gridExtra", "repmis", "devtools", "MSBVAR", 
-              "simPH", "SPIn", "survival", "Zelig", "ggplot2")
+Packages <- c("car", "knitr", "gridExtra", "repmis", "devtools",
+            "MSBVAR", "simPH", "SPIn", "survival", "Zelig", "ggplot2")
 
 LoadandCite(Packages, file = "HRPackages.bib")
 
@@ -41,31 +30,50 @@ data("CarpenterFdaData")
 data("GolubEUPData")
 
 ##### Set Chunk Options ####
-opts_chunk$set(fig.align='center', dev='pdf')
+opts_chunk$set(fig.align='center', dev='png')
 @
 
-\begin{document}
+% Author/Title
+\author{Christopher Gandrud \\ Hertie School of Governance}
+\title{\pkg{simPH}: An \proglang{R} package for showing estimates for interactive and nonlinear effects from Cox proportional hazard models}
 
-% Title
-\title{Showing Estimates for Interactive and Nonlinear Effects from Cox Proportional Hazard Models}
-    \author{Christopher Gandrud\footnote{Lecturer in International Relations Yonsei University (\href{mailto:gandrud@yonsei.ac.kr}{gandrud@yonsei.ac.kr}). Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, Luke Keele, Meredith Wilf, and participants at the International Studies Association Annual Convention (2013). Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper can be completely reproduced from source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
+\Plainauthor{Christopher Gandrud}
+\Plaintitle{simPH: An R package for showing estimates for interactive and nonlinear effects from Cox proportional hazard models}
+\Shorttitle{\pkg{simPH}}
+
+    Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, Luke Keele, Meredith Wilf, and participants at the International Studies Association Annual Convention (2013). Note: I wrote the paper with \texttt{knitr} \citep{R-knitr}. The paper can be completely reproduced from source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.}}
 
 \maketitle
 
 % Abstract
 \begin{abstract}
 
-\noindent\emph{Draft Version. Comments welcome.} \\[0.2cm]
-
-The Cox Proportional Hazard (PH) model is a popular tool for political scientists examining cross-unit cross-time data. However, many researchers misspecify their models and poorly communicate uncertainty about their estimates. This is unfortunate because causes of model misspecification--e.g. interactive and nonlinear effects--may be substantively meaningful. Uncertainty about these effects can be difficult to assess because quantities of interest are often on asymmetric and nonlinear scales. Part of the problem has been that available computational tools make it difficult to explore and communicate these effects. This paper improves the way researchers use Cox-type models in two ways. First it advocates using  visually-weighted shortest probability intervals to display simulated quantities of interest for interactive and nonlinear effects. Second, it makes it easy for researchers to use these methods by demonstrating a new R package--\emph{simPH}.
+The Cox Proportional Hazard (PH) model is a popular tool for examining cross-unit cross-time data. However, many researchers misspecify their models and poorly communicate uncertainty about their estimates. This is unfortunate because causes of model misspecification--e.g. interactive and nonlinear effects--may be substantively meaningful. Uncertainty about these effects can be difficult to assess because quantities of interest are often on asymmetric and nonlinear scales. Part of the problem has been that available computational tools make it difficult to explore and communicate these effects. This paper improves the way researchers use Cox-type models in two ways. First it advocates using  visually-weighted shortest probability intervals to display simulated quantities of interest for interactive and nonlinear effects. Second, it makes it easy for researchers to use these methods by demonstrating a new R package--\emph{simPH}.
 
 \end{abstract}
 
-\begin{description}
-  \item [{\textbf{Keywords:}}] Cox Proportional Hazard models, Event History Analysis, hazard ratios, time-varying, nonlinearity, splines
-\end{description}
+\Keywords{Cox proportional hazard models, Event History Analysis, hazard ratios, time-varying, nonlinearity, splines, \proglang{R}}
+\Plainkeywords{Cox proportional hazard models, Event History Analysis, hazard ratios, time-varying, nonlinearity, splines, R}
 
-\vspace{0.3cm}
+%% publication information
+%% NOTE: Typically, this can be left commented and will be filled out by the technical editor
+%% \Volume{50}
+%% \Issue{9}
+%% \Month{June}
+%% \Year{2012}
+%% \Submitdate{2012-06-04}
+%% \Acceptdate{2012-06-04}
+
+\Address{
+    Christopher Gandrud
+    Hertie School of Governance
+    Friedrichstrasse 180
+    Berlin, 10117
+    Germany
+    E-mail: \email{christopher.gandrud@gmail.com}
+}
+
+\begin{document}
 
 The Cox \citeyearpar{cox1972} Proportional Hazards (PH) model and Event History Analysis (EHA) in general are increasingly being used to help answer political science questions. A small sample of recent studies using Cox PH and EHA generally includes: \cite{Aleman2011, BuenodeMesquita1999, brooks2005, Gandrud2012, Gates2006, Golub2007, Mccubbins2009, Neumayer2002, Simmons2006}. However, many researchers misspecify their models and poorly communicate uncertainty about their estimates. This is unfortunate because causes of model misspecification--e.g. interactive and nonlinear effects--may be substantively meaningful. Uncertainty about these effects can be difficult to assess because quantities of interest are often on asymmetric and nonlinear scales. Part of the problem has been that available computational tools make it difficult to explore and communicate these effects. 
 
