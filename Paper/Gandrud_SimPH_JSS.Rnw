@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SimPH: Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models
 % Christopher Gandrud
-% 15 August 2013
+% 29 August 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[article]{jss}
@@ -277,7 +277,7 @@ The right-panel of Figure \ref{TVCQMV} shows the shortest-probability interval f
 <<TVCModel3, tidy=FALSE, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE, fig.width=7, fig.height=4, out.width='0.95\\linewidth'>>=
 library(gridExtra)
 
-# Create simtvc object for first difference (central interval)
+## Create simtvc object for first difference (central interval)
 Sim1.1 <- coxsimtvc(obj = M1, b = "qmv", btvc = "Lqmv",
                   qi = "First Difference", Xj = 1,
                   tfun = "log", from = 80, to = 2000,
@@ -316,27 +316,28 @@ load("M1_ModelObject.RData")
 # Create simtvc object for relative hazard
 Sim2 <- coxsimtvc(obj = M1, b = "backlog", btvc = "Lbacklog",
                   qi = "Relative Hazard", Xj = seq(40, 200, 40),
-                  tfun = "log", from = 1200, to = 2000, by = 10)
+                  tfun = "log", from = 1200, to = 2000, by = 10,
+                  nsim = 500)
 
 # Create relative hazard plot
-simGG(Sim2, xlab = "\nTime in Days", leg.name = "Backlogged \n Items")
+simGG(Sim2, xlab = "\nTime in Days", ribbons = TRUE,
+        leg.name = "Backlogged \n Items", alpha = 0.5)
 @
 
 \begin{figure}
   \caption{Simulated Relative Hazards for the Effect of Different Levels of Legislative Backlog on Directive Deliberation Time}
   \label{BacklogRH}
 
-<<TVCBacklog2, echo=FALSE, tidy=FALSE, message=FALSE, warning=FALSE, out.width="9cm", out.height="8cm", cache=TRUE>>=
-
+<<TVCBacklog2, echo=FALSE, tidy=FALSE, message=FALSE, warning=FALSE, out.width="9cm", out.height="8cm", cache=TRUE, dev='pdf'>>=
 # Create simtvc object for relative hazard
 Sim2 <- coxsimtvc(obj = M1, b = "backlog", btvc = "Lbacklog",
-                  qi = "Relative Hazard",
-                  Xj = seq(40, 200, 40),
-                  tfun = "log", from = 1200, to = 2000,
-                  by = 10)
+                  qi = "Relative Hazard", Xj = seq(40, 200, 40),
+                  tfun = "log", from = 1200, to = 2000, by = 10,
+                  nsim = 500)
 
 # Create relative hazard plot
-simGG(Sim2, xlab = "\nTime in Days", leg.name = "Backlogged \n Items")
+simGG(Sim2, xlab = "\nTime in Days", ribbons = TRUE,
+        leg.name = "Backlogged \n Items", alpha = 0.5)
 @
 {\scriptsize{The figure's points show the middle 95 percent of the simulations at each point in time and each fitted value. \\ The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.}}
 \end{figure}
@@ -384,16 +385,16 @@ Sim3 <- coxsimSpline(M2, bspline = "pspline(stafcder, df = 4)",
 
 # Plot simulated values
 simGG(Sim3, xlab = "\n Number of FDA Drug Review Staff", 
-        title = "Central Interval\n", palpha = 0.2)
+        title = "Central Interval\n", alpha = 0.5, ribbons = TRUE)
 @ 
 
-There are a few syntax points to note. First we tell \code{coxsimSpline} the term to estimate for using the \code{bspline} argument and the same syntax we used to enter the term as a penalized spline in the \code{coxph} call, i.e. \code{pspline(stafcder, df = 4)}.\footnote{You need to make sure that there is a white space before and after the \code{=}.} Second, we specified the vector containing the observed \code{stafcder} data with the \code{bdata} argument. This is important for \code{coxsimSpline} to be able to accurately find the spline knots. Finally, the \code{palpha} argument was added to \code{simGG} to decrease the transparency of the dots in order to highlight wide distribution's full range more effectively. 
+There are a few syntax points to note. First we tell \code{coxsimSpline} the term to estimate for using the \code{bspline} argument and the same syntax we used to enter the term as a penalized spline in the \code{coxph} call, i.e. \code{pspline(stafcder, df = 4)}.\footnote{You need to make sure that there is a white space before and after the \code{=}.} Second, we specified the vector containing the observed \code{stafcder} data with the \code{bdata} argument. This is important for \code{coxsimSpline} to be able to accurately find the spline knots. Finally, the \code{alpha} argument was added to \code{simGG} to decrease the transparency of the dots in order to highlight wide distribution's full range more effectively. 
 
 \begin{figure}
   \caption{Simulated Hazard Ratios for the Effect of FDA Staff on Drug Approval Time: Central 95\% Interval}
   \label{Spline1}
-<<Spline1Fig2, echo=FALSE, tidy=FALSE, message=FALSE, out.width="9cm", out.height="8cm", cache=TRUE>>=
-# Simulated Fitted Values
+<<Spline1Fig2, echo=FALSE, tidy=FALSE, message=FALSE, out.width="9cm", out.height="8cm", cache=TRUE, dev='pdf'>>=
+## Simulated Fitted Values
 Sim3 <- coxsimSpline(M2, bspline = "pspline(stafcder, df = 4)", 
                      bdata = CarpenterFdaData$stafcder,
                      qi = "Hazard Ratio",
@@ -402,7 +403,7 @@ Sim3 <- coxsimSpline(M2, bspline = "pspline(stafcder, df = 4)",
 
 # Plot simulated values
 SimPlot1 <- simGG(Sim3, xlab = "\n Number of FDA Drug Review Staff", 
-        title = "Central Interval\n", palpha = 0.2)
+        title = "Central Interval\n", alpha = 0.5, ribbons = TRUE)
 
 SimPlot1 + scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60))
 @  
@@ -424,7 +425,7 @@ SimPlot + scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60))
 \begin{figure}
   \caption{Simulated Hazard Ratios for the Effect of FDA Staff on Drug Approval Time: Shortest 95\% Probability Interval}
   \label{Spline2}
-<<Spline2Fig2, echo=FALSE, tidy=FALSE, message=FALSE, out.width="9cm", out.height="8cm", cache=TRUE>>=
+<<Spline2Fig2, echo=FALSE, tidy=FALSE, message=FALSE, out.width="9cm", out.height="8cm", cache=TRUE, dev='pdf'>>=
 # Simulated Fitted Values: shortest probability interval
 Sim4 <- coxsimSpline(M2, bspline = "pspline(stafcder, df = 4)", 
                      bdata = CarpenterFdaData$stafcder,
@@ -436,7 +437,7 @@ Sim4 <- coxsimSpline(M2, bspline = "pspline(stafcder, df = 4)",
 # Plot simulated values
 SimPlot2 <- simGG(Sim4, xlab = "\n Number of FDA Drug Review Staff",
                 title = "SPIn\n", 
-                palpha = 0.2)
+                alpha = 0.5, ribbons = TRUE)
 
 # Place on the same scale as the central interval figure
 library(ggplot2)
