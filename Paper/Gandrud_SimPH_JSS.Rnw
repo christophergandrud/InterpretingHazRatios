@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SimPH: Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models
 % Christopher Gandrud
-% 1 September 2013
+% 2 September 2013
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[article]{jss}
@@ -169,7 +169,7 @@ where $k$ are the equally spaced spline knots with values inside of the range of
 %
 Note, $x$ should be within the observed data. 
 
-We can again draw values of each $\beta_{k_{1}}, \ldots \beta_{k_{n}}$ from the multivariate normal distribution described above. We then use these simulated coefficients to estimate quantities of interest for a range covariate values. For example, the first difference between two values $x_{j}$ and $x_{l}$ is:
+We can again draw values of each $\beta_{k_{1}}, \ldots \beta_{k_{n}}$ from the multivariate normal distribution described above. We then use these simulated coefficients to estimate quantities of interest for a range of covariate values. For example, the first difference between two values $x_{j}$ and $x_{l}$ is:
 %
 \begin{equation}
     \%\triangle h_{i}(t) = (\mathrm{e}^{g(x_{j}) - g(x_{l})} - 1) * 100.
