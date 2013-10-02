@@ -31,32 +31,23 @@ M1 <- coxph(Surv(begin, end, event) ~ qmv + qmvpostsea + qmvpostteu +
               Lthatcher + Lbacklog,
             data = GolubEUPData, ties = "efron")
 
-# Create simtvc object for first difference (central interval)
-Sim1 <- coxsimtvc(obj = M1, b = "qmv", btvc = "Lqmv",
-                  qi = "First Difference", Xj = 1, tfun = "log", 
-                  from = 80, to = 2000, by = 5)
-
-# Create first difference plot
-simGG(Sim1, xlab = "\nTime in Days", title = "Central Interval\n", 
-      ribbon = TRUE, lsize = 0.5, legend = FALSE, alpha = 0.3) 
-
 ## Create simtvc object for first difference (central interval)
 Sim1.1 <- coxsimtvc(obj = M1, b = "qmv", btvc = "Lqmv",
-                  qi = "First Difference", Xj = 1,
-                  tfun = "log", from = 80, to = 2000,
-                  by = 15, ci = 0.95)
+                    qi = "First Difference", Xj = 1,
+                    tfun = "log", from = 80, to = 2000,
+                    by = 15, ci = 0.95)
 
 # Create simtvc object for first difference (SPIn)
 Sim1.2 <- coxsimtvc(obj = M1, b = "qmv", btvc = "Lqmv",
-                  qi = "First Difference", Xj = 1,
-                  tfun = "log", from = 80, to = 2000,
-                  by = 15, ci = 0.95, spin = TRUE)
+                    qi = "First Difference", Xj = 1,
+                    tfun = "log", from = 80, to = 2000,
+                    by = 15, ci = 0.95, spin = TRUE)
 
 
 # Create first difference plots
 Plot1.1 <- simGG(Sim1.1, xlab = "\nTime in Days", 
-                title = "Central Interval\n", alpha = 0.3,
-                ribbon = TRUE, lsize = 0.5, legend = FALSE) 
+                 title = "Central Interval\n", alpha = 0.3,
+                 ribbon = TRUE, lsize = 0.5, legend = FALSE) 
 Plot1.2 <- simGG(Sim1.2, ylab = "", xlab = "\nTime in Days",
                  title = "SPIn\n", alpha = 0.3,
                  ribbon = TRUE, lsize = 0.5, legend = FALSE)
@@ -64,6 +55,15 @@ Plot1.2 <- simGG(Sim1.2, ylab = "", xlab = "\nTime in Days",
 # Combine plots
 grid.arrange(Plot1.1, Plot1.2, ncol = 2)
 
+# Create simtvc object for relative hazard
+Sim2 <- coxsimtvc(obj = M1, b = "backlog", btvc = "Lbacklog",
+                  qi = "Relative Hazard", Xj = seq(40, 200, 40),
+                  tfun = "log", from = 1200, to = 2000, by = 10,
+                  nsim = 500)
+
+# Create relative hazard plot
+simGG(Sim2, xlab = "\nTime in Days", ribbons = TRUE,
+      leg.name = "Backlogged \n Items", alpha = 0.2)
 
 ##### Estimate the model for illustrating spline effects ######
 # Load Carpenter (2002) data. The data is included with simPH.
