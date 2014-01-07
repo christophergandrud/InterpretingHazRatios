@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SimPH: Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models
 % Christopher Gandrud
-% 3 October 2013
+% 7 January 2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[article]{jss}
@@ -62,7 +62,7 @@ opts_chunk$set(fig.align='center', dev='png', prompt=TRUE, highlight=FALSE, back
     Friedrichstrasse 180 \\
     Berlin, 10117 \\
     Germany \\
-    E-mail: \email{christopher.gandrud@gmail.com}
+    E-mail: \email{gandrud@hertie-school.org}
 }
 
 \begin{document}
@@ -74,9 +74,7 @@ This article aims to improve how researchers use Cox-type models in two ways. Af
 %%%%%% Section: Common issues
 \section[Misspecification analyzing Cox PH]{Misspecification in analyses using Cox PH models}
 
-In this section we will briefly review a number of ways that Cox PH models can be misspecified. Misspecification problems include not explicitly modeling interactions, especially time-varying effects, and nonlinearities. 
-
-Before discussing these problems let's quickly look at what Cox PH models are. The Cox PH model \citep{cox1972} is a semi-parametric EHA model that allows researchers to examine how specified factors influence the rate of a particular event happening--e.g., infection, death, the adoption of a public policy--at a particular point in time given that the event has not already occurred. This rate is commonly referred to as the hazard rate ($h_{i}(t)$). The hazard rate for unit $i$ at time $t$ is estimated with the Cox PH model using: 
+Before discussing model misspecification problems, let's quickly look at what Cox PH models are. The Cox PH model \citep{cox1972} is a semi-parametric survival model that allows researchers to examine how specified factors influence the rate of a particular event happening--e.g., infection, death, the adoption of a public policy--at a particular point in time given that the event has not already occurred. This rate is commonly referred to as the hazard rate ($h_{i}(t)$). The hazard rate for unit $i$ at time $t$ is estimated with the Cox PH model using: 
 %
 \begin{equation}
     h(t|\mathbf{X}_{i})=h_{0}(t)\mathrm{e}^{(\mathbf{\beta X}_{i})},
@@ -107,7 +105,7 @@ Like any other interaction effect \cite[see][]{Brambor2006} extra care should be
 Licht describes two methods for calculating the combined effect of a time interaction on the hazard of an event happening in ways that are relatively easy to interpret: (a) first differences and (b) relative hazards. A first difference is the percentage change in the hazard rate at time $t$ between two values of $x$:
 %
 \begin{equation}
-	\%\triangle h_{i}(t) = (e^{(x_{j} - x_{l})(\beta_{1} + \beta{2}f(t))} - 1) * 100.
+	\%\triangle h_{i}(t) = (e^{(x_{j} - x_{l})(\beta_{1} + \beta_{2}f(t))} - 1) * 100.
 \end{equation}
 % 
 Relative hazards are given by:
@@ -120,7 +118,7 @@ In this situation the covariate $x_{l}$ is 0. Relative hazards represent the cha
  
 \subsection[Nonproportional and nonlinear effects]{Nonproportional hazards and nonlinear effects}
 
-Time-varying effects are not the only cause of PHA violations. Building on \cite{Grambsch1994} and \cite{Therneau2000}, \cite{Keele2010} points out that common diagnostic tests will also indicate PHA violations if the model is misspecified for other reasons. Omitting an important covariate, using a proportional hazards model even if another EHA model is more appropriate, or including a covariate as linear when its effect is actually nonlinear can lead to significant PHA tests. 
+Time-varying effects are not the only cause of PHA violations. Building on \cite{Grambsch1994} and \cite{Therneau2000}, \cite{Keele2010} points out that common diagnostic tests will also indicate PHA violations if the model is misspecified for other reasons. Omitting an important covariate, using a proportional hazards model even if another survival model is more appropriate, or including a covariate as linear when its effect is actually nonlinear can lead to significant PHA tests. 
 
 Because of this Keele suggests that \emph{before} testing the PHA we should try to make sure that we are not omitting important variables and find the covariates' appropriate functional forms, typically using either polynomials or splines.\footnote{See \cite{Keele2008} for a review of methods for identifying nonlinear effects and different spline types.} He demonstrates this in replication studies by adding penalized splines then using a Wald test to examine if the spline estimates have a better fit than their linear counterparts. Many studies using Cox PH models do not test for nonlinearity, but instead jump straight to testing the PHA, including time-interactions when it is violated. As Keele \citeyearpar{Keele2010} demonstrates, ascribing a time-varying effect to a covariate when in fact the effect varies not over time, but nonlinearly over values of the covariate can have major implications for the substantive interpretation of results.
 
