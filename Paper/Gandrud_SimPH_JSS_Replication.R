@@ -24,7 +24,7 @@ M1 <- coxph(Surv(time, censor) ~ AgeMed + drug,
 
 # Simulate relative hazards
 Sim1 <- coxsimLinear(M1, b = "AgeMed", Xj = seq(-15, 19, by = 0.2),
-                     qi = "Relative Hazard")
+                     qi = "Hazard Ratio")
 
 # Plot results
 simGG(Sim1, xlab = "\nYears of Age from the Sample Median (35)",
