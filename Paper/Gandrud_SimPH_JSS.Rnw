@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % simPH: Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models
 % Christopher Gandrud
-% 18 January 2014
+% 25 January 2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[article]{jss}
@@ -12,7 +12,7 @@
 library(repmis)
 
 Packages <- c("car", "knitr", "gridExtra", "repmis", "devtools",
-            "MSBVAR", "simPH", "SPIn", "survival", "Zelig", "ggplot2")
+            "MASS", "simPH", "SPIn", "stats", "survival", "Zelig", "ggplot2")
 
 LoadandCite(Packages, file = "HRPackages.bib")
 
@@ -186,9 +186,9 @@ Many quantities of interest from Cox-type models have asymmetric probability dis
 
 Whether graphing a central or shortest probability interval, only using lines to represent the center and edges can draw the reader's attention away from what the graph is trying to communicate. This approach overemphasizes the edges of the interval, the areas of lowest probability. Some graphs uniformly shade the interval between the upper and lower bounds. Uniform shading suggest to the reader a uniform distribution between the edges. Both of these characteristics give misleading information about the quantities of interests' probability distributions, especially when they are on an exponential scale.
 
-Visual weighting presents a solution to these problems. Hsiang calls visual weight ``the amount of a viewer's attention that a graphical object or display region attracts, based on visual properties'' \citeyearpar[3]{Hsiang2012}. More visual weight can be created by using more ``graphical ink" \citep{Tufte2001}. Visual weight is decreased by removing graphical ink. The simplest way to increase or decrease graphical ink with our simulations is to simply plot each simulation value as a point with some transparency. Areas of the distribution with many simulations will be darker. Areas with fewer simulations, often near the edges of the distribution, will be lighter. Plotting each simulated quantity of interest as a semi-transparent point allows a researcher to very clearly communicate a quantity of interest's probability distribution. When each point is partially transparent areas of the chart where the points are darker indicate areas of the distribution with higher probability as more points are stacked on top of one another. This approach gives more visual weight to areas of higher probability and avoids drawing the reader's attention to the edges of the distribution--the areas of lower probability--in the way that traditional confidence interval lines do. 
+Visual weighting presents a solution to these problems. Hsiang calls visual weight ``the amount of a viewer's attention that a graphical object or display region attracts, based on visual properties'' \citeyearpar[3]{Hsiang2012}. More visual weight can be created by using more ``graphical ink" \citep{Tufte2001}. Visual weight is decreased by removing graphical ink. The simplest way to increase or decrease graphical ink with our simulations is to simply plot each simulation value as a point or series of values with a line that is semi-transparent. Areas of the distribution with many simulations will be darker. Areas with fewer simulations, often near the edges of the distribution, will be lighter. Plotting semi-transparent points or lines allows a researcher to very clearly communicate a quantity of interest's probability distribution. When each point or line is partially transparent areas of the chart where the points or lines are darker indicate areas of the distribution with higher probability as more points are stacked on top of one another. This approach gives more visual weight to areas of higher probability and avoids drawing the reader's attention to the edges of the distribution--the areas of lower probability--in the way that traditional confidence interval lines do. 
 
-As a practical issue if a plot shows very many simulations as individual points it may create a very large file size. This is especially true if a researcher wants to use higher quality vector graphics. An alternative it to summarize simulated distributions with multiple ribbons of increasing transparency the further from the central tendency a portion of the distribution is. These ribbons could stretch across given segments of the distribution such as the central 50 and 95 percentage intervals. Using ribbons rather than points conveys somewhat less information about a distribution, but can be convenient if very many simulations are run.
+As a practical issue if a plot shows very many simulations as individual points, and to a lesser extent lines, it may create a very large file size. This is especially true if a researcher wants to use higher quality vector graphics. An alternative it to summarize simulated distributions with multiple ribbons of increasing transparency the further from the central tendency a portion of the distribution is. These ribbons could stretch across given segments of the distribution such as the central 50 and 95 percentage intervals. Using ribbons rather than points conveys somewhat less information about a distribution, but can be convenient if very many simulations are run.
 
 %%%%%% Section: simPH
 \section[simPH: Tools]{\pkg{simPH}: Tools for simulating and graphing effects}
@@ -223,11 +223,11 @@ To solve these problems I am introducing the \pkg{simPH} package for \proglang{R
     \end{center}
 \end{table}
 
-\pkg{simPH}'s simulation functions follow \cite{King2000} to simulate parameters\footnote{\pkg{simPH} uses the \pkg{MSVBAR} \citep{R-MSBVAR} \proglang{R} package to draw the simulations.} and calculate a variety of quantities of interest. The user can specify the number of simulations to run per fitted value with the \code{nsim} argument. The default is 1000. The more simulations conducted, the better picture we get of the probability distributions our parameters are from \citep[349]{King2000}.\footnote{Warning: in some cases, especially with penalized splines, it is easy to ask the program to create more simulations than average desktop computers can easily handle. Therefore the user may need to balance a desire for a clear view of the probability distribution a quantity of interest comes from with what is computationally feasible.} \pkg{simPH}'s simulation commands allow the user to keep either the traditional central interval of the simulations' distributions--the middle 95 percent by default--or use the shortest probability interval--also 95 percent by default. In either case the range is set with the \code{ci} argument, i.e., to find the central 90 percent interval use \code{ci = 0.9}. To tell \pkg{simPH} to find the shortest probability interval with any of \pkg{simPH}'s' simulation commands simply set the argument \code{spin = TRUE}.\footnote{This capability was developed from \cite{Liu2013} and the accompanying code in Liu's \citeyearpar{R-SPIn} \pkg{SPIn} \proglang{R} package. It is currently unavailable for hazard rates.} 
+\pkg{simPH}'s simulation functions follow \cite{King2000} to simulate parameters\footnote{\pkg{simPH} uses the \pkg{MASS} \citep{R-MASS} \proglang{R} package to draw the simulations.} and calculate a variety of quantities of interest. The user can specify the number of simulations to run per fitted value with the \code{nsim} argument. The default is 1000. The more simulations conducted, the better picture we get of the probability distributions our parameters are from \citep[349]{King2000}.\footnote{Warning: in some cases, especially with penalized splines, it is easy to ask the program to create more simulations than average desktop computers can easily handle. Therefore the user may need to balance a desire for a clear view of the probability distribution a quantity of interest comes from with what is computationally feasible.} \pkg{simPH}'s simulation commands allow the user to keep either the traditional central interval of the simulations' distributions--the middle 95 percent by default--or use the shortest probability interval--also 95 percent by default. In either case the range is set with the \code{ci} argument, i.e., to find the central 90 percent interval use \code{ci = 0.9}. To tell \pkg{simPH} to find the shortest probability interval with any of \pkg{simPH}'s' simulation commands simply set the argument \code{spin = TRUE}.\footnote{This capability was developed from \cite{Liu2013} and the accompanying code in Liu's \citeyearpar{R-SPIn} \pkg{SPIn} \proglang{R} package. It is currently unavailable for hazard rates.} 
 
-The \code{simGG} plotting method can then be used to plot these simulated values as semi-transparent points. The transparency level can be set with the argument \code{alpha}. Furthermore a smoothing line of a type that can be specified by the user with the \code{smoother} argument is plotted to summarize the distribution's central tendency. In general, any smoothing method accepted by \pkg{ggplot2} \citep{R-ggplot2} can be used. By plotting semi-transparent points for each simulated quantity of interest value \code{simGG} automatically visually weights simulation distributions.
+The \code{simGG} plotting method can then be used to plot these simulated values as semi-transparent points. The transparency level can be set with the argument \code{alpha}. Furthermore a smoothing line of a type that can be specified by the user with the \code{smoother} argument is plotted to summarize the distribution's central tendency. In general, any smoothing method accepted by \pkg{ggplot2} \citep{R-ggplot2} can be used. By plotting semi-transparent points for each simulated quantity of interest value or lines for the series of values from each simulation, \code{simGG} automatically visually weights simulation distributions.
 
-Ribbons are an alternative way to show different segments of the distribution. To do this simply use the \code{ribbons = TRUE} argument value. The resulting plot will have three ribbons. The most transparent shows the furthest extent of the central or shortest probability interval. The less transparent ribbon shows the central 50 percent of this interval. And the middle line shows the interval's median.
+To choose between points, lines, or ribbons use the \code{type} argument and set it to equal \code{points}, \code{lines}, or \code{ribbons}, respectively. The default is \code{type = 'points'}. Ribbon plots will have three ribbons. The most transparent shows the furthest extent of the central or shortest probability interval. The less transparent ribbon shows the central 50 percent of this interval. And the middle line shows the interval's median.
 
 The \code{simGG} method draws on \pkg{ggplot2} to plot the simulations. In most cases \code{simGG} returns a \pkg{ggplot2} \code{gg} object. As such you can add any aesthetic attributes to the plots that \pkg{ggplot2} will allow.
 
@@ -243,7 +243,7 @@ To illustrate \pkg{simPH}'s syntax and capabilities we will first examine a simp
 Let's estimate a simple Cox PH model that includes information on the members' ages and intravenous drug use. We can load the necessary packages for this example and download the data with the following code:
 
 <<LinearModel1.1, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
-library("survival")
+library("survival") 
 library("simPH")
 hmohiv <- read.table(
             "http://www.ats.ucla.edu/stat/r/examples/asa/hmohiv.csv", 
@@ -255,20 +255,20 @@ hmohiv <- read.table(
 We are going to present results for how age is associated with survival times. Remember that quantities of interest such as relative hazards and hazard ratios are effectively comparisons. Relative hazards are simply hazard ratios comparing a unit with a zero value on some variable to another unit with another value of this variable. For the \code{age} variable this would mean a comparison between someone with an age of zero and someone with some other age. This may not be a particularly relevant comparison. It is also an out of sample comparison as the youngest HMO member is 20 years old. We can easily change the comparisons such that the median age (35) is the reference value:
 
 <<LinearModel1.2, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
-hmohiv$AgeMed <- hmohiv$age - 35
+hmohiv$AgeMed <- hmohiv$age - 35 
 @ 
 
 \noindent The new variable ranges from -15 to 19. Now all of the simulated relative hazards will be based on a comparison with a 35 year old. Let's estimate the model using the \code{coxph} command from the \pkg{survival} package:
 
 <<LinearModel1.3, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
-M1 <- coxph(Surv(time, censor) ~ AgeMed + drug, 
+M1 <- coxph(Surv(time, censor) ~ AgeMed + drug,  
         method = "breslow", data = hmohiv)
 @
 
 Age is clearly a time-varying quantity. Not only does it vary over time in the way a person's income does, for example, but in effect it has a linear interaction with time. However, in our model we do not explicitly interact age with time as we will in later examples. Therefore we can treat the variable in the same way as personal income for the purposes of creating simulations with \pkg{simPH}. So, we use the \code{coxsimLinear} command:
 
 <<LinearModel1.4, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
-Sim1 <- coxsimLinear(M1, b = "AgeMed", Xj = seq(-15, 19, by = 0.2),
+Sim1 <- coxsimLinear(M1, b = "AgeMed", Xj = seq(-15, 19, by = 0.2), 
                      qi = "Hazard Ratio")
 @   
 
@@ -277,15 +277,16 @@ Sim1 <- coxsimLinear(M1, b = "AgeMed", Xj = seq(-15, 19, by = 0.2),
 We have not specified the \code{Xl} argument our hazard ratios. In this case \code{coxsimLinear} automatically sets all $x_{l}$ to zero. To graphically present the results now in the \code{Sim1} object we can use the \code{simGG} method. The following code creates Figure~\ref{LinearPlot}.
 
 <<LinearModel1.5, eval=FALSE, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
-simGG(Sim1, xlab = "\nYears of Age from the Sample Median (35)",
+simGG(Sim1, xlab = "\nYears of Age from the Sample Median (35)", 
       ylab = "Hazard Ratio with Comparison\n to a 35 Year Old\n")
 @
 
 \begin{figure}
 
-<<LinearModel1.6, tidy=FALSE, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE, fig.width=7, fig.height=4, out.width='0.95\\linewidth', dev='pdf'>>=
-simGG(Sim1, xlab = "\nYears of Age from the Sample Median (35)",
-      ylab = "Hazard Ratio with Comparison\n to a 35 Year Old\n")
+<<LinearModel1.6, tidy=FALSE, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE, fig.width=7, fig.height=4, out.width='0.6\\linewidth'>>=
+simGG(Sim1, xlab = "\nYears of Age from the Sample Median (35)", 
+      ylab = "Hazard Ratio with Comparison\n to a 35 Year Old\n",
+      alpha = 0.05, type = 'lines')
 @
 
     \caption{Simulated hazard ratios of age on survival time for HIV positive HMO members.}
@@ -345,7 +346,7 @@ Once we have created the \code{Sim2} object containing the simulations, we can s
 
 <<TVCModel2.2, eval=FALSE, tidy=FALSE>>=
 simGG(Sim2, xlab = "\nTime in Days", title = "Central Interval\n", 
-      ribbon = TRUE, lsize = 0.5, legend = FALSE, alpha = 0.3) 
+      type = "ribbons", lsize = 0.5, legend = FALSE, alpha = 0.3) 
 @
 
 We can clearly see in the left panel of Figure~\ref{TVCQMV}\footnote{The figures' ribbons extend across the middle or shortest probability 95 percent interval of the simulations. \\ As in Licht's \citeyearpar{Licht2011} original the time period plotted is truncated from 80 to 2000 to make the estimates more easily interpretable.} that QMV increases the probability of passing a directive early in the deliberation process (almost by 300 percent at about 80 days). But as the deliberation process goes on, the effect decreases and then becomes negative at about 1000 days. Finally, the rate of decrease levels off after 1000 days relative to before. 
@@ -374,11 +375,11 @@ Sim2.2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
 # Create first difference plots
 Plot2.1 <- simGG(Sim2.1, xlab = "\nTime in Days", 
                  title = "Central Interval\n", alpha = 0.3,
-                 ribbon = TRUE, lsize = 0.5, legend = FALSE)
+                 type = "ribbons", lsize = 0.5, legend = FALSE)
                   
 Plot2.2 <- simGG(Sim2.2, ylab = "", xlab = "\nTime in Days",
                  title = "SPIn\n", alpha = 0.3,
-                 ribbon = TRUE, lsize = 0.5, legend = FALSE)
+                 type = "ribbons", lsize = 0.5, legend = FALSE)
 
 # Combine plots
 grid.arrange(Plot2.1, Plot2.2, ncol = 2)
@@ -404,7 +405,7 @@ Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
                   tfun = "log", from = 1200, to = 2000, by = 10,
                   nsim = 500)
 
-simGG(Sim3, xlab = "\nTime in Days", ribbons = TRUE,
+simGG(Sim3, xlab = "\nTime in Days", type = "ribbons",
         leg.name = "Backlogged \n Items", alpha = 0.2)
 @
 
@@ -463,14 +464,14 @@ Sim4 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)",
                      Xl = seq(1099, 1699, by = 10))
 
 simGG(Sim4, xlab = "\n Number of FDA Drug Review Staff", 
-        title = "Central Interval\n", alpha = 0.2)
+        title = "Central Interval\n", alpha = 0.1)
 @ 
 
 There are a few syntax points to note. First we tell \code{coxsimSpline} the term to estimate for using the \code{bspline} argument and the same syntax we used to enter the term as a penalized spline in the \code{coxph} call, i.e., \code{pspline(stafcder, df = 4)}.\footnote{You need to make sure that there is a white space before and after the \code{=}.} Second, we specified the vector containing the observed \code{stafcder} data with the \code{bdata} argument. This is important for \code{coxsimSpline} to be able to accurately find the spline knots. 
 
 \begin{figure}
 
-<<Spline1Fig2, echo=FALSE, tidy=FALSE, message=FALSE, warning=FALSE, out.width="9cm", out.height="8cm", cache=TRUE>>=
+<<Spline1Fig2, echo=FALSE, tidy=FALSE, message=FALSE, warning=FALSE, , fig.width=7, fig.height=4, out.width='0.6\\linewidth', cache=TRUE>>=
 ## Simulated Fitted Values
 Sim4 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)", 
                      bdata = CarpenterFdaData$stafcder,
@@ -480,7 +481,7 @@ Sim4 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)",
 
 # Plot simulated values
 SimPlot1 <- simGG(Sim4, xlab = "\n Number of FDA Drug Review Staff", 
-        title = "Central Interval\n", alpha = 0.2)
+        title = "Central Interval\n", alpha = 0.1, type = "lines")
 
 SimPlot1 + scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60))
 @  
@@ -490,7 +491,7 @@ SimPlot1 + scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60))
 
 \end{figure}
 
-We can see in Figure~\ref{Spline1} that the simulated values are concentrated near the bottom of the distribution. Following \citeauthor{Liu2013} we may find it useful to show not the central 95 percent interval, but the shortest 95 percent probability interval. Figure~\ref{Spline2} shows this interval.\footnote{The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.} To create it we used all of the same syntax as before, while simply adding \code{spin = TRUE} to \code{coxsimSpline}. Using the shortest 95 percent probability interval indicates that there is actually a higher probability that the hazard ratio is 1--i.e., no effect--than the central 95 percent interval for all but the highest quartile or so of FDA drug review staff. It also deemphasizes the higher hazard ratio values, where there is a low concentration of the probability. In both figures \ref{Spline1} and \ref{Spline2} the visual weighting draws readers' attention to the lower part of the distribution where the model estimates there is a higher probability that the hazard ratio will be. 
+We can see in Figure~\ref{Spline1} that the simulated values are concentrated near the bottom of the distribution.\footnote{Note that the simulation values have been smoothed using post-simulation cubic smoothing splines. Smoothing is accomplished with \code{smooth.spline}, which is part of basic \proglang{R}. This gives a more continuous appearance to the simulations. You can tell \code{simGG} to not smooth the simulations by setting the argument \code{SmoothSpline = FALSE}.} Following \citeauthor{Liu2013} we may find it useful to show not the central 95 percent interval, but the shortest 95 percent probability interval. Figure~\ref{Spline2} shows this interval.\footnote{The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.} To create it we used all of the same syntax as before, while simply adding \code{spin = TRUE} to \code{coxsimSpline}. Using the shortest 95 percent probability interval indicates that there is actually a higher probability that the hazard ratio is 1--i.e., no effect--than the central 95 percent interval for all but the highest quartile or so of FDA drug review staff. It also deemphasizes the higher hazard ratio values, where there is a low concentration of the probability. In both figures \ref{Spline1} and \ref{Spline2} the visual weighting draws readers' attention to the lower part of the distribution where the model estimates there is a higher probability that the hazard ratio will be. 
 
 Finally, to ease comparison, let's put the second plot on the same y-axis scale as the first. To do this imagine that we placed the output of \code{coxsimSpline} with the argument \code{spin = TRUE} into an object called \code{SimPlot1}. We can then use \pkg{ggplot2} to change the y-axis range so that it is comparable to Figure~\ref{Spline1}'s:
 
@@ -502,7 +503,7 @@ SimPlot1 + scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60))
 
 \begin{figure}
 
-<<Spline2Fig2, echo=FALSE, tidy=FALSE, message=FALSE, out.width="9cm", out.height="8cm", cache=TRUE>>=
+<<Spline2Fig2, echo=FALSE, tidy=FALSE, message=FALSE, , fig.width=7, fig.height=4, out.width='0.6\\linewidth', cache=TRUE>>=
 # Simulated Fitted Values: shortest probability interval
 Sim4 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)", 
                      bdata = CarpenterFdaData$stafcder,
@@ -513,11 +514,12 @@ Sim4 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)",
 
 # Plot simulated values
 SimPlot2 <- simGG(Sim4, xlab = "\n Number of FDA Drug Review Staff",
-                title = "SPIn\n", alpha = 0.2)
+                title = "SPIn\n", alpha = 0.1, type = "lines")
 
 library("ggplot2")
 
-SimPlot2 + scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60))
+SimPlot2 + scale_y_continuous(breaks = c(0, 20, 40, 60), 
+                              limits = c(0, 60))
 @  
 
   \caption{Simulated hazard ratios for the effect of FDA staff on drug approval time. Showing the shortest 95\% probability interval.}
@@ -526,7 +528,7 @@ SimPlot2 + scale_y_continuous(breaks = c(0, 20, 40, 60), limits = c(0, 60))
 
 \section[Conclusion]{Conclusion}
 
-In this paper I have reviewed a number of important insights about avoiding Cox PH model misspecification. Looking out for and properly estimating the interactions and nonlinearities that can cause biased estimates is crucial for researchers using Cox Proportional Hazard models. Beyond creating biased estimates, they can actually be factors that we are interested in studying. Until now the tools for fully exploring them, including their associated uncertainty, have been lacking. So, this paper has demonstrated a new \proglang{R} package--\pkg{simPH}--that makes it considerably easier to effectively explore and present quantities of interest for interactive and nonlinear effects. It can also be used for simple linear effects, making it a useful all-round package for showing results from Cox Proportional Hazard models. The paper has also argued for and demonstrated the usefulness of visual weighting and shortest probability intervals for understanding Cox-type models. \pkg{simPH} fully supports these methods.
+In this paper I have reviewed a number of important insights about avoiding Cox PH model misspecification. Looking out for and properly estimating the interactions and nonlinearities that can cause biased estimates is crucial for researchers using Cox Proportional Hazard models. Beyond creating biased estimates, they can actually be factors that we are interested in studying. Until now the tools for fully exploring them, including their associated uncertainty, have been lacking. The \pkg{Zelig} package for \proglang{R} comes closest to allowing uses to so estimation uncertainty from Cox Proportional Hazards models. However, it has limited or no ability to simulate quantities of interest for interactive and nonlinear estimated effects. So, this paper has demonstrated a new \proglang{R} package--\pkg{simPH}--that makes it considerably easier to effectively explore and present quantities of interest for interactive and nonlinear effects. It can also be used for simple linear effects, making it a useful all-round package for showing results from Cox Proportional Hazard models. The paper has also argued for and demonstrated the usefulness of visual weighting and shortest probability intervals for understanding Cox-type models. \pkg{simPH} fully supports these methods.
 
 % Acknowledgments
 \section*{Acknowledgments}

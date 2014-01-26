@@ -1,7 +1,7 @@
 #############
 # Replication file for: simPH: An R package for showing estimates for interactive and nonlinear effects from Cox proportional hazard models
 # Requires R 3.0.2 or greater
-# Updated 17 January 2014
+# Updated 25 January 2014
 #############
 
 # Load packages
@@ -68,11 +68,11 @@ Sim2.2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
 # Create first difference plots
 Plot2.1 <- simGG(Sim2.1, xlab = "\nTime in Days", 
                  title = "Central Interval\n", alpha = 0.3,
-                 ribbon = TRUE, lsize = 0.5, legend = FALSE)
+                 type = "ribbons", lsize = 0.5, legend = FALSE)
 
 Plot2.2 <- simGG(Sim2.2, ylab = "", xlab = "\nTime in Days",
                  title = "SPIn\n", alpha = 0.3,
-                 ribbon = TRUE, lsize = 0.5, legend = FALSE)
+                 type = "ribbons", lsize = 0.5, legend = FALSE)
 
 # Combine plots
 grid.arrange(Plot2.1, Plot2.2, ncol = 2)
@@ -84,7 +84,7 @@ Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
                   nsim = 500)
 
 # Create relative hazard plot
-simGG(Sim3, xlab = "\nTime in Days", ribbons = TRUE,
+simGG(Sim3, xlab = "\nTime in Days", type = "ribbons",
       leg.name = "Backlogged \n Items", alpha = 0.2)
 
 ##### Illustration of spline effects ######
@@ -110,7 +110,8 @@ Sim4 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)",
 
 # Plot simulated values
 Plot4 <- simGG(Sim4, xlab = "\n Number of FDA Drug Review Staff", 
-                  title = "Central Interval\n", alpha = 0.2)
+                  title = "Central Interval\n", alpha = 0.1, 
+                  type = "lines")
 
 Plot4 + scale_y_continuous(breaks = c(0, 20, 40, 60), 
             limits = c(0, 60))
@@ -126,7 +127,7 @@ Sim5 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)",
 
 # Plot simulated values
 Plot5 <- simGG(Sim5, xlab = "\n Number of FDA Drug Review Staff",
-                title = "SPIn\n", alpha = 0.2)
+                title = "SPIn\n", alpha = 0.1, type = "lines")
 
 # Place on the same scale as the central interval figure
 Plot5 + scale_y_continuous(breaks = c(0, 20, 40, 60), 
