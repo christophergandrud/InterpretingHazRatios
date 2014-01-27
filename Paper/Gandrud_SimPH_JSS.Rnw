@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % simPH: Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models
 % Christopher Gandrud
-% 25 January 2014
+% 26 January 2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[article]{jss}
@@ -44,7 +44,7 @@ opts_chunk$set(fig.align='center', dev='png', prompt=TRUE, highlight=FALSE, back
     The \proglang{R} package \pkg{simPH} provides tools for effectively communicating results from Cox Proportional Hazard (PH) models, especially models with interactive and nonlinear effects. The Cox Proportional Hazard model is a popular tool for examining cross-unit cross-time data. However, many researchers misspecify their models and poorly communicate uncertainty about their estimates. This is unfortunate because causes of model misspecification--e.g., interactive and nonlinear effects--may be substantively meaningful. Uncertainty about these effects can be difficult to assess because quantities of interest are often on asymmetric and nonlinear scales. Part of the problem has been that available computational tools make it difficult to explore and communicate these effects. \pkg{simPH} overcomes these problems by making it easy for researchers to simulate quantities of interest for a variety of effects estimated from Cox PH models and plot them. The package can also be used for simple linear effects, making it a useful all-round package for showing results from Cox PH models. \pkg{simPH}'s plots employ visual weighting in order to effectively communicate estimation uncertainty. The user also has the option of showing either the standard central interval of the simulation's distribution or the shortest probability interval--which can be especially useful for asymmetrically distributed estimates. I use hypothetical and empirical examples to illustrate \pkg{simPH}'s syntax and capabilities.
 }
 
-\Keywords{Cox Proportional Hazard models, hazard ratios, , time-varying, nonlinearity, splines, visual-weighting, \proglang{R}}
+\Keywords{Cox Proportional Hazard models, hazard ratios, time-interactions, time-varying, nonlinearity, splines, visual-weighting, \proglang{R}}
 \Plainkeywords{Cox Proportional Hazard models, hazard ratios, time-interactions, time-varying, nonlinearity, splines, visual-weighting, R}
 
 %% publication information
@@ -225,9 +225,9 @@ To solve these problems I am introducing the \pkg{simPH} package for \proglang{R
 
 \pkg{simPH}'s simulation functions follow \cite{King2000} to simulate parameters\footnote{\pkg{simPH} uses the \pkg{MASS} \citep{R-MASS} \proglang{R} package to draw the simulations.} and calculate a variety of quantities of interest. The user can specify the number of simulations to run per fitted value with the \code{nsim} argument. The default is 1000. The more simulations conducted, the better picture we get of the probability distributions our parameters are from \citep[349]{King2000}.\footnote{Warning: in some cases, especially with penalized splines, it is easy to ask the program to create more simulations than average desktop computers can easily handle. Therefore the user may need to balance a desire for a clear view of the probability distribution a quantity of interest comes from with what is computationally feasible.} \pkg{simPH}'s simulation commands allow the user to keep either the traditional central interval of the simulations' distributions--the middle 95 percent by default--or use the shortest probability interval--also 95 percent by default. In either case the range is set with the \code{ci} argument, i.e., to find the central 90 percent interval use \code{ci = 0.9}. To tell \pkg{simPH} to find the shortest probability interval with any of \pkg{simPH}'s' simulation commands simply set the argument \code{spin = TRUE}.\footnote{This capability was developed from \cite{Liu2013} and the accompanying code in Liu's \citeyearpar{R-SPIn} \pkg{SPIn} \proglang{R} package. It is currently unavailable for hazard rates.} 
 
-The \code{simGG} plotting method can then be used to plot these simulated values as semi-transparent points. The transparency level can be set with the argument \code{alpha}. Furthermore a smoothing line of a type that can be specified by the user with the \code{smoother} argument is plotted to summarize the distribution's central tendency. In general, any smoothing method accepted by \pkg{ggplot2} \citep{R-ggplot2} can be used. By plotting semi-transparent points for each simulated quantity of interest value or lines for the series of values from each simulation, \code{simGG} automatically visually weights simulation distributions.
+The \code{simGG} plotting method can then be used to plot these simulated values as semi-transparent points or lines, as well as ribbons. The transparency level can be set with the argument \code{alpha}. If points or lines are used then the value in \code{alpha} is the value simulations at the center of the distribution. Simulations further away from the center are more transparent. Furthermore a smoothing line of a type that can be specified by the user with the \code{smoother} argument is plotted to summarize the distribution's central tendency. In general, any smoothing method accepted by \pkg{ggplot2} \citep{R-ggplot2} can be used. By plotting semi-transparent points for each simulated quantity of interest value or lines for the series of values from each simulation, \code{simGG} visually weights simulation distributions. Ribbon plots will have three ribbons. The most transparent shows the furthest extent of the central or shortest probability interval. The less transparent ribbon shows the central 50 percent of this interval. And the middle line shows the interval's median.
 
-To choose between points, lines, or ribbons use the \code{type} argument and set it to equal \code{points}, \code{lines}, or \code{ribbons}, respectively. The default is \code{type = 'points'}. Ribbon plots will have three ribbons. The most transparent shows the furthest extent of the central or shortest probability interval. The less transparent ribbon shows the central 50 percent of this interval. And the middle line shows the interval's median.
+To choose between points, lines, or ribbons use the \code{type} argument and set it to equal \code{points}, \code{lines}, or \code{ribbons}, respectively. The default is \code{type = 'points'}. 
 
 The \code{simGG} method draws on \pkg{ggplot2} to plot the simulations. In most cases \code{simGG} returns a \pkg{ggplot2} \code{gg} object. As such you can add any aesthetic attributes to the plots that \pkg{ggplot2} will allow.
 
@@ -284,7 +284,7 @@ simGG(Sim1, xlab = "\nYears of Age from the Sample Median (35)",
 \begin{figure}
 
 <<LinearModel1.6, tidy=FALSE, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE, fig.width=7, fig.height=4, out.width='0.6\\linewidth'>>=
-simGG(Sim1, xlab = "\nYears of Age from the Sample Median (35)", 
+simGG(Sim1, xlab = "\nYears of Age from the Sample Median (35)",
       ylab = "Hazard Ratio with Comparison\n to a 35 Year Old\n",
       alpha = 0.05, type = 'lines')
 @
@@ -368,7 +368,7 @@ Sim2.1 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
 # Create simtvc object for first difference (SPIn)
 Sim2.2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
                     qi = "First Difference", Xj = 1,
-                    tfun = "log", from = 80, to = 2000,
+                    tfun = "log", from = 80, to = 2000, 
                     by = 15, ci = 0.95, spin = TRUE)
 
 
@@ -460,7 +460,7 @@ Now simulate the hazard ratios for a sequence of values with \code{coxsimSpline}
 Sim4 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)", 
                      bdata = CarpenterFdaData$stafcder,
                      qi = "Hazard Ratio",
-                     Xj = seq(1100, 1700, by = 10), 
+                     Xj = seq(1100, 1700, by = 10),
                      Xl = seq(1099, 1699, by = 10))
 
 simGG(Sim4, xlab = "\n Number of FDA Drug Review Staff", 
@@ -510,7 +510,7 @@ Sim4 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)",
                      qi = "Hazard Ratio",
                      Xj = seq(1100, 1700, by = 10), 
                      Xl = seq(1099, 1699, by = 10), 
-                     spin = TRUE)
+                     spin = TRUE) 
 
 # Plot simulated values
 SimPlot2 <- simGG(Sim4, xlab = "\n Number of FDA Drug Review Staff",
