@@ -1,7 +1,7 @@
 #############
 # Replication file for: simPH: An R package for showing estimates for interactive and nonlinear effects from Cox proportional hazard models
 # Requires R 3.0.2 or greater
-# Updated 26 January 2014
+# Updated 1 February 2014
 #############
 
 # Load packages
@@ -23,8 +23,7 @@ M1 <- coxph(Surv(time, censor) ~ AgeMed + drug,
             method = "breslow", data = hmohiv)
 
 # Simulate relative hazards
-Sim1 <- coxsimLinear(M1, b = "AgeMed", Xj = seq(-15, 19, by = 0.2),
-                     qi = "Hazard Ratio")
+Sim1 <- coxsimLinear(M1, b = "AgeMed", Xj = seq(-15, 19, by = 0.2))
 
 # Plot results
 simGG(Sim1, xlab = "\nYears of Age from the Sample Median (35)",
