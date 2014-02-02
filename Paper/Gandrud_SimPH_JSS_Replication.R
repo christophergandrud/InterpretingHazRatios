@@ -85,7 +85,7 @@ Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
 
 # Create relative hazard plot
 simGG(Sim3, xlab = "\nTime in Days", type = "ribbons",
-      leg.name = "Backlogged \n Items", alpha = 0.2)
+      leg.name = "Backlogged \n Items")
 
 ##### Illustration of spline effects ######
 # Load Carpenter (2002) data. The data is included with simPH.
