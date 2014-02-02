@@ -1,7 +1,7 @@
 #############
 # Replication file for: simPH: An R package for showing estimates for interactive and nonlinear effects from Cox proportional hazard models
 # Requires R 3.0.2 or greater
-# Updated 1 February 2014
+# Updated 2 February 2014
 #############
 
 # Load packages
@@ -27,7 +27,8 @@ Sim1 <- coxsimLinear(M1, b = "AgeMed", Xj = seq(-15, 19, by = 0.2))
 
 # Plot results
 simGG(Sim1, xlab = "\nYears of Age from the Sample Median (35)",
-      ylab = "Hazard Ratio with Comparison\n to a 35 Year Old\n")
+      ylab = "Relative Hazard with Comparison\n to a 35 Year Old\n",
+      alpha = 0.05, type = 'lines')
 
 ##### Illustration of time-varying interactive effects ######
 # Load Golub & Steunenberg (2007) data. The data is included with simPH.
@@ -37,9 +38,9 @@ data("GolubEUPData")
 Golubtvc <- function(x){
   tvc(data = GolubEUPData, b = x, tvar = "end", tfun = "log")
 }
-GolubEUPData$Lcoop <- Golubtvc("coop")
 GolubEUPData$Lqmv <- Golubtvc("qmv")
 GolubEUPData$Lbacklog <- Golubtvc("backlog")
+GolubEUPData$Lcoop <- Golubtvc("coop")
 GolubEUPData$Lcodec <- Golubtvc("codec")
 GolubEUPData$Lqmvpostsea <- Golubtvc("qmvpostsea")
 GolubEUPData$Lthatcher <- Golubtvc("thatcher")
@@ -55,14 +56,13 @@ M2 <- coxph(Surv(begin, end, event) ~ qmv + qmvpostsea + qmvpostteu +
 Sim2.1 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
                     qi = "First Difference", Xj = 1,
                     tfun = "log", from = 80, to = 2000,
-                    by = 15, ci = 0.95)
+                    by = 5, ci = 0.95)
 
 # Create simtvc object for first difference (SPIn)
 Sim2.2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
                     qi = "First Difference", Xj = 1,
                     tfun = "log", from = 80, to = 2000,
-                    by = 15, ci = 0.95, spin = TRUE)
-
+                    by = 5, ci = 0.95, spin = TRUE)
 
 # Create first difference plots
 Plot2.1 <- simGG(Sim2.1, xlab = "\nTime in Days", 
