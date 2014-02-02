@@ -84,7 +84,7 @@ where $h_{0}(t)$ is the baseline hazard, i.e., the instantaneous rate of a trans
 
 We are often interested in how a covariate changes the rate of an event happening. In general researchers have tried to address this by looking at Cox PH coefficient estimates $\beta$. However, only examining single coefficients can lead to significant model misspecification and erroneous substantive interpretation of Cox PH results.
 
-\section[Nonproportional and time-interactive]{Nonproportional hazards and time-interactive effects}
+\section[Nonproportional hazards]{Nonproportional hazards}
 
 One of the most important sources of estimation bias in Cox PH models discussed at length by \cite{Licht2011}, \cite{BoxSteffensmeier2001}, and \cite{boxsteffensmeier2004} is a violation of the proportional hazards assumption (PHA). The PHA is that the hazards of two units experiencing an event are proportional to one another and that this relationship is constant over time. Formally, for the PHA to hold the hazard for units $j$ and $l$ must be:\footnote{This is also the equation for the hazard ratio between $x_{j}$ and $x_{l}$.}
 %
@@ -94,7 +94,11 @@ One of the most important sources of estimation bias in Cox PH models discussed 
 %
 for all points in time. If the proportional hazards assumption is violated and measures are not taken to correct for the violation, then researchers may create biased parameter estimates and statistical tests with lower power \citep{Therneau1990,Keele2010}. Beyond these statistical problems, not adjusting for violations of the PHA can prevent researchers from finding evidence for phenomenon they are interested in studying, including how an effect changes over time and whether or not it changes nonlinearly over the range of a variable's values.
 
-There are a number of widely used tests to examine if the PHA has been violated. See \cite{Grambsch1994}, \cite{BoxSteffensmeier2001}, and \cite{boxsteffensmeier2004} for discussions of various PHA testing methods.\footnote{Many software packages implement versions of these tests. \proglang{R}'s \pkg{survival} package \citep{R-survival} implements Grambsch and Therneau's \citeyearpar{Grambsch1994} modified Schoenfeld residuals test. This is done with the \code{cox.zph} command.} If a covariate is determined to violate the PHA, Box-Steffensmeier and co-authors \citep[see][]{BoxSteffensmeier2003,boxsteffensmeier2004} suggest directly modeling the relationship between the variable and time. This usually entails including an interaction between the variable and some function of time such as the natural logarithm or some exponent. The decision to use a particular functional form should be guided by theory and will likely also be influenced by findings in the data. If $f(t)$ is some function of time then a simple Nonproportional Hazards Cox model estimating the hazard rate for unit $i$ with one time-interaction is given by:
+There are a number of widely used tests to examine if the PHA has been violated. See \cite{Grambsch1994}, \cite{BoxSteffensmeier2001}, and \cite{boxsteffensmeier2004} for discussions of various PHA testing methods.\footnote{Many software packages implement versions of these tests. \proglang{R}'s \pkg{survival} package \citep{R-survival} implements Grambsch and Therneau's \citeyearpar{Grambsch1994} modified Schoenfeld residuals test. This is done with the \code{cox.zph} command.} 
+
+\subsection[Nonproportional and time-interactive]{Nonproportional hazards and time-interactive effects}
+
+If a covariate is determined to violate the PHA, Box-Steffensmeier and co-authors \citep[see][]{BoxSteffensmeier2003,boxsteffensmeier2004} suggest directly modeling the relationship between the variable and time. This usually entails including an interaction between the variable and some function of time such as the natural logarithm or some exponent. The decision to use a particular functional form should be guided by theory and will likely also be influenced by findings in the data. If $f(t)$ is some function of time then a simple Nonproportional Hazards Cox model estimating the hazard rate for unit $i$ with one time-interaction is given by:
 %
 \begin{equation}
 	h_{i}(t|\mathbf{x}_{i})=h_{0}(t)\mathrm{e}^{(\beta_{1}x_{i} + \beta_{2}f(t)x_{i})}.
