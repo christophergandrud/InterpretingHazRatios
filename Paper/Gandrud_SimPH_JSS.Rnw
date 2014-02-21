@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % simPH: Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models
 % Christopher Gandrud
-% 2 February 2014
+% 21 February 2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[article]{jss}
@@ -306,13 +306,32 @@ Three quick notes on syntax before moving on. The \code{xlab} and \code{ylab} ar
 
 Let's now look at how to use \pkg{simPH} to explore time-interactive effects that are explicitly created by interacting a given variable in the estimation model with some time transformation. To do this we will recreate plots from \cite{Licht2011}. She re-examines Golub and Steunenberg's \citeyearpar{Golub2007} analysis of European Union legislative deliberation time. They wanted to find out what factors affected the amount of time it took the European Union to pass a new piece of legislation. Key variables they examined included the voting procedure that was used for a given piece of legislation--including the so-called qualified majority vote (QMV) procedure\footnote{The procedure changed over time, but essentially QMV requires some voting majority greater than 50\% + 1. See the European Union's website for more details: \url{http://europa.eu/legislation_summaries/glossary/qualified_majority_en.htm} (accessed January 2014).}--and the amount of other legislation pending, i.e. legislative backlog. Both of these variables violated the proportional hazard assumption and were more accurately modeled with log-time interactions.
 
-The left panel of Figure~\ref{TVCQMV} recreates Licht's \citeyearpar{Licht2011} figure showing the first difference of a log-time interaction for how the effect of the QMV procedure on legislative deliberation time changes as the number of days of deliberation increases \citep[see][236]{Licht2011}.\footnote{Her original figure was not in terms of a percentage difference to make it more comparable to a figure in Golub and Steunenberg's original. I present the results in terms of percentage difference, as the first difference is commonly reported. I have not separated out the pre and post Single European Act time periods for simplicity. There are slight discrepancies in the estimates presented in her figures and those here. These are caused by differences in how the underlying model was estimated in \proglang{Stata} compared to \proglang{R}. Finally, I also examined whether or not nonlinearity functional forms would be better fits than time interactions as per our discussion above. However, I found no evidence of this.} To create this figure we first load the data \code{GolubEUPData}. This data set is included with \pkg{simPH}.
+The left panel of Figure~\ref{TVCQMV} recreates Licht's \citeyearpar{Licht2011} figure showing the first difference of a log-time interaction for how the effect of the QMV procedure on legislative deliberation time changes as the number of days of deliberation increases \citep[see][236]{Licht2011}.\footnote{Her original figure was not in terms of a percentage difference to make it more comparable to a figure in Golub and Steunenberg's original. I present the results in terms of percentage difference, as the first difference is commonly reported. I have not separated out the pre and post Single European Act time periods for simplicity. There are discrepancies in the estimates presented in her figures and those here. These are caused by differences in how the underlying model was estimated in \proglang{Stata} compared to \proglang{R}. Finally, I also examined whether or not nonlinearity functional forms would be better fits than time interactions as per our discussion above. However, I found no evidence of this.} To create this figure we first load the data \code{GolubEUPData}. This data set is included with \pkg{simPH}.
 
 <<TVCModel1.1, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
 data("GolubEUPData")
 @
 
-Then we create the log-time interactions. The two variables we will focus on are for qualified majority voting (\code{qmv}) and legislative backlog (\code{backlog}). Other variables are from the original model. Notice the use of the \code{tvc} command to create the log-time interactions. The command is included with the \pkg{simPH} package. The \code{data} argument specified the data frame where our covariate and time variables are. The covariate we wish to interact is specified with \code{b} and the time variable with \code{tvar}. Finally, we specify the function of time with the \code{tfun} argument. The additional creation of the \code{Golubtvc} function is not necessary, it just makes the code tidier. 
+Then we create the log-time interactions. Before we do this, let's look at the data format:
+
+<<TVCModel1.1.1, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
+head(GolubEUPData[, 2:5])
+@
+
+We can see that each piece of prospective legislation is identified with a case number in the \code{caseno} variable. Observation interval's \code{begin} at 0 and extend to the \code{end} when either an even happens, or one of the covariates changes values. If we simply create a time interaction by using the \code{end} time as the time value, then we will generally over measure the interaction when there are failures at times before this. For example, imagine we create a simple interaction between a dummy variable and time. For one unit that experiences an event of interest at time 1,000 in a data set formatted as above, the time interaction would be treated as 1,000 for all failures at time $t \leq 1000$. This would be inaccurate as at time 500, for example the interaction should be 500, not 1,000.
+
+To solve this problem, \pkg{simPH} includes a function called \code{SurvExpand} to expand a data set out into equally spaced intervals. This allows for the creation of accurate time interactions. This is how we would use the function with the \code{GolubEUPData} data:
+
+<<TVCModel1.1.2, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
+ GolubEUPData <- SurvExpand(GolubEUPData, GroupVar = 'caseno',
+                      Time = 'begin', Time2 = 'end', event = 'event') 
+
+head(GolubEUPData[, 1:4])
+@
+
+\noindent Now we can create the log-time interactions.
+
+The two variables we will focus on are for qualified majority voting (\code{qmv}) and legislative backlog (\code{backlog}). Other variables are from the original model. Notice the use of the \code{tvc} command to create the log-time interactions. The command is included with the \pkg{simPH} package. The \code{data} argument specified the data frame where our covariate and time variables are. The covariate we wish to interact is specified with \code{b} and the time variable with \code{tvar}. Finally, we specify the function of time with the \code{tfun} argument. The additional creation of the \code{Golubtvc} function is not necessary, it just makes the code tidier. 
 
 <<TVCModel1.2, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
 Golubtvc <- function(x){
@@ -536,7 +555,7 @@ In this paper I have reviewed a number of important insights about avoiding Cox 
 
 % Acknowledgments
 \section*{Acknowledgments}
-Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, Luke Keele, Alison Post, Meredith Wilf, participants of the International Studies Association Annual Convention (2013), and two anonymous reviewers. The paper can be completely reproduced from source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.
+Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, Luke Keele, Mintao Nie, Alison Post, Meredith Wilf, participants of the International Studies Association Annual Convention (2013), and two anonymous reviewers. The paper can be completely reproduced from source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.
 
 % Bibliography
 \bibliographystyle{jss}

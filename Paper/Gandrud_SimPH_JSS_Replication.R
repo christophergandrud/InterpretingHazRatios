@@ -1,7 +1,7 @@
 #############
 # Replication file for: simPH: An R package for showing estimates for interactive and nonlinear effects from Cox proportional hazard models
 # Requires R 3.0.2 or greater
-# Updated 2 February 2014
+# Updated 21 February 2014
 #############
 
 # Load packages
@@ -33,6 +33,16 @@ simGG(Sim1, xlab = "\nYears of Age from the Sample Median (35)",
 ##### Illustration of time-varying interactive effects ######
 # Load Golub & Steunenberg (2007) data. The data is included with simPH.
 data("GolubEUPData")
+
+# Examine the data's format
+head(GolubEUPData[, 2:5])
+
+# Expand data into equally spaced time intervals
+ GolubEUPData <- SurvExpand(GolubEUPData, GroupVar = 'caseno',
+                      Time = 'begin', Time2 = 'end', event = 'event') 
+
+# Examine the data's new format
+head(GolubEUPData[, 1:4])
 
 # Create natural log-time interactions
 Golubtvc <- function(x){
@@ -79,7 +89,7 @@ grid.arrange(Plot2.1, Plot2.2, ncol = 2)
 # Create simtvc object for relative hazard
 Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
                   qi = "Relative Hazard", Xj = seq(40, 200, 40),
-                  tfun = "log", from = 1200, to = 2000, by = 10,
+                  tfun = "log", from = 1200, to = 5000, by = 10,
                   nsim = 500)
 
 # Create relative hazard plot
