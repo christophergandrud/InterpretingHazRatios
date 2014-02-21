@@ -89,8 +89,8 @@ grid.arrange(Plot2.1, Plot2.2, ncol = 2)
 # Create simtvc object for relative hazard
 Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
                   qi = "Relative Hazard", Xj = seq(40, 200, 40),
-                  tfun = "log", from = 1200, to = 5000, by = 10,
-                  nsim = 500)
+                  tfun = "log", from = 1200, to = 7000, by = 100,
+                  nsim = 200)
 
 # Create relative hazard plot
 simGG(Sim3, xlab = "\nTime in Days", type = "ribbons",

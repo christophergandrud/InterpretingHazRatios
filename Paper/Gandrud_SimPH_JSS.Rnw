@@ -306,21 +306,21 @@ Three quick notes on syntax before moving on. The \code{xlab} and \code{ylab} ar
 
 Let's now look at how to use \pkg{simPH} to explore time-interactive effects that are explicitly created by interacting a given variable in the estimation model with some time transformation. To do this we will recreate plots from \cite{Licht2011}. She re-examines Golub and Steunenberg's \citeyearpar{Golub2007} analysis of European Union legislative deliberation time. They wanted to find out what factors affected the amount of time it took the European Union to pass a new piece of legislation. Key variables they examined included the voting procedure that was used for a given piece of legislation--including the so-called qualified majority vote (QMV) procedure\footnote{The procedure changed over time, but essentially QMV requires some voting majority greater than 50\% + 1. See the European Union's website for more details: \url{http://europa.eu/legislation_summaries/glossary/qualified_majority_en.htm} (accessed January 2014).}--and the amount of other legislation pending, i.e. legislative backlog. Both of these variables violated the proportional hazard assumption and were more accurately modeled with log-time interactions.
 
-The left panel of Figure~\ref{TVCQMV} recreates Licht's \citeyearpar{Licht2011} figure showing the first difference of a log-time interaction for how the effect of the QMV procedure on legislative deliberation time changes as the number of days of deliberation increases \citep[see][236]{Licht2011}.\footnote{Her original figure was not in terms of a percentage difference to make it more comparable to a figure in Golub and Steunenberg's original. I present the results in terms of percentage difference, as the first difference is commonly reported. I have not separated out the pre and post Single European Act time periods for simplicity. There are discrepancies in the estimates presented in her figures and those here. These are caused by differences in how the underlying model was estimated in \proglang{Stata} compared to \proglang{R}. Finally, I also examined whether or not nonlinearity functional forms would be better fits than time interactions as per our discussion above. However, I found no evidence of this.} To create this figure we first load the data \code{GolubEUPData}. This data set is included with \pkg{simPH}.
+The left panel of Figure~\ref{TVCQMV} recreates Licht's \citeyearpar{Licht2011} figure showing the first difference of a log-time interaction for how the effect of the QMV procedure on legislative deliberation time changes as the number of days of deliberation increases \citep[see][236]{Licht2011}.\footnote{Her original figure was not in terms of a percentage difference to make it more comparable to a figure in Golub and Steunenberg's original. I present the results in terms of percentage difference, as the first difference is commonly reported. I have not separated out the pre and post Single European Act time periods for simplicity. Finally, I also examined whether or not nonlinearity functional forms would be better fits than time interactions as per our discussion above. However, I found no evidence of this.} To create this figure we first load the data \code{GolubEUPData}. This data set is included with \pkg{simPH}.
 
 <<TVCModel1.1, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
 data("GolubEUPData")
 @
 
-Then we create the log-time interactions. Before we do this, let's look at the data format:
+Then we create the log-time interactions. Before jumping into this, let's look at the data's format:
 
 <<TVCModel1.1.1, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
 head(GolubEUPData[, 2:5])
 @
 
-We can see that each piece of prospective legislation is identified with a case number in the \code{caseno} variable. Observation interval's \code{begin} at 0 and extend to the \code{end} when either an even happens, or one of the covariates changes values. If we simply create a time interaction by using the \code{end} time as the time value, then we will generally over measure the interaction when there are failures at times before this. For example, imagine we create a simple interaction between a dummy variable and time. For one unit that experiences an event of interest at time 1,000 in a data set formatted as above, the time interaction would be treated as 1,000 for all failures at time $t \leq 1000$. This would be inaccurate as at time 500, for example the interaction should be 500, not 1,000.
+We can see that each piece of prospective legislation is identified with a case number in the \code{caseno} variable. The \code{event} variable records if the event of interest occurred (i.e. the legislation was passed) or not. Observation intervals \code{begin} at 0 and extend to the \code{end} when either the event occurs, or one of the covariate values change. If we simply create a time interaction by using the \code{end} variable as the time value, we will over-measure the interaction for failures before this time. For example, imagine we create a simple interaction between a dummy variable and time. Imagine one unit has the value 1 for the dummy variable and that this unit experiences an event of interest at time 1,000 in a data set formatted as above. The time interaction would then be treated as 1,000 for all failures at time $t \leq 1,000$. This would be inaccurate. At time 500, for example the interaction should be 500, not 1,000.
 
-To solve this problem, \pkg{simPH} includes a function called \code{SurvExpand} to expand a data set out into equally spaced intervals. This allows for the creation of accurate time interactions. This is how we would use the function with the \code{GolubEUPData} data:
+To solve this problem, \pkg{simPH} includes a function called \code{SurvExpand} to expand a data set out into equally spaced intervals. It keeps all intervals that end at an event time or when a covariate changes. This allows us to create accurate time interactions. Here is how we use the function with the \code{GolubEUPData} data:
 
 <<TVCModel1.1.2, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
  GolubEUPData <- SurvExpand(GolubEUPData, GroupVar = 'caseno',
@@ -352,8 +352,8 @@ Now estimate the model with \code{coxph}. Note that each log-time interaction is
 M2 <- coxph(Surv(begin, end, event) ~ qmv + qmvpostsea + qmvpostteu +
               coop + codec + eu9 + eu10 + eu12 + eu15 + thatcher + 
               agenda + backlog + Lqmv + Lqmvpostsea + Lcoop + Lcodec +
-              Lthatcher + Lbacklog,
-            data = GolubEUPData, ties = "efron")
+              Lthatcher + Lbacklog, 
+            data = GolubEUPData, ties = "efron") 
 @
 
 In the following code chunk we take the \code{M2} model object created by \code{coxph} and use it in \pkg{simPH}'s \code{coxsimtvc} function to simulate the first difference of the time-interactive effect of qualified majority voting on directive deliberation time from 80 through 2000 days after deliberation begins. We specify the quantity of interest that we want to simulate with the \code{qi} argument. The non-time interacted term is entered with the \code{b} argument as before. The time interacted term is entered with \code{btvc}. The form of the time interaction is declared with the \code{tfun} argument, i.e \code{tfun = "log"}.\footnote{Other options include \code{"linear"} for linear time-interactions and \code{"pow"} for polynomials. If \code{tfun = "pow"} then also set the argument \code{pow} to specify the power the time interaction was raised to.} \code{Xj = 1} specifies that the difference is between values of \code{qmv} 1 and 0. This is a comparison between using QMV or not. We could change the $x_{l}$ value with the \code{Xl} argument, but this is not relevant for dummy variables. The \code{from} and \code{to} arguments allow us to specify the time period over which to simulate the quantity of interest. The \code{by} argument allows us to specify the increment of the time sequence to simulate values at. 
@@ -361,14 +361,14 @@ In the following code chunk we take the \code{M2} model object created by \code{
 <<TVCModel2.1, eval=FALSE, tidy=FALSE>>=
 Sim2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
                   qi = "First Difference", Xj = 1, tfun = "log", 
-                  from = 80, to = 2000, by = 5)
+                  from = 80, to = 2000, by = 5)  
 @
 
 Once we have created the \code{Sim2} object containing the simulations, we can simply use the \code{simGG} method to plot the results. In this example, we adjusted the median line size with the \code{lsize = 0.5} argument. This makes this particular plot clearer. Finally, the \code{legend = FALSE} argument hides the legend describing the fitted value comparisons that are being made between $x_{j}$ and $x_{l}$. A legend would be fairly uninformative in this case as we are only comparing the values 1 and 0.\footnote{The default is to show the legend. The \code{legend} argument follows the \pkg{ggplot2} syntax for creating plot guides, so to show the legend use \code{legend = "legend"}.} Finally, in we added a title to the whole plot using the \code{title} argument.
 
 <<TVCModel2.2, eval=FALSE, tidy=FALSE>>=
 simGG(Sim2, xlab = "\nTime in Days", title = "Central Interval\n", 
-      type = "ribbons", lsize = 0.5, legend = FALSE, alpha = 0.3) 
+      type = "ribbons", lsize = 0.5, legend = FALSE, alpha = 0.3)   
 @
 
 We can clearly see in the left panel of Figure~\ref{TVCQMV}\footnote{The figures' ribbons extend across the middle or shortest probability 95 percent interval of the simulations. \\ As in Licht's \citeyearpar{Licht2011} original the time period plotted is truncated from 80 to 2000 to make the estimates more easily interpretable.} that QMV increases the probability of passing a directive early in the deliberation process (almost by 300 percent at about 80 days). But as the deliberation time increases, the effect decreases and then becomes negative at about 1000 days. Finally, the rate of decrease levels off after 1000 days relative to before. 
@@ -377,14 +377,16 @@ The right-panel of Figure~\ref{TVCQMV} shows the shortest-probability interval f
 
 \begin{figure}
 
-<<TVCModel3, tidy=FALSE, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE, fig.width=7, fig.height=4, out.width='0.95\\linewidth', dev='pdf'>>=
+    \includegraphics[width=0.96\textwidth]{figure/TVCModel3.pdf}
+
+<<TVCModel3, eval=FALSE, tidy=FALSE, echo=FALSE, message=F, warning=F, cache=TRUE, fig.width=7, fig.height=4, out.width='0.95\\linewidth', dev='pdf'>>=
 library("ggplot2")
-library("gridExtra")
+library('gridExtra')
 
 ## Create simtvc object for first difference (central interval)
-Sim2.1 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
+Sim2.1 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",  
                     qi = "First Difference", Xj = 1,
-                    tfun = "log", from = 80, to = 2000,
+                    tfun = "log", from = 80, to = 2000, 
                     by = 5, ci = 0.95)
 
 # Create simtvc object for first difference (SPIn)
@@ -397,14 +399,14 @@ Sim2.2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
 # Create first difference plots
 Plot2.1 <- simGG(Sim2.1, xlab = "\nTime in Days", 
                  title = "Central Interval\n", alpha = 0.3,
-                 type = "ribbons", lsize = 0.5, legend = FALSE)
+                 type = "ribbons", lsize = 0.5, legend = FALSE)  
                   
 Plot2.2 <- simGG(Sim2.2, ylab = "", xlab = "\nTime in Days",
                  title = "SPIn\n", alpha = 0.3,
                  type = "ribbons", lsize = 0.5, legend = FALSE)
 
 # Combine plots
-grid.arrange(Plot2.1, Plot2.2, ncol = 2)
+grid.arrange(Plot2.1, Plot2.2, ncol = 2) 
 ######### Save M2 #############
 save(M2, file = "M2_ModelObject.RData")
 @
@@ -414,7 +416,7 @@ save(M2, file = "M2_ModelObject.RData")
 
 \end{figure}
 
-Let's look at another example, this time with multiple comparisons plotted in one figure. Figure~\ref{BacklogRH} \footnote{It replicates the right panel of Licht's \citeyearpar{Licht2011} Figure 3 \citeyearpar[][237]{Licht2011}. One difference is that she estimates uncertainty from 10 draws of 1000 simulations, whereas Figure~\ref{BacklogRH} is based on one draw of 1000 simulations. The figure's ribbons extend across the middle 95 percent of the simulations.} shows the effect of different levels of legislative backlog (\code{backlog}) on directive deliberation time from 1200 to 2000 days after the directive was proposed. The effect shown is also modeled as a log-time interaction. The process for creating the plot is similar to what we have already seen. The only differences to note are that we entered a sequence of values for backlogged legislation for \code{Xj} in \code{coxsimtvc} ranging from 40 to 200 at increments of 40. This creates five separate sets of relative hazard simulations, one for each value of \code{Xj} compared to 0. Finally, we specified the legend name for the plot in the \code{simGG} call with the \code{leg.name} argument.
+Let's look at another example, this time with multiple comparisons plotted in one figure. Figure~\ref{BacklogRH} \footnote{It replicates the right panel of Licht's \citeyearpar{Licht2011} Figure 3 \citeyearpar[][237]{Licht2011}. One difference is that she estimates uncertainty from 10 draws of 1000 simulations, whereas Figure~\ref{BacklogRH} is based on one draw of 1000 simulations. The figure's ribbons extend across the middle 95 percent of the simulations.} shows the effect of different levels of legislative backlog (\code{backlog}) on directive deliberation time from 1200 to 7000 days after the directive was proposed. The effect shown is also modeled as a log-time interaction. The process for creating the plot is similar to what we have already seen. The only differences to note are that we entered a sequence of values for backlogged legislation for \code{Xj} in \code{coxsimtvc} ranging from 40 to 200 at increments of 40. This creates five separate sets of relative hazard simulations, one for each value of \code{Xj} compared to 0. Finally, we specified the legend name for the plot in the \code{simGG} call with the \code{leg.name} argument.
 
 <<TVCBacklogDataLoad, include=FALSE>>=
 ######### Load cached model object ############
@@ -424,11 +426,11 @@ load("M2_ModelObject.RData")
 <<TVCBacklog1, echo=TRUE, tidy=FALSE, eval=FALSE>>=
 Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
                   qi = "Relative Hazard", Xj = seq(40, 200, 40),
-                  tfun = "log", from = 1200, to = 2000, by = 10,
-                  nsim = 500) 
+                  tfun = "log", from = 1200, to = 7000, by = 100,
+                  nsim = 200)
 
 simGG(Sim3, xlab = "\nTime in Days", type = "ribbons",
-        leg.name = "Backlogged \n Items")
+      leg.name = "Backlogged \n Items")
 @
 
 \begin{figure}
@@ -437,12 +439,12 @@ simGG(Sim3, xlab = "\nTime in Days", type = "ribbons",
 # Create simtvc object for relative hazard
 Sim3 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
                   qi = "Relative Hazard", Xj = seq(40, 200, 40),
-                  tfun = "log", from = 1200, to = 2000, by = 10,
-                  nsim = 500)
+                  tfun = "log", from = 1200, to = 7000, by = 100,
+                  nsim = 200)
 
 # Create relative hazard plot
 simGG(Sim3, xlab = "\nTime in Days", type = "ribbons",
-        leg.name = "Backlogged \n Items")
+      leg.name = "Backlogged \n Items")
 @
   \caption{Simulated relative hazards for the effect of different levels of legislative backlog on directive deliberation time.}
   \label{BacklogRH}
@@ -555,7 +557,9 @@ In this paper I have reviewed a number of important insights about avoiding Cox 
 
 % Acknowledgments
 \section*{Acknowledgments}
-Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, Luke Keele, Mintao Nie, Alison Post, Meredith Wilf, participants of the International Studies Association Annual Convention (2013), and two anonymous reviewers. The paper can be completely reproduced from source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.
+Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, Luke Keele, Mintao Nie, Alison Post, Meredith Wilf, participants of the International Studies Association Annual Convention (2013), and two anonymous reviewers. 
+
+The paper can be completely reproduced from source code files available at: \url{https://github.com/christophergandrud/InterpretingHazRatios}.
 
 % Bibliography
 \bibliographystyle{jss}
