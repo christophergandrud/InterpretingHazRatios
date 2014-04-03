@@ -2,7 +2,7 @@
 # Replication file for: simPH: An R package for showing estimates for 
 # interactive and nonlinear effects from Cox proportional hazard models
 # Requires R 3.0.3 or greater and simPH version 1.2 or greater
-# Updated 2 April 2014
+# Updated 3 April 2014
 #############
 
 # Load packages
@@ -26,17 +26,23 @@ M1 <- coxph(Surv(time, censor) ~ AgeMed + drug,
 # Simulate relative hazards
 Sim1 <- coxsimLinear(M1, b = "AgeMed", Xj = seq(-15, 19, by = 0.2))
 
+# Plot results with simGG default
+Plot1_1 <- simGG(Sim1)
+
 # Plot results
-simGG(Sim1, xlab = "\nYears of Age from the Sample Median (35)",
-      ylab = "Relative Hazard with Comparison\n to a 35 Year Old\n",
-      alpha = 0.05, type = 'lines')
+Plot1_2 <-simGG(Sim1, xlab = "\nYears of Age from the\n Sample Median (35)",
+                ylab = "Relative Hazard with Comparison\n to a 35 Year Old\n",
+                alpha = 0.05, type = 'lines')
+
+# Combine plots
+grid.arrange(Plot1_1, Plot1_2, ncol = 2)
 
 # Simulate and plot binary drug relative hazard estiamates
 Sim2 <- coxsimLinear(M1, b = "drug", Xj = 0:1)
 
 simGG(Sim2, psize = 3, xlab = "",
       ylab = "Relative Hazard\n",
-      type = 'points', smoother = 'lm') + 
+      type = 'points', method = 'lm') + 
     scale_x_continuous(breaks = c(0, 1), 
                        labels = c('\nNo Drug Use', '\nDrug Use'))
 
@@ -73,28 +79,28 @@ M2 <- coxph(Surv(begin, end, event) ~ qmv + qmvpostsea + qmvpostteu +
             data = GolubEUPData, ties = "efron")
 
 ## Create simtvc object for first difference (central interval)
-Sim3.1 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
+Sim3_1 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
                     qi = "First Difference", Xj = 1,
                     tfun = "log", from = 80, to = 2000,
                     by = 5, ci = 0.95)
 
 # Create simtvc object for first difference (SPIn)
-Sim3.2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
+Sim3_2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
                     qi = "First Difference", Xj = 1,
                     tfun = "log", from = 80, to = 2000,
                     by = 5, ci = 0.95, spin = TRUE)
 
 # Create first difference plots
-Plot3.1 <- simGG(Sim3.1, xlab = "\nTime in Days", 
+Plot3_1 <- simGG(Sim3_1, xlab = "\nTime in Days", 
                  title = "Central Interval\n", alpha = 0.3,
                  type = "ribbons", lsize = 0.5, legend = FALSE)
 
-Plot3.2 <- simGG(Sim3.2, ylab = "", xlab = "\nTime in Days",
+Plot3_2 <- simGG(Sim3_2, ylab = "", xlab = "\nTime in Days",
                  title = "SPIn\n", alpha = 0.3,
                  type = "ribbons", lsize = 0.5, legend = FALSE)
 
 # Combine plots
-grid.arrange(Plot3.1, Plot3.2, ncol = 2)
+grid.arrange(Plot3_1, Plot3_2, ncol = 2)
 
 # Create simtvc object for relative hazard
 Sim4 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
@@ -120,34 +126,38 @@ M3 <- coxph(Surv(acttime, censor) ~  prevgenx + lethal + deathrt1 +
               pspline(orderent, df = 4) + pspline(stafcder, df = 4), 
               data = CarpenterFdaData)
 
+## Set Xj and Xl values
+XjFit <- seq(1100, 1700, by = 10)
+XlFit <- setXl(Xj = XjFit, diff = 1)
+
 ## Simulated Fitted Values
 Sim5 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)", 
                      bdata = CarpenterFdaData$stafcder,
                      qi = "Hazard Ratio",
-                     Xj = seq(1100, 1700, by = 10), 
-                     Xl = seq(1099, 1699, by = 10))
+                     Xj = XjFit, Xl = XlFit)
 
 # Plot simulated values
-Plot5 <- simGG(Sim5, xlab = "\n Number of FDA Drug Review Staff", 
+Plot5_1 <- simGG(Sim5, xlab = "\n Number of FDA Drug Review Staff",
                   title = "Central Interval\n", alpha = 0.1, 
                   type = "lines")
 
-Plot5 + scale_y_continuous(breaks = c(0, 20, 40, 60), 
-            limits = c(0, 60))
-
+Plot5_1 <- Plot5_1 + scale_y_continuous(breaks = c(0, 20, 40, 60), 
+                                     limits = c(0, 60))
 
 # Simulated Fitted Values: shortest probability interval
 Sim6 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)", 
                      bdata = CarpenterFdaData$stafcder,
                      qi = "Hazard Ratio",
-                     Xj = seq(1100, 1700, by = 10), 
-                     Xl = seq(1099, 1699, by = 10), 
+                     Xj = XjFit, Xl = XlFit, 
                      spin = TRUE)
 
 # Plot simulated values
-Plot6 <- simGG(Sim6, xlab = "\n Number of FDA Drug Review Staff",
+Plot5_2 <- simGG(Sim6, xlab = "\n Number of FDA Drug Review Staff", ylab = "",
                 title = "SPIn\n", alpha = 0.1, type = "lines")
 
 # Place on the same scale as the central interval figure
-Plot6 + scale_y_continuous(breaks = c(0, 20, 40, 60), 
-            limits = c(0, 60))
+Plot5_2 <- Plot5_2 + scale_y_continuous(breaks = c(0, 20, 40, 60), 
+                                    limits = c(0, 60))
+
+# Return combined plot
+grid.arrange(Plot5_1, Plot5_2, ncol = 2)
