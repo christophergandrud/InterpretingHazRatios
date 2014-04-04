@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% simPH: Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models
+% simPH: Showing Estimates from Cox Proportional Hazard Models
 % Christopher Gandrud
 % 4 April 2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,12 +36,12 @@ opts_chunk$set(fig.align='center', dev='png', prompt=TRUE, highlight=FALSE, back
 \title{\pkg{simPH}: An \proglang{R} Package for Showing Estimates for Interactive and Nonlinear Effects from Cox Proportional Hazard Models}
 
 \Plainauthor{Christopher Gandrud}
-\Plaintitle{simPH: An R Package for Showing Estimates for Interactive and Nonlinear Effects from Cox Proportional Hazard Models}
+\Plaintitle{simPH: An R Package for Showing Estimates from Cox Proportional Hazard Models including for Interactive and Nonlinear Effects}
 \Shorttitle{\pkg{simPH}}
 
 % Abstract
 \Abstract{
-    The \proglang{R} package \pkg{simPH} provides tools for effectively communicating results from Cox Proportional Hazard (PH) models, especially models with interactive and nonlinear effects for continuous variables. The Cox Proportional Hazard model is a popular tool for examining cross-unit cross-time data. However, many mis-specify their models and poorly communicate uncertainty about their estimates. This is unfortunate because causes of model mis-specification--e.g., interactive and nonlinear effects--may be substantively meaningful. Uncertainty about these effects can be difficult to assess because quantities of interest are often on asymmetric and nonlinear scales. Part of the problem has been that available computational tools make it difficult to explore and communicate these effects. \pkg{simPH} overcomes these problems by making it easy for to simulate and then plot quantities of interest for a variety of effects estimated from Cox PH models. The package can also be used for simple linear effects, making it a useful all-round package for showing results from Cox PH models. \pkg{simPH}'s plots employ visual weighting in order to effectively communicate estimation uncertainty. The user also has the option of showing either the standard central interval of the simulation's distribution or the shortest probability interval--which can be especially useful for asymmetrically distributed estimates. Hypothetical and empirical examples are used to illustrate \pkg{simPH}'s syntax and capabilities.
+    The \proglang{R} package \pkg{simPH} provides tools for effectively communicating results from Cox Proportional Hazard (PH) models, especially models with interactive and nonlinear effects for continuous variables. The Cox Proportional Hazard model is a popular tool for examining cross-unit cross-time data. However, available computational tools make it difficult to explore and communicate estimated effects for interactive and nonlinear continuous covariates along with their associated uncertainty. \pkg{simPH} overcomes these problems by making it easy for to simulate and then plot quantities of interest for a variety of effects estimated from Cox PH models. The package can also be used for simple linear effects, making it a useful all-round package for showing results from Cox PH models. \pkg{simPH}'s plots employ visual weighting in order to effectively communicate estimation uncertainty. The user also has the option of showing either the standard central interval of the simulation's distribution or the shortest probability interval--which can be especially useful for asymmetrically distributed estimates. Hypothetical and empirical examples are used to illustrate \pkg{simPH}'s syntax and capabilities.
 }
 
 \Keywords{Cox Proportional Hazard models, hazard ratios, time-interactions, time-varying, nonlinearity, splines, visual-weighting, \proglang{R}}
