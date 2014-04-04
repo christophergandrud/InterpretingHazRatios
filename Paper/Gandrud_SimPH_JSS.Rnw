@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % simPH: Showing Estimates from Interactive and Nonlinear Cox Proportional Hazard Models
 % Christopher Gandrud
-% 3 April 2014
+% 4 April 2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[article]{jss}
@@ -25,7 +25,7 @@ data("CarpenterFdaData")
 ## The data is included with simPH
 data("GolubEUPData")
 
-options(prompt = "R>  ")
+options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 
 ##### Set Chunk Options ####
 opts_chunk$set(fig.align='center', dev='png', prompt=TRUE, highlight=FALSE, background="white")
@@ -41,7 +41,7 @@ opts_chunk$set(fig.align='center', dev='png', prompt=TRUE, highlight=FALSE, back
 
 % Abstract
 \Abstract{
-    The \proglang{R} package \pkg{simPH} provides tools for effectively communicating results from Cox Proportional Hazard (PH) models, especially models with interactive and nonlinear effects. The Cox Proportional Hazard model is a popular tool for examining cross-unit cross-time data. However, many mis-specify their models and poorly communicate uncertainty about their estimates. This is unfortunate because causes of model misspecification--e.g., interactive and nonlinear effects--may be substantively meaningful. Uncertainty about these effects can be difficult to assess because quantities of interest are often on asymmetric and nonlinear scales. Part of the problem has been that available computational tools make it difficult to explore and communicate these effects. \pkg{simPH} overcomes these problems by making it easy for to simulate and then plot quantities of interest for a variety of effects estimated from Cox PH models. The package can also be used for simple linear effects, making it a useful all-round package for showing results from Cox PH models. \pkg{simPH}'s plots employ visual weighting in order to effectively communicate estimation uncertainty. The user also has the option of showing either the standard central interval of the simulation's distribution or the shortest probability interval--which can be especially useful for asymmetrically distributed estimates. Hypothetical and empirical examples are used to illustrate \pkg{simPH}'s syntax and capabilities.
+    The \proglang{R} package \pkg{simPH} provides tools for effectively communicating results from Cox Proportional Hazard (PH) models, especially models with interactive and nonlinear effects for continuous variables. The Cox Proportional Hazard model is a popular tool for examining cross-unit cross-time data. However, many mis-specify their models and poorly communicate uncertainty about their estimates. This is unfortunate because causes of model mis-specification--e.g., interactive and nonlinear effects--may be substantively meaningful. Uncertainty about these effects can be difficult to assess because quantities of interest are often on asymmetric and nonlinear scales. Part of the problem has been that available computational tools make it difficult to explore and communicate these effects. \pkg{simPH} overcomes these problems by making it easy for to simulate and then plot quantities of interest for a variety of effects estimated from Cox PH models. The package can also be used for simple linear effects, making it a useful all-round package for showing results from Cox PH models. \pkg{simPH}'s plots employ visual weighting in order to effectively communicate estimation uncertainty. The user also has the option of showing either the standard central interval of the simulation's distribution or the shortest probability interval--which can be especially useful for asymmetrically distributed estimates. Hypothetical and empirical examples are used to illustrate \pkg{simPH}'s syntax and capabilities.
 }
 
 \Keywords{Cox Proportional Hazard models, hazard ratios, time-interactions, time-varying, nonlinearity, splines, visual-weighting, \proglang{R}}
@@ -552,7 +552,6 @@ Plot5_1 <- simGG(Sim5, xlab = "\n No. of FDA Drug Review Staff",
 Plot5_1 <- Plot5_1 + scale_y_continuous(breaks = c(0, 20, 40, 60), 
                                      limits = c(0, 60))
 
-
 # Simulated Fitted Values: shortest probability interval
 Sim6 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)", 
                      bdata = CarpenterFdaData$stafcder,
@@ -577,7 +576,7 @@ grid.arrange(Plot5_1, Plot5_2, ncol = 2)
 
 \end{figure}
 
-We can see in left panel of Figure~\ref{Spline1} that the simulated values are concentrated near the bottom of the distribution.\footnote{Note that the values have been smoothed using post-simulation cubic smoothing splines. This gives a more continuous appearance to the simulations. Smoothing is accomplished with \code{smooth.spline}, which is part of basic \proglang{R}. You can tell \code{simGG} to not smooth the simulations by setting the argument \code{SmoothSpline = FALSE}.} Following \citeauthor{Liu2013} we may find it useful to show not the central 95 percent interval, but the shortest 95 percent probability interval. The right panel of Figure~\ref{Spline1} shows this interval.\footnote{The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.} To create it we used all of the same syntax as before, while simply adding \code{spin = TRUE} to \code{coxsimSpline}. Using the shortest 95 percent probability interval indicates that there is actually a higher probability that the hazard ratio is 1, i.e., no effect, than the central 95 percent interval for all but the highest quartile or so of FDA drug review staff. It also deemphasizes the higher hazard ratio values, where there is a low concentration of the probability. In both figures \ref{Spline1} and \ref{Spline2} the visual weighting draws readers' attention to the lower part of the distribution where the model estimates there is a higher probability that the hazard ratio will be. 
+We can see in left panel of Figure~\ref{Spline1} that the simulated values are concentrated near the bottom of the distribution.\footnote{Note that the values have been smoothed using post-simulation cubic smoothing splines. This gives a more continuous appearance to the simulations. Smoothing is accomplished with \code{smooth.spline}, which is part of basic \proglang{R}. You can tell \code{simGG} to not smooth the simulations by setting the argument \code{SmoothSpline = FALSE}.} Following \citeauthor{Liu2013} we may find it useful to show not the central 95 percent interval, but the shortest 95 percent probability interval. The right panel of Figure~\ref{Spline1} shows this interval.\footnote{The line summarizing the central tendency of the distribution was created with a generalized additive model for integrated smoothness estimation.} To create it we used all of the same syntax as before, while simply adding \code{spin = TRUE} to \code{coxsimSpline}. Using the shortest 95 percent probability interval indicates that there is actually a higher probability that the hazard ratio is 1, i.e., no effect, than the central 95 percent interval for all but the highest quartile or so of FDA drug review staff. It also deemphasizes the higher hazard ratio values, where there is a low concentration of the probability. In both panels of Figure~\ref{Spline1} the visual weighting draws readers' attention to the lower part of the distribution where the model estimates there is a higher probability that the hazard ratio will be. 
 
 Finally, to ease comparison, the second plot is on the same y-axis scale as the first. To illustrate how to do this, imagine that we placed the output of \code{coxsimSpline} with the argument \code{spin = TRUE} into an object called \code{SimPlot1}. We can then use \pkg{ggplot2} to change the y-axis range so that it is comparable to Figure~\ref{Spline1}'s:
 
@@ -596,7 +595,6 @@ This paper reviewed a number of insights about avoiding Cox Proportional Hazard 
 Thank you to Andreas Beger, Jeffrey Chwieroth, Kelly Kadera, Luke Keele, Mintao Nie, Alison Post, Meredith Wilf, participants of the International Studies Association Annual Convention (2013), two anonymous reviewers, and the JSS editors. 
 
 % Bibliography
-\bibliographystyle{jss}
 \bibliography{HRBibliography,HRPackages}
 
 \end{document}
