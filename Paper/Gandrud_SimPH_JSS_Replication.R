@@ -1,8 +1,8 @@
 #############
-# Replication file for: simPH: An R package for showing estimates for 
-# interactive and nonlinear effects from Cox proportional hazard models
+# Replication file for: simPH: An R Package for Showing Estimates from 
+# Cox Proportional Hazard Models including for Interactive and Nonlinear Effects
 # Requires R 3.0.3 or greater and simPH version 1.2 or greater
-# Updated 3 April 2014
+# Updated 5 April 2014
 #############
 
 # Load packages
@@ -46,7 +46,7 @@ simGG(Sim2, psize = 3, xlab = "",
     scale_x_continuous(breaks = c(0, 1), 
                        labels = c('\nNo Drug Use', '\nDrug Use'))
 
-##### Illustration of time-varying interactive effects ######
+##### Illustration of time-interactive interactive effects ######
 # Load Golub & Steunenberg (2007) data. The data is included with simPH.
 data("GolubEUPData")
 
