@@ -2,7 +2,7 @@
 # Replication file for: simPH: An R Package for Showing Estimates from 
 # Cox Proportional Hazard Models including for Interactive and Nonlinear Effects
 # Requires R 3.0.3 or greater and simPH version 1.2 or greater
-# Updated 5 April 2014
+# Updated 6 April 2014
 #############
 
 # Load packages
@@ -24,7 +24,7 @@ M1 <- coxph(Surv(time, censor) ~ AgeMed + drug,
             method = "breslow", data = hmohiv)
 
 # Simulate relative hazards
-Sim1 <- coxsimLinear(M1, b = "AgeMed", Xj = seq(-15, 19, by = 0.2))
+Sim1 <- coxsimLinear(M1, b = "AgeMed", Xj = seq(-15, 19, by = 1))
 
 # Plot results with simGG default
 Plot1_1 <- simGG(Sim1)
@@ -61,49 +61,29 @@ head(GolubEUPData[, 2:5])
 head(GolubEUPData[, 1:4])
 
 # Create natural log-time interactions
-Golubtvc <- function(x){
-  tvc(data = GolubEUPData, b = x, tvar = "end", tfun = "log")
-}
-GolubEUPData$Lqmv <- Golubtvc("qmv")
-GolubEUPData$Lbacklog <- Golubtvc("backlog")
-GolubEUPData$Lcoop <- Golubtvc("coop")
-GolubEUPData$Lcodec <- Golubtvc("codec")
-GolubEUPData$Lqmvpostsea <- Golubtvc("qmvpostsea")
-GolubEUPData$Lthatcher <- Golubtvc("thatcher")
+BaseVars <- c('qmv', 'backlog', 'coop', 'codec', 'qmvpostsea', 'thatcher')
+GolubEUPData <- tvc(GolubEUPData, b = BaseVars, tvar = 'end', tfun = 'log')
 
 # Estimate model
 M2 <- coxph(Surv(begin, end, event) ~ qmv + qmvpostsea + qmvpostteu +
-              coop + codec + eu9 + eu10 + eu12 + eu15 + thatcher + 
-              agenda + backlog + Lqmv + Lqmvpostsea + Lcoop + Lcodec +
-              Lthatcher + Lbacklog,
+                coop + codec + eu9 + eu10 + eu12 + eu15 + thatcher +
+                agenda + backlog + qmv_log + qmvpostsea_log + coop_log +
+                codec_log + thatcher_log + backlog_log,
             data = GolubEUPData, ties = "efron")
 
 ## Create simtvc object for first difference (central interval)
-Sim3_1 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
+Sim3 <- coxsimtvc(obj = M2, b = "qmv", btvc = "qmv_log",
                     qi = "First Difference", Xj = 1,
                     tfun = "log", from = 80, to = 2000,
-                    by = 5, ci = 0.95)
-
-# Create simtvc object for first difference (SPIn)
-Sim3_2 <- coxsimtvc(obj = M2, b = "qmv", btvc = "Lqmv",
-                    qi = "First Difference", Xj = 1,
-                    tfun = "log", from = 80, to = 2000,
-                    by = 5, ci = 0.95, spin = TRUE)
+                    by = 10, ci = 0.95)
 
 # Create first difference plots
-Plot3_1 <- simGG(Sim3_1, xlab = "\nTime in Days", 
-                 title = "Central Interval\n", alpha = 0.3,
-                 type = "ribbons", lsize = 0.5, legend = FALSE)
-
-Plot3_2 <- simGG(Sim3_2, ylab = "", xlab = "\nTime in Days",
-                 title = "SPIn\n", alpha = 0.3,
-                 type = "ribbons", lsize = 0.5, legend = FALSE)
-
-# Combine plots
-grid.arrange(Plot3_1, Plot3_2, ncol = 2)
+simGG(Sim3, xlab = "\nTime in Days", 
+       title = "Central Interval\n", alpha = 0.3,
+       type = "ribbons", lsize = 0.5, legend = FALSE)
 
 # Create simtvc object for relative hazard
-Sim4 <- coxsimtvc(obj = M2, b = "backlog", btvc = "Lbacklog",
+Sim4 <- coxsimtvc(obj = M2, b = "backlog", btvc = "backlog_log",
                   qi = "Relative Hazard", Xj = seq(40, 200, 40),
                   tfun = "log", from = 1200, to = 7000, by = 100,
                   nsim = 200)
