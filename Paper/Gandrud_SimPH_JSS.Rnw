@@ -28,7 +28,7 @@ data("GolubEUPData")
 options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 
 ##### Set Chunk Options ####
-opts_chunk$set(fig.align='center', dev='png', prompt=TRUE, highlight=FALSE, background="white")
+opts_chunk$set(fig.align='center', tidy=FALSE, prompt=TRUE, highlight=FALSE, background="white")
 @
 
 % Author/Title
