@@ -2,7 +2,7 @@
 # Replication file for: simPH: An R Package for Showing Estimates from 
 # Cox Proportional Hazard Models including for Interactive and Nonlinear Effects
 # Requires R 3.0.3 or greater and simPH version 1.2 or greater
-# Updated 6 April 2014
+# Updated 21 April 2014
 #############
 
 # Load packages
@@ -61,8 +61,8 @@ head(GolubEUPData[, 2:5])
 head(GolubEUPData[, 1:4])
 
 # Create natural log-time interactions
-BaseVars <- c('qmv', 'backlog', 'coop', 'codec', 'qmvpostsea', 'thatcher')
-GolubEUPData <- tvc(GolubEUPData, b = BaseVars, tvar = 'end', tfun = 'log')
+BaseVars <- c("qmv", "backlog", "coop", "codec", "qmvpostsea", "thatcher")
+GolubEUPData <- tvc(GolubEUPData, b = BaseVars, tvar = "end", tfun = "log")
 
 # Estimate model
 M2 <- coxph(Surv(begin, end, event) ~ qmv + qmvpostsea + qmvpostteu +
