@@ -1,15 +1,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % simPH: JSS
 % Christopher Gandrud
-% 3 July 2014
+% 5 July 2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[article]{jss}
 \usepackage{amsmath}
 
 %%%% track changes
-%\usepackage[margins]{trackchanges}
-\usepackage[finalnew]{trackchanges}
+\usepackage[margins]{trackchanges}
+%\usepackage[finalnew]{trackchanges}
 
 <<include=FALSE>>=
 #### Load Packages ####
@@ -369,7 +369,7 @@ head(GolubEUPData[, 2:5])
 
 We can see that each piece of prospective legislation is identified with a case number in the \code{caseno} variable. The \code{event} variable records if the event of interest occurred (i.e. the legislation was passed) or not. Observation intervals \code{begin} at 0 and extend to the \code{end} when either the event occurs, \emph{or} one of the covariate values change. 
 
-If we create a time interaction by using the \code{end} variable as the time value, we will inaccurately measure the interaction for failures before this time. \change[CG]{Imagine we build a simple interaction between a binary variable and time. One unit has the value one for the binary variable and this unit experiences an event of interest at time 1,000 in a data set formatted as above. The time interaction would then be treated as 1,000 for all failures at time  This would be inaccurate. At time 500, for example the interaction should be 500, not 1,000.}{Imagine we build an interaction between} \code{end} \add[CG]{time and a dichotomous variable with value one for the second unit in our data set. The interaction term would be 1,246. This is accurate at the second unit's event time $t_{j}$. However, it is inaccurate at all times $i$, where  $t_{i} < t_{j}$. When another unit experiences an event at a time $t_{i}$ where $t_{i} < t_{j}$ we want to use the second unit's time interaction value at $t_{i}$ to find the partial likelihood rather than the value at $t_{j}$.}
+If we create a time interaction by using the \code{end} variable as the time value, we will inaccurately measure the interaction for failures before this time. \change[CG]{Imagine we build a simple interaction between a binary variable and time. One unit has the value one for the binary variable and this unit experiences an event of interest at time 1,000 in a data set formatted as above. The time interaction would then be treated as 1,000 for all failures at time  This would be inaccurate. At time 500, for example the interaction should be 500, not 1,000.}{Imagine we build an interaction between} \code{end} \add[CG]{time and a dichotomous variable with the value 1 for the second unit in our data set. The interaction term would be 1,246. This is accurate at the second unit's event time $t_{j}$. However, it is inaccurate at all times $t_{i}$, where  $t_{i} < t_{j}$. When another unit experiences an event at a time $t_{i}$ before $t_{j}$ we should use the second unit's time interaction value at $t_{i}$ to find the partial likelihood, rather than the value at $t_{j}$.}
 
 To solve this problem, \pkg{simPH} includes the \code{SurvExpand} function. It expands a data set out into equally spaced intervals. It keeps all intervals that end at an observed event time and when a covariate changes. These are the only time points that are interesting to the Cox PH model and removing unneeded periods helps save memory. The resulting data frame allows us to create accurate time interactions. Here is how we use the function with the \code{GolubEUPData} data:
 
