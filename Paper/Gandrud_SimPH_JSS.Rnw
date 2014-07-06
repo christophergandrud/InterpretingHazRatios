@@ -1,15 +1,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % simPH: JSS
 % Christopher Gandrud
-% 5 July 2014
+% 6 July 2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[article]{jss}
 \usepackage{amsmath}
 
 %%%% track changes
-\usepackage[margins]{trackchanges}
-%\usepackage[finalnew]{trackchanges}
+%\usepackage[margins]{trackchanges}
+\usepackage[finalnew]{trackchanges}
 
 <<include=FALSE>>=
 #### Load Packages ####
@@ -124,7 +124,7 @@ Relative hazards are given by:
 	\frac{h_{j}(t)}{h_{l}(t)} = \mathrm{e}^{x_{j}(\beta_{1} + \beta_{2}f(t))}.
 \end{equation}
 %
-In this situation the covariate $x_{l}$ is zero. Relative hazards represent the change in the hazard when $x$ is `switched on'. As such, relative hazards are a special case of the hazard ratio \citep[p. 231]{Licht2011}. They are the expected change in the hazard when $x$ is fitted at a value different from zero compared to when $x$ is zero.
+In this situation the covariate $x_{l}$ is zero. Relative hazards represent the change in the hazard when $x$ is ``switched on''. As such, relative hazards are a special case of the hazard ratio \citep[p. 231]{Licht2011}. They are the expected change in the hazard when $x$ is fitted at a value different from zero compared to when $x$ is zero.
  
 \subsection[Nonproportional and nonlinear effects]{Correcting nonproportional hazards with nonlinear transformations of continuous variables}
 
@@ -193,7 +193,7 @@ We can use this post-estimation simulation technique for virtually any quantity 
 
 \subsection{Which interval to show?}
 
-If researchers go beyond usual `train timetable' coefficient tables and graphically show their parameter estimates, as \pkg{simPH} makes easier, they usually do so by plotting lines of some measure of central tendency and confidence bands calculated from standard errors over a range of fitted values. Previous work with post-estimation simulations, e.g., \cite{Licht2011}, has mirrored this approach in graphs with a line for the median or mean of the simulation distribution and lines representing the boundaries of a central interval of the distribution. For example, the central 95 percent interval could be represented by lines at the 2.5 and 97.5 percentiles of the distribution.
+If researchers go beyond usual ``train timetable'' coefficient tables and graphically show their parameter estimates, as \pkg{simPH} makes easier, they usually do so by plotting lines of some measure of central tendency and confidence bands calculated from standard errors over a range of fitted values. Previous work with post-estimation simulations, e.g., \cite{Licht2011}, has mirrored this approach in graphs with a line for the median or mean of the simulation distribution and lines representing the boundaries of a central interval of the distribution. For example, the central 95 percent interval could be represented by lines at the 2.5 and 97.5 percentiles of the distribution.
 
 Many quantities of interest from Cox PH models have asymmetric probability distributions on a nonlinear scale and can therefore be poorly summarized by central intervals. Recall that most quantities of interest are on an exponential scale with a lower bound of 0 or, in the case of first differences, -100. They can have very long and sparse upper regions relative to a tighter concentration of the distribution near the lower boundary. In these cases it can be more useful to look at highest density regions \citep[see][]{Box1973,Hyndman1996}. The underlying idea is that we should be more interested in the set of quantities of interest values with the most probability \cite[p. 120]{Hyndman1996}, rather than an arbitrary central interval. When the simulation has a normal distribution, the highest density region will be equivalent to the central interval with the same percentage of the simulations, e.g., 95 percent. However, when the highest density is at the boundary, for example when many of the simulated relative hazard values are close to 0, then \cite{Liu2013} argue that the highest density region is preferable to the central interval. In these cases ``central intervals can be much longer and have the awkward property [of] cutting off a narrow high-posterior slice that happens to be near the boundary, thus ruling out a part of the distribution that is actually strongly supported by the inference'' \citep[p. 2]{Liu2013}. If this happens \citeauthor{Liu2013} recommend finding the shortest probability interval (SPIn). This is the shortest interval of a particular probability coverage based on the simulations. They find this to be a very efficient way of finding the shortest highest density region for unimodal distributions.
 
@@ -285,7 +285,7 @@ M1 <- coxph(Surv(time, censor) ~ AgeMed + drug,
             method = "breslow", data = hmohiv)
 @
 
-Age is clearly a time-varying quantity. Not only does it change over time in the way a person's income (probably) does, for example, but in effect it has a linear interaction with time. However, in our model we do not explicitly interact age with time as we will interact other variables with time in later examples. We can treat the variable in the same way as personal income for the purposes of creating simulations with \pkg{simPH} and so can use the \code{coxsimLinear} function:
+Age is clearly a time-varying quantity. Not only does it change over time in the way a person's income (probably) does, for example, but in effect it has a linear interaction with time. However, in our model we do not explicitly interact age with time as we will interact other variables with time in later examples. Because of this we can treat the variable the same way as personal income for the purposes of creating simulations with \pkg{simPH} and so can use the \code{coxsimLinear} function:
 
 <<LinearModel1_4, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
 Sim1 <- coxsimLinear(M1, b = "AgeMed", Xj = seq(-15, 19, by = 1))
@@ -369,9 +369,9 @@ head(GolubEUPData[, 2:5])
 
 We can see that each piece of prospective legislation is identified with a case number in the \code{caseno} variable. The \code{event} variable records if the event of interest occurred (i.e. the legislation was passed) or not. Observation intervals \code{begin} at 0 and extend to the \code{end} when either the event occurs, \emph{or} one of the covariate values change. 
 
-If we create a time interaction by using the \code{end} variable as the time value, we will inaccurately measure the interaction for failures before this time. \change[CG]{Imagine we build a simple interaction between a binary variable and time. One unit has the value one for the binary variable and this unit experiences an event of interest at time 1,000 in a data set formatted as above. The time interaction would then be treated as 1,000 for all failures at time  This would be inaccurate. At time 500, for example the interaction should be 500, not 1,000.}{Imagine we build an interaction between} \code{end} \add[CG]{time and a dichotomous variable with the value 1 for the second unit in our data set. The interaction term would be 1,246. This is accurate at the second unit's event time $t_{j}$. However, it is inaccurate at all times $t_{i}$, where  $t_{i} < t_{j}$. When another unit experiences an event at a time $t_{i}$ before $t_{j}$ we should use the second unit's time interaction value at $t_{i}$ to find the partial likelihood, rather than the value at $t_{j}$.}
+If we create a time interaction by using the \code{end} variable as the time value, we will inaccurately measure the interaction for failures before this time. \change[CG]{Imagine we build a simple interaction between a binary variable and time. One unit has the value one for the binary variable and this unit experiences an event of interest at time 1,000 in a data set formatted as above. The time interaction would then be treated as 1,000 for all failures at time  This would be inaccurate. At time 500, for example the interaction should be 500, not 1,000.}{Imagine we build an interaction between} \code{end} \add[CG]{time and a dichotomous variable with the value 1 for the second unit in our data set. The interaction term would be 1,246. This is accurate at the second unit's event time $t_{m}$. However, it is inaccurate at all times $t_{n}$, where  $t_{n} < t_{m}$. When another unit experiences an event at a time $t_{n}$ before $t_{m}$ we should use the second unit's time interaction value at $t_{n}$ to find the partial likelihood, rather than the value at $t_{m}$.}
 
-To solve this problem, \pkg{simPH} includes the \code{SurvExpand} function. It expands a data set out into equally spaced intervals. It keeps all intervals that end at an observed event time and when a covariate changes. These are the only time points that are interesting to the Cox PH model and removing unneeded periods helps save memory. The resulting data frame allows us to create accurate time interactions. Here is how we use the function with the \code{GolubEUPData} data:
+To solve this problem, \pkg{simPH} includes the \code{SurvExpand} function. It expands a data set out into equally spaced intervals. It keeps all intervals that end at an observed event time and when a covariate changes. These are the only time points that are \change[CG]{interesting to the Cox PH model}{needed to find the partial likelihood.} \change[CG]{and r}{R}emoving unneeded periods helps save memory. The resulting data frame allows us to create accurate time interactions. Here is how we use the function with the \code{GolubEUPData} data:
 
 <<TVCModel1_1_2, tidy=FALSE, echo=TRUE, message=FALSE, warning=FALSE>>=
 GolubEUPData <- SurvExpand(GolubEUPData, GroupVar = "caseno",
