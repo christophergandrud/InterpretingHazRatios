@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % simPH: JSS
 % Christopher Gandrud
-% 28 July 2014
+% 16 August 2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[article]{jss}
@@ -29,7 +29,7 @@ data("CarpenterFdaData")
 ## The data is included with simPH
 data("GolubEUPData")
 
-options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
+options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE, comment=NA)
 
 ##### Set Chunk Options ####
 opts_chunk$set(fig.align='center', tidy=FALSE, prompt=TRUE, highlight=FALSE, background="white")
@@ -37,10 +37,10 @@ opts_chunk$set(fig.align='center', tidy=FALSE, prompt=TRUE, highlight=FALSE, bac
 
 % Author/Title
 \author{Christopher Gandrud \\ Hertie School of Governance}
-\title{\pkg{simPH}: An \proglang{R} Package for Illustrating Estimates from Cox Proportional Hazard Models including for Interactive and Nonlinear Effects}
+\title{\pkg{simPH}: An \proglang{R} Package for Illustrating Estimates from Cox Proportional Hazard Models Including for Interactive and Nonlinear Effects}
 
 \Plainauthor{Christopher Gandrud}
-\Plaintitle{simPH: An R Package for Illustrating Estimates from Cox Proportional Hazard Models including for Interactive and Nonlinear Effects}
+\Plaintitle{simPH: An R Package for Illustrating Estimates from Cox Proportional Hazard Models Including for Interactive and Nonlinear Effects}
 \Shorttitle{\pkg{simPH}}
 
 % Abstract
@@ -220,8 +220,6 @@ One reason that researchers have inconsistently incorporated suggestions to test
 
 
 \begin{table}
-    \caption{\pkg{simPH} quantity of interest simulation functions}
-    \label{simTable}
     \vspace{0.3cm}
     \begin{center}
         \begin{tabular}{l c}
@@ -236,6 +234,8 @@ One reason that researchers have inconsistently incorporated suggestions to test
             \hline
         \end{tabular}
     \end{center}
+    \caption{\pkg{simPH} quantity of interest simulation functions.}
+    \label{simTable}
 \end{table}
 
 \pkg{simPH}'s simulation functions follow \cite{King2000} to simulate parameters and calculate a variety of quantities of interest. The user can specify the number of simulations to run per fitted value with the \code{nsim} argument. The default is 1,000. Warning: in some cases, especially with penalized splines, it is easy to ask the program to create more simulations than an average desktop computer can easily handle. The user may need to balance a desire for a clear view of the probability distribution a quantity of interest comes from with what is computationally feasible.
@@ -332,7 +332,7 @@ We can use \pkg{simPH} to find and plot quantities of interest for the binary \c
 Sim2 <- coxsimLinear(M1, b = "drug", Xj = 0:1)
 @
 
-We can then use \code{simGG} (with some stylistic modifications) to create the plot in Figure~\ref{LinearPlotDrug}. It is important to note that the \code{method} argument should be set to \code{method = "lm"} (i.e. linear model) when using binary variables. The nonlinear smoothers will not work with fewer than 10 x-axis values.
+We can then use \code{simGG} (with some stylistic modifications) to create the plot in Figure~\ref{LinearPlotDrug}. It is important to note that the \code{method} argument should be set to \code{method = "lm"} (i.e., linear model) when using binary variables. The nonlinear smoothers will not work with fewer than 10 x-axis values.
 
 \begin{figure}[t]
 
@@ -365,7 +365,7 @@ Before creating the log-time interactions, let's look at the data's format:
 head(GolubEUPData[, 2:5])
 @
 
-We can see that each piece of prospective legislation is identified with a case number in the \code{caseno} variable. The \code{event} variable records if the event of interest occurred (i.e. the legislation was passed) or not. Observation intervals \code{begin} at 0 and extend to the \code{end} when either the event occurs, \emph{or} one of the covariate values change.
+We can see that each piece of prospective legislation is identified with a case number in the \code{caseno} variable. The \code{event} variable records if the event of interest occurred (i.e., the legislation was passed) or not. Observation intervals \code{begin} at 0 and extend to the \code{end} when either the event occurs, \emph{or} one of the covariate values change.
 
 If we create a time interaction by using the \code{end} variable as the time value, we will inaccurately measure the interaction for failures before this time. Imagine we build an interaction between \code{end} time and a dichotomous variable with the value 1 for the second unit in our data set. The interaction term would be 1,246. This is accurate at the second unit's event time $t_{m}$. However, it is inaccurate at all times $t_{n}$, where  $t_{n} < t_{m}$. When another unit experiences an event at a time $t_{n}$ before $t_{m}$ we should use the second unit's time interaction value at $t_{n}$ to find the partial likelihood, rather than the value at $t_{m}$.
 
