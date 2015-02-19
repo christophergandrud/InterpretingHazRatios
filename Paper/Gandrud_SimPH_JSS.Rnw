@@ -538,7 +538,8 @@ Sim6 <- coxsimSpline(M3, bspline = "pspline(stafcder, df = 4)",
 
 # Plot simulated values
 Plot5_2 <- simGG(Sim6, xlab = "\n No. of FDA Drug Review Staff", ylab = "",
-                title = "SPIn\n", alpha = 0.1, type = "lines")
+                title = "SPIn\n", alpha = 0.1, type = "lines",
+                rug_position = 'jitter')
 
 # Place on the same scale as the central interval figure
 Plot5_2 <- Plot5_2 + scale_y_continuous(breaks = c(0, 20, 40, 60),
