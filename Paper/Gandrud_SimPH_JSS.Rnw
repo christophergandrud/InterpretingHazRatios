@@ -115,7 +115,7 @@ Like any other interaction effect \cite[see][]{Brambor2006} extra care should be
 \cite{Licht2011} describes two methods for calculating the combined effect of a time interaction on the hazard of an event happening in ways that are relatively easy to interpret: (a) first differences and (b) relative hazards. A first difference is the percentage change in the hazard rate at time $t$ between two values of $x$:
 %
 \begin{equation}
-	\%\triangle h_{i}(t) = (e^{(x_{j} - x_{l})(\beta_{1} + \beta_{2}f(t))} - 1) \cdot 100.
+	\%\triangle h_{i}(t) = (\mathrm{e}^{(x_{j} - x_{l})(\beta_{1} + \beta_{2}f(t))} - 1) \cdot 100.
 \end{equation}
 %
 Relative hazards are given by:
